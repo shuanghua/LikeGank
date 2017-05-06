@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@mipmap/ic_menu_home"
+            android:title="首页" />
+        <item
+            android:id="@+id/nav_android"
+            android:checkable="false"
+            android:icon="@mipmap/ic_menu_android"
+            android:title="Android" />
+        <item
+            android:id="@+id/nav_ios"
+            android:checkable="false"
+            android:icon="@mipmap/ic_menu_ios"
+            android:title="iOS" />
+        <item
+            android:id="@+id/nav_surprise"
+            android:checkable="false"
+            android:icon="@mipmap/ic_menu_fuli"
+            android:title="福利" />
+    </group>
+
+    <item
+        android:title="其它"
+        tools:ignore="HardcodedText">
+        <menu>
+            <item
+                android:id="@+id/nav_about"
+                android:icon="@mipmap/ic_menu_send"
+                android:title="关于" />
+        </menu>
+    </item>
+
+</menu>

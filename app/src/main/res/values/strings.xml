@@ -1,0 +1,57 @@
+<resources>
+    <string name="app_name">LIKEGANK</string>
+    <string name="moshuanghua17_gamil_com">moshuanghua17@gamil.com</string>
+    <string name="bar_title_home">首页</string>
+    <string name="bar_title_fuli">福利</string>
+    <string name="bar_title_android">Android</string>
+    <string name="bar_title_ios">iOS</string>
+    <string name="likegank">LIKEGANK</string>
+    <string name="share">分享</string>
+
+    <string name="meizi_transition_name">name</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Gank 官网</string>
+    <string name="title_activity_a">a</string>
+
+    <string name="prompt">提示</string>
+    <string name="prompt_information">是否确认退出？</string>
+    <string name="picture_has_save_to">图片已保存至 %s 文件夹</string>
+
+    <string name="error_toolbar">没有找到 Tooblbar 或者 AppBarLayout ！</string>
+    <string name="error_net">网络不可用！</string>
+    <string name="error_delete">Delete error!</string>
+    <string name="share_to">分享到：</string>
+    <string name="action_refresh">刷新</string>
+    <string name="action_copy_url">复制链接</string>
+    <string name="action_open_url">打开链接</string>
+
+
+    <string-array name="photo_dialog_list">
+        <item name="share">分享图片</item>
+        <item name="save">保存图片</item>
+    </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_web_view">WebViewActivity</string>
+    <string name="gank_link">http://gank.io</string>
+    <string name="via">(via-</string>
+    <string name="fd">发生的</string>
+    <string name="about_Introduction">LikeGank 是我抽空学习@drakeet 妹纸Gank.io 写的一个练手应用，学习涵盖了 Relm、Rxjava、Retrofit、Multitype、Photoview 等等一些热门的开源框架。
+        \nLikeGank 中所有的网络数据均来自@代码家 GankApi</string>
+    <string name="like_gank_github">项目地址:   https://github.com/Shuanghua</string>
+    <string name="gank_api">GankApi:    http://gank.io/api</string>
+    <string name="meizi_github">妹纸Gank.io地址:    https://github.com/drakeet/Meizhi</string>
+    <string name="open_license">开放源代码许可</string>
+
+    <string name="license_LICENSE_2.0"> Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.You may obtain a copy of the License at \n http://www.apache.org/licenses/LICENSE-2.0 \n Unless required by applicable law or agreed to in writing, softwaredistributed under the License is distributed on an "AS IS" BASIS,WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.See the License for the specific language governing permissions and limitations under the License.</string>
+    <string name="license_realm_java">Realm Java is published under the Apache 2.0 license. \n The underlying core is available under the Realm Core Binary License while we work to open-source it under the Apache 2.0 license.</string>
+    <string name="license_RxPermissions">tbruyelle/RxPermissions is licensed under the \n
+Apache License 2.0 \n
+
+A permissive license whose main conditions require preservation of copyright and license notices. Contributors provide an express grant of patent rights. Licensed works, modifications, and larger works may be distributed under different terms and without source code.</string>
+    <string name="about">关于</string>
+</resources>
