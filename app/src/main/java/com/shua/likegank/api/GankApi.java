@@ -8,7 +8,6 @@ import rx.Observable;
 
 /**
  * GankApi
- * Created by SHUA on 2017/3/12.
  */
 
 public interface GankApi {
