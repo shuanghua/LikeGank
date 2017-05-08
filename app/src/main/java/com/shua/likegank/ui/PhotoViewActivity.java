@@ -1,6 +1,7 @@
 package com.shua.likegank.ui;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +19,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.github.chrisbanes.photoview.PhotoViewAttacher;
+import com.orhanobut.logger.Logger;
 import com.shua.likegank.R;
 import com.shua.likegank.ui.base.BaseActivity;
 import com.shua.likegank.utils.RxSave;
@@ -84,7 +86,7 @@ public class PhotoViewActivity extends BaseActivity {
                 mAttacher.setScale(1.0f, x, y, true);
             }
         } catch (ArrayIndexOutOfBoundsException vr) {
-            // Can sometimes happen when getX() and getY() is called
+            Logger.e(vr.getMessage());
         }
     }
 
@@ -150,9 +152,10 @@ public class PhotoViewActivity extends BaseActivity {
                 .into(mPhotoView);
     }
 
+    @SuppressLint("WrongConstant")
     private void saveImage() {
         rxPermissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .subscribe(granted -> {
+                .subscribe((Boolean granted) -> {
                     if (granted) {
                         subscribe = RxSave.saveImageAndGetPathObservable(
                                 PhotoViewActivity.this
@@ -178,6 +181,7 @@ public class PhotoViewActivity extends BaseActivity {
                 });
     }
 
+    @SuppressLint("WrongConstant")
     private void shareImage() {
         RxSave.saveImageAndGetPathObservable(this, url, url)
                 .observeOn(AndroidSchedulers.mainThread())

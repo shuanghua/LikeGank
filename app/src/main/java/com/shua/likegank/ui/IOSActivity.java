@@ -1,5 +1,6 @@
 package com.shua.likegank.ui;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -32,6 +33,7 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
+@SuppressLint("WrongConstant")
 public class IOSActivity extends RefreshActivity {
 
     private int mPage = 1;
@@ -172,9 +174,10 @@ public class IOSActivity extends RefreshActivity {
     }
 
     protected void bottomRefresh(LinearLayoutManager layoutManager) {
-        int lastItemPosition, itemCount;
+        int lastItemPosition, firstItemPosition, itemCount;
         itemCount = mAdapter.getItemCount();
         lastItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
+        firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
         if (lastItemPosition == itemCount - 1) {
             mPage += 1;
             if (NetWorkUtils.isNetworkConnected(IOSActivity.this)) {
@@ -185,6 +188,10 @@ public class IOSActivity extends RefreshActivity {
                         R.string.error_net, Toast.LENGTH_SHORT).show();
                 setRefreshStatus(false);
             }
+        } else if (firstItemPosition == 0) {
+            setToolbarElevation(0);
+        } else {
+            setToolbarElevation(8);
         }
     }
 

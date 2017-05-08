@@ -1,5 +1,6 @@
 package com.shua.likegank.ui;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -85,11 +86,13 @@ public class MainActivity extends RefreshActivity
         return new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView rv, int dx, int dy) {
+
                 bottomRefresh(layoutManager);
             }
         };
     }
 
+    @SuppressLint("WrongConstant")
     private void loadData() {
         setRefreshStatus(true);
         if (NetWorkUtils.isNetworkConnected(this) &&
@@ -164,6 +167,7 @@ public class MainActivity extends RefreshActivity
                 .deleteAllFromRealm());
     }
 
+    @SuppressLint("WrongConstant")
     @Override
     protected void topRefresh() {
         if (NetWorkUtils.isNetworkConnected(this)) {
@@ -177,10 +181,12 @@ public class MainActivity extends RefreshActivity
         }
     }
 
+    @SuppressLint("WrongConstant")
     protected void bottomRefresh(LinearLayoutManager layoutManager) {
-        int lastItemPosition, itemCount;
+        int lastItemPosition, firstItemPosition, itemCount;
         itemCount = mAdapter.getItemCount();
         lastItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
+        firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
         if (lastItemPosition == itemCount - 1) {
             mPage += 1;
             if (NetWorkUtils.isNetworkConnected(MainActivity.this)) {
@@ -191,9 +197,12 @@ public class MainActivity extends RefreshActivity
                         R.string.error_net, Toast.LENGTH_SHORT).show();
                 setRefreshStatus(false);
             }
+        } else if (firstItemPosition == 0) {
+            setToolbarElevation(0);
+        } else {
+            setToolbarElevation(8);
         }
     }
-
 
     @Override
     protected void onResume() {

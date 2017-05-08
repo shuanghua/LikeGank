@@ -22,16 +22,14 @@ public class App extends Application {
     }
 
     private void setLeakCanary() {
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            return;
-        }
+        if (LeakCanary.isInAnalyzerProcess(this)) return;
         LeakCanary.install(this);
     }
 
     private void setRealm() {
         Realm.init(this);
         RealmConfiguration config = new RealmConfiguration.Builder().build();
-        Realm.deleteRealm(config);
+        //Realm.deleteRealm(config);
         Realm.setDefaultConfiguration(config);
     }
 }

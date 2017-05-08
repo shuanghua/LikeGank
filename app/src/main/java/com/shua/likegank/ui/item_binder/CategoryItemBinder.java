@@ -22,11 +22,12 @@ import me.drakeet.multitype.ItemViewBinder;
 public class CategoryItemBinder
         extends ItemViewBinder<Category, CategoryItemBinder.ViewHolder> {
 
-
     @NonNull
     @Override
-    protected ViewHolder onCreateViewHolder(@NonNull LayoutInflater layoutInflater, @NonNull ViewGroup viewGroup) {
-        View view = layoutInflater.inflate(R.layout.item_category, viewGroup, false);
+    protected ViewHolder onCreateViewHolder
+            (@NonNull LayoutInflater layoutInflater, @NonNull ViewGroup viewGroup) {
+        View view = layoutInflater.inflate
+                (R.layout.item_category, viewGroup, false);
         return new ViewHolder(view);
     }
 
@@ -36,7 +37,6 @@ public class CategoryItemBinder
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-
         private final TextPaint paint;
         TextView category;
 

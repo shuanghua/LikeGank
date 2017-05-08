@@ -1,8 +1,6 @@
 package com.shua.likegank.ui.item_binder;
 
-import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -27,13 +25,11 @@ import me.drakeet.multitype.ItemViewBinder;
 public class HomeItemBinder extends ItemViewBinder<Home,
         HomeItemBinder.HomeHolder> {
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @NonNull
     @Override
     protected HomeHolder onCreateViewHolder(@NonNull LayoutInflater inflater
             , @NonNull ViewGroup parent) {
-        View root = inflater
-                .inflate(R.layout.item_home, parent, false);
+        View root = inflater.inflate(R.layout.item_home, parent, false);
         return new HomeHolder(root);
     }
 
@@ -65,7 +61,7 @@ public class HomeItemBinder extends ItemViewBinder<Home,
         }
         holder.mTextTime.setText(LikeGankUtils.timeString(data.createdAt));
         holder.mTextTitle.setText(Html.fromHtml(data.title
-                + "<font color='#9e9e9e'>"
+                + "<font color='#eeb211'>"
                 + holder.mTextTime.getContext().getString(R.string.via) + data.who + ")"
                 + "</font>"));
 
@@ -91,13 +87,11 @@ public class HomeItemBinder extends ItemViewBinder<Home,
         private String title;
         private String type;
 
-        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         HomeHolder(View itemView) {
             super(itemView);
-            this.mImageView = (ImageView) itemView.findViewById(R.id.home_image);
-            this.mTextTitle = (TextView) itemView.findViewById(R.id.home_title);
-            this.mTextTime = (TextView) itemView.findViewById(R.id.home_time);
-
+            this.mImageView = itemView.findViewById(R.id.home_image);
+            this.mTextTitle = itemView.findViewById(R.id.home_title);
+            this.mTextTime = itemView.findViewById(R.id.home_time);
 
             itemView.setOnClickListener(v -> {
                 switch (type) {

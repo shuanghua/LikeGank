@@ -23,7 +23,9 @@ import me.drakeet.multitype.ItemViewBinder;
 public class FuLiItemBinder extends ItemViewBinder<MeiZi,
         FuLiItemBinder.MeiziHolder> {
 
-    //练习为主，为 Gank 节省流量而请求压缩后的图片
+    /**
+     * It is recommended to request a compressed image
+     */
     private static final String URL_MEIZI_DIMENSION = "?imageView2/0/w/100";
 
     @NonNull
@@ -54,9 +56,8 @@ public class FuLiItemBinder extends ItemViewBinder<MeiZi,
 
         MeiziHolder(View itemView) {
             super(itemView);
-            this.mImageView = (ImageView) itemView.findViewById(R.id.fuli_image);
-
-            itemView.setOnClickListener(v -> {
+            this.mImageView = itemView.findViewById(R.id.fuli_image);
+            itemView.setOnClickListener((View v) -> {
                 itemView.getContext().startActivity(PhotoViewActivity
                         .newIntent(itemView.getContext(), url));
             });

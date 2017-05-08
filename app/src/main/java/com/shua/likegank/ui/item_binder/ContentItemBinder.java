@@ -19,25 +19,27 @@ import me.drakeet.multitype.ItemViewBinder;
  * Created by moshu on 2017/5/7.
  */
 
-public class ContentItemBinder extends ItemViewBinder<Content, ContentItemBinder.ViewHolder> {
-
+public class ContentItemBinder
+        extends ItemViewBinder<Content, ContentItemBinder.ViewHolder> {
 
     @NonNull
     @Override
-    protected ContentItemBinder.ViewHolder onCreateViewHolder(@NonNull LayoutInflater layoutInflater, @NonNull ViewGroup viewGroup) {
-        View view = layoutInflater.inflate(R.layout.item_content, viewGroup, false);
+    protected ContentItemBinder.ViewHolder onCreateViewHolder
+            (@NonNull LayoutInflater layoutInflater, @NonNull ViewGroup viewGroup) {
+        View view = layoutInflater.inflate
+                (R.layout.item_content, viewGroup, false);
         return new ContentItemBinder.ViewHolder(view);
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull ContentItemBinder.ViewHolder viewHolder, @NonNull Content content) {
+    protected void onBindViewHolder(@NonNull ContentItemBinder.ViewHolder viewHolder
+            , @NonNull Content content) {
         viewHolder.content.setText(content.content);
         viewHolder.position = getPosition(viewHolder);
         viewHolder.url = content.url;
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-
         TextView content;
         String url;
         int position;
@@ -48,7 +50,8 @@ public class ContentItemBinder extends ItemViewBinder<Content, ContentItemBinder
             if (!"".equals(url)) {
                 itemView.setOnClickListener(v -> v
                         .getContext()
-                        .startActivity(WebViewActivity.newIntent(v.getContext(), url, url)));
+                        .startActivity(WebViewActivity
+                                .newIntent(v.getContext(), url, url)));
             }
         }
     }

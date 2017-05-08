@@ -1,11 +1,11 @@
 <resources>
-    <string name="app_name">LIKEGANK</string>
+    <string name="app_name">Like Gank</string>
     <string name="moshuanghua17_gamil_com">moshuanghua17@gamil.com</string>
     <string name="bar_title_home">首页</string>
     <string name="bar_title_fuli">福利</string>
     <string name="bar_title_android">Android</string>
     <string name="bar_title_ios">iOS</string>
-    <string name="likegank">LIKEGANK</string>
+    <string name="likegank">Like Gank</string>
     <string name="share">分享</string>
 
     <string name="meizi_transition_name">name</string>
@@ -24,7 +24,7 @@
     <string name="error_net">网络不可用！</string>
     <string name="error_delete">Delete error!</string>
     <string name="share_to">分享到：</string>
-    <string name="action_refresh">刷新</string>
+    <string name="action_refresh">刷新此页</string>
     <string name="action_copy_url">复制链接</string>
     <string name="action_open_url">打开链接</string>
 

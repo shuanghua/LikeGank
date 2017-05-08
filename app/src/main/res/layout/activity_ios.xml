@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.shua.likegank.ui.AndroidActivity">
+    android:background="@color/md_white_1000"
+    android:fitsSystemWindows="true">
 
     <include layout="@layout/app_toolbar" />
 
     <include layout="@layout/list_recycler_refresh" />
 
-</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

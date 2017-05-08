@@ -24,7 +24,7 @@
         <activity
             android:name=".ui.FuLiActivity"
             android:launchMode="singleTask"
-            android:theme="@style/LikeGankTheme" />
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.PhotoViewActivity"
             android:launchMode="singleTask"
@@ -33,19 +33,19 @@
             android:name=".ui.WebViewActivity"
             android:label="@string/title_activity_web_view"
             android:launchMode="singleTask"
-            android:theme="@style/LikeGankTheme" />
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.AndroidActivity"
             android:launchMode="singleTask"
-            android:theme="@style/LikeGankTheme" />
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.IOSActivity"
             android:launchMode="singleTask"
-            android:theme="@style/LikeGankTheme" />
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.AboutActivity"
             android:launchMode="singleTask"
-            android:theme="@style/LikeGankTheme" />
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

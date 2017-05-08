@@ -24,15 +24,16 @@ public class IOSItemBinder
 
     @NonNull
     @Override
-    protected IOSItemBinder.ViewHolder onCreateViewHolder(@NonNull LayoutInflater layoutInflater,
-                                                          @NonNull ViewGroup viewGroup) {
+    protected IOSItemBinder.ViewHolder
+    onCreateViewHolder(@NonNull LayoutInflater layoutInflater, @NonNull ViewGroup viewGroup) {
         View view = layoutInflater.inflate(R.layout.item_content,
                 viewGroup, false);
         return new IOSItemBinder.ViewHolder(view);
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull IOSItemBinder.ViewHolder viewHolder, @NonNull IOS ios) {
+    protected void onBindViewHolder(@NonNull IOSItemBinder.ViewHolder viewHolder
+            , @NonNull IOS ios) {
         viewHolder.setData(ios);
     }
 

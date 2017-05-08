@@ -48,15 +48,16 @@ public class WebViewActivity extends ToolbarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mUrl = getIntent().getStringExtra(EXTRA_URL);
-        String mTitle = getIntent().getStringExtra(EXTRA_TITLE);
-        setTitle(mTitle);
+        setTitle(getIntent().getStringExtra(EXTRA_TITLE));
         WebSettings settings = mWebView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setLoadWithOverviewMode(true);
         settings.setAppCacheEnabled(true);
-        settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
         settings.setSupportZoom(true);
+        settings.setUseWideViewPort(true);
+        settings.setLoadWithOverviewMode(true);
+        settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+        mUrl = getIntent().getStringExtra(EXTRA_URL);
         mWebView.setWebChromeClient(new WebChromeClient());
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
@@ -64,11 +65,11 @@ public class WebViewActivity extends ToolbarActivity {
                 return false;
             }
         });
-
         mWebView.loadUrl(mUrl);
     }
 
     public class WebChromeClient extends android.webkit.WebChromeClient {
+        @SuppressLint("WrongConstant")
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
             if (newProgress == 100) {
@@ -103,7 +104,8 @@ public class WebViewActivity extends ToolbarActivity {
                 mWebView.reload();
                 return true;
             case R.id.action_copy_url:
-                LikeGankUtils.copyToClipBoard(this, mWebView.getUrl(), "复制成功");
+                LikeGankUtils.copyToClipBoard
+                        (this, mWebView.getUrl(), "复制成功");
                 return true;
             case R.id.action_open_url:
                 Intent intent = new Intent();

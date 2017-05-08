@@ -1,5 +1,6 @@
 package com.shua.likegank.ui;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -31,7 +32,7 @@ import rx.schedulers.Schedulers;
  * NetWork to Realm to View
  * Created by SHUA on 2017/3/27.
  */
-
+@SuppressLint("WrongConstant")
 public class FuLiActivity extends RefreshActivity {
 
     @BindView(R.id.list)
@@ -86,6 +87,7 @@ public class FuLiActivity extends RefreshActivity {
         };
     }
 
+    @SuppressLint("WrongConstant")
     private void loadData() {
         setRefreshStatus(true);
         if (NetWorkUtils.isNetworkConnected(this) &&
@@ -164,9 +166,10 @@ public class FuLiActivity extends RefreshActivity {
     }
 
     protected void bottomRefresh(GridLayoutManager layoutManager) {
-        int lastItemPosition, itemCount;
+        int lastItemPosition, firstItemPosition, itemCount;
         itemCount = mAdapter.getItemCount();
         lastItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
+        firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
         if (lastItemPosition == itemCount - 1) {
             mPage += 1;
             if (NetWorkUtils.isNetworkConnected(FuLiActivity.this)) {
@@ -177,6 +180,10 @@ public class FuLiActivity extends RefreshActivity {
                         R.string.error_net, Toast.LENGTH_SHORT).show();
                 setRefreshStatus(false);
             }
+        } else if (firstItemPosition == 0) {
+            setToolbarElevation(0);
+        } else {
+            setToolbarElevation(8);
         }
     }
 
