@@ -32,8 +32,8 @@ import rx.schedulers.Schedulers;
  * NetWork to Realm to View
  * Created by SHUA on 2017/3/27.
  */
-@SuppressLint("WrongConstant")
-public class FuLiActivity extends RefreshActivity {
+@SuppressLint({"WrongConstant", "Registered"})
+public class ImageActivity extends RefreshActivity {
 
     @BindView(R.id.list)
     RecyclerView mRecyclerView;
@@ -156,7 +156,7 @@ public class FuLiActivity extends RefreshActivity {
     @Override
     public void topRefresh() {
         isRefresh = true;
-        if (NetWorkUtils.isNetworkConnected(this)) {;
+        if (NetWorkUtils.isNetworkConnected(this)) {
             mPage = 1;
             fromNetWorkLoad();
         } else {
@@ -173,11 +173,11 @@ public class FuLiActivity extends RefreshActivity {
         firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
         if (lastItemPosition == itemCount - 1) {
             mPage += 1;
-            if (NetWorkUtils.isNetworkConnected(FuLiActivity.this)) {
+            if (NetWorkUtils.isNetworkConnected(ImageActivity.this)) {
                 setRefreshStatus(true);
                 fromNetWorkLoad();
             } else {
-                Toast.makeText(FuLiActivity.this,
+                Toast.makeText(ImageActivity.this,
                         R.string.error_net, Toast.LENGTH_SHORT).show();
                 setRefreshStatus(false);
             }

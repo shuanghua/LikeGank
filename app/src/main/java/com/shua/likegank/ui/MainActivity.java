@@ -291,7 +291,7 @@ public class MainActivity extends RefreshActivity
         } else if (id == R.id.nav_ios) {
             startActivity(IOSActivity.newIntent(this));
         } else if (id == R.id.nav_surprise) {
-            Intent intent = new Intent(this, FuLiActivity.class);
+            Intent intent = new Intent(this, ImageActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_about) {
             startActivity(AboutActivity.newIntent(this));
