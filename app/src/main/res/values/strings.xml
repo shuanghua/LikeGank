@@ -42,7 +42,7 @@
     <string name="fd">发生的</string>
     <string name="about_Introduction">LikeGank 是我抽空学习@drakeet 妹纸Gank.io 写的一个练手应用，学习涵盖了 Relm、Rxjava、Retrofit、Multitype、Photoview 等等一些热门的开源框架。
         \nLikeGank 中所有的网络数据均来自@代码家 GankApi</string>
-    <string name="like_gank_github">项目地址:   https://github.com/Shuanghua</string>
+    <string name="like_gank_github">项目地址:   https://github.com/Shuanghua/LikeGank</string>
     <string name="gank_api">GankApi:    http://gank.io/api</string>
     <string name="meizi_github">妹纸Gank.io地址:    https://github.com/drakeet/Meizhi</string>
     <string name="open_license">开放源代码许可</string>
