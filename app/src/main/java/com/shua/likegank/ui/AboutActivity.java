@@ -70,7 +70,7 @@ public class AboutActivity extends ToolbarActivity {
         items.add(new Category("----------------------------------------------------------------------------------"));
 
         items.add(new Content(getResources().getString(R.string.like_gank_github),
-                "https://github.com/Shuanghua"));
+                "https://github.com/Shuanghua/LikeGank"));
         items.add(new Content(getResources().getString(R.string.gank_api),
                 "http://gank.io/api"));
         items.add(new Content(getResources().getString(R.string.meizi_github),
