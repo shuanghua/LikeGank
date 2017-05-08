@@ -40,12 +40,12 @@ public class FuLiActivity extends RefreshActivity {
 
     private int mPage = 1;
     private final static int SPAN_COUNT = 2;
+    private boolean isRefresh;
 
     private Realm mRealm;
     private MultiTypeAdapter mAdapter;
     private Subscription subscribeNet;
     private Subscription subscribeRealm;
-
     private Items items = new Items();
     private List<MeiZi> meiZiList = new ArrayList<>();
 
@@ -120,10 +120,10 @@ public class FuLiActivity extends RefreshActivity {
                 .map(this::conversionData)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(meiZis -> mRealm.executeTransaction(realm
-                        -> realm.copyToRealmOrUpdate(meiZis)), throwable -> {
-                    Logger.d(throwable);
-                    setRefreshStatus(false);
+                .subscribe(meiZis -> {
+                    if (isRefresh) deleteData();
+                    mRealm.executeTransaction(realm ->
+                            realm.copyToRealmOrUpdate(meiZis));
                 });
     }
 
@@ -143,6 +143,7 @@ public class FuLiActivity extends RefreshActivity {
             mAdapter.notifyDataSetChanged();
         }
         setRefreshStatus(false);
+        isRefresh = false;
     }
 
     private void deleteData() {
@@ -154,8 +155,8 @@ public class FuLiActivity extends RefreshActivity {
 
     @Override
     public void topRefresh() {
-        if (NetWorkUtils.isNetworkConnected(this)) {
-            deleteData();
+        isRefresh = true;
+        if (NetWorkUtils.isNetworkConnected(this)) {;
             mPage = 1;
             fromNetWorkLoad();
         } else {

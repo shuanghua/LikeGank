@@ -39,18 +39,19 @@ public class IOSActivity extends RefreshActivity {
     private int mPage = 1;
     private MultiTypeAdapter mAdapter;
 
-    @BindView(R.id.list)
-    RecyclerView mRecycler;
-
     private Subscription subscribeNet;
     private Subscription subscribeRealm;
     private List<IOS> IOSs;
     private Realm mRealm;
+    private boolean isRefresh;
+
+    @BindView(R.id.list)
+    RecyclerView mRecycler;
 
     @Override
     protected void topRefresh() {
+        isRefresh = true;
         if (NetWorkUtils.isNetworkConnected(this)) {
-            deleteData();
             mPage = 1;
             fromNetWorkLoad();
         } else {
@@ -125,8 +126,11 @@ public class IOSActivity extends RefreshActivity {
                 .map(this::conversionData)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(IOSList -> mRealm.executeTransaction(realm
-                        -> realm.copyToRealmOrUpdate(IOSList)));
+                .subscribe(ios -> {
+                    if (isRefresh) deleteData();
+                    mRealm.executeTransaction(realm ->
+                            realm.copyToRealmOrUpdate(ios));
+                });
     }
 
     private void pareData(List<IOS> IOSs) {
@@ -153,6 +157,7 @@ public class IOSActivity extends RefreshActivity {
             mAdapter.notifyDataSetChanged();
         }
         setRefreshStatus(false);
+        isRefresh = false;
     }
 
     private void deleteData() {

@@ -2,7 +2,6 @@ package com.shua.likegank.ui.item_binder;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextPaint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +20,6 @@ import me.drakeet.multitype.ItemViewBinder;
 
 public class ContentItemBinder
         extends ItemViewBinder<Content, ContentItemBinder.ViewHolder> {
-
     @NonNull
     @Override
     protected ContentItemBinder.ViewHolder onCreateViewHolder
@@ -35,24 +33,23 @@ public class ContentItemBinder
     protected void onBindViewHolder(@NonNull ContentItemBinder.ViewHolder viewHolder
             , @NonNull Content content) {
         viewHolder.content.setText(content.content);
-        viewHolder.position = getPosition(viewHolder);
         viewHolder.url = content.url;
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView content;
-        String url;
-        int position;
+        private TextView content;
+        private String url;
 
         ViewHolder(View itemView) {
             super(itemView);
-            this.content = (TextView) itemView.findViewById(R.id.item_content);
-            if (!"".equals(url)) {
-                itemView.setOnClickListener(v -> v
-                        .getContext()
-                        .startActivity(WebViewActivity
-                                .newIntent(v.getContext(), url, url)));
-            }
+            this.content = itemView.findViewById(R.id.item_content);
+
+            itemView.setOnClickListener(view -> {
+                if (!"".equals(url)) {
+                    view.getContext().startActivity(WebViewActivity
+                            .newIntent(view.getContext(), url, url));
+                }
+            });
         }
     }
 }

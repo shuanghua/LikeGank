@@ -16,8 +16,8 @@ import com.shua.likegank.data.GankData;
 import com.shua.likegank.data.LikeGankEntity;
 import com.shua.likegank.data.entity.Android;
 import com.shua.likegank.ui.base.RefreshActivity;
-import com.shua.likegank.ui.item_binder.CategoryItemBinder;
 import com.shua.likegank.ui.item_binder.AndroidItemBinder;
+import com.shua.likegank.ui.item_binder.CategoryItemBinder;
 import com.shua.likegank.utils.LikeGankUtils;
 import com.shua.likegank.utils.NetWorkUtils;
 
@@ -45,12 +45,13 @@ public class AndroidActivity extends RefreshActivity {
     private Subscription subscribeRealm;
     private List<Android> androids;
     private Realm mRealm;
+    private boolean isRefresh;
 
     @SuppressLint("WrongConstant")
     @Override
     protected void topRefresh() {
+        isRefresh = true;
         if (NetWorkUtils.isNetworkConnected(this)) {
-            deleteData();
             mPage = 1;
             fromNetWorkLoad();
         } else {
@@ -126,8 +127,11 @@ public class AndroidActivity extends RefreshActivity {
                 .map(this::conversionData)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(androidList -> mRealm.executeTransaction(realm
-                        -> realm.copyToRealmOrUpdate(androidList)));
+                .subscribe(androids -> {
+                    if (isRefresh) deleteData();
+                    mRealm.executeTransaction(realm ->
+                            realm.copyToRealmOrUpdate(androids));
+                });
     }
 
     private void pareData(List<Android> androids) {
@@ -154,6 +158,7 @@ public class AndroidActivity extends RefreshActivity {
             mAdapter.notifyDataSetChanged();
         }
         setRefreshStatus(false);
+        isRefresh = false;
     }
 
     private void deleteData() {
@@ -190,7 +195,7 @@ public class AndroidActivity extends RefreshActivity {
                         R.string.error_net, Toast.LENGTH_SHORT).show();
                 setRefreshStatus(false);
             }
-        }else if (firstItemPosition == 0) {
+        } else if (firstItemPosition == 0) {
             setToolbarElevation(0);
         } else {
             setToolbarElevation(8);

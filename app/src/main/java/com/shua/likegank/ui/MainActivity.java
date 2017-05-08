@@ -42,7 +42,7 @@ public class MainActivity extends RefreshActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private int mPage = 1;
-
+    private boolean isRefresh;
     private Realm mRealm;
     private MultiTypeAdapter mAdapter;
     private Items items = new Items();
@@ -86,7 +86,6 @@ public class MainActivity extends RefreshActivity
         return new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView rv, int dx, int dy) {
-
                 bottomRefresh(layoutManager);
             }
         };
@@ -129,10 +128,10 @@ public class MainActivity extends RefreshActivity
                 .map(this::conversionData)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(homeList -> mRealm.executeTransaction(realm
-                        -> realm.copyToRealmOrUpdate(homeList)), throwable -> {
-                    Logger.d(throwable);
-                    setRefreshStatus(false);
+                .subscribe(homes -> {
+                    if (isRefresh) deleteData();
+                    mRealm.executeTransaction(realm ->
+                            realm.copyToRealmOrUpdate(homes));
                 });
     }
 
@@ -158,6 +157,7 @@ public class MainActivity extends RefreshActivity
             mAdapter.notifyDataSetChanged();
         }
         setRefreshStatus(false);
+        isRefresh = false;
     }
 
     private void deleteData() {
@@ -170,8 +170,8 @@ public class MainActivity extends RefreshActivity
     @SuppressLint("WrongConstant")
     @Override
     protected void topRefresh() {
+        isRefresh = true;
         if (NetWorkUtils.isNetworkConnected(this)) {
-            deleteData();
             mPage = 1;
             fromNetWorkLoad();
         } else {

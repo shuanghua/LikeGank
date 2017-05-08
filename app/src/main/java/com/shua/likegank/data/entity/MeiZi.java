@@ -4,6 +4,7 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 /**
+ * MeiZi
  * Created by SHUA on 2017/4/26.
  */
 
