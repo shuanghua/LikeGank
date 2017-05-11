@@ -5,7 +5,7 @@
 
 - 数据库：[Realm](https://github.com/realm/realm-java "Realm") 
 - 响应式：[Rxjava](https://github.com/ReactiveX/RxJava "Rxjava")
-- 网络请求[Retrofit2](https://github.com/square/retrofit "Retrofit2") 
+- 网络请求: [Retrofit2](https://github.com/square/retrofit "Retrofit2") 
 - 布局数据适配：[Multiype](https://github.com/drakeet/MultiType "Multiype") 
 - 图片显示：[Photoview](https://github.com/chrisbanes/PhotoView "Photoview") [Glide](https://github.com/bumptech/glide "Glide")
 
