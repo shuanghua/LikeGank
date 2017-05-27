@@ -1,6 +1,5 @@
 package com.shua.likegank.ui;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,66 +13,41 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
-import com.orhanobut.logger.Logger;
 import com.shua.likegank.R;
-import com.shua.likegank.api.ApiFactory;
-import com.shua.likegank.data.GankData;
-import com.shua.likegank.data.LikeGankEntity;
 import com.shua.likegank.data.entity.Home;
+import com.shua.likegank.interfaces.RefreshViewInterface;
+import com.shua.likegank.presenters.HomePresenter;
 import com.shua.likegank.ui.base.RefreshActivity;
-import com.shua.likegank.ui.item_binder.HomeItemBinder;
+import com.shua.likegank.ui.itembinder.HomeItemBinder;
 import com.shua.likegank.utils.NetWorkUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import io.realm.Realm;
-import io.realm.RealmResults;
-import me.drakeet.multitype.Items;
 import me.drakeet.multitype.MultiTypeAdapter;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
-public class MainActivity extends RefreshActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends RefreshActivity<RefreshViewInterface, HomePresenter>
+        implements NavigationView.OnNavigationItemSelectedListener, RefreshViewInterface<Home> {
 
-    private int mPage = 1;
-    private boolean isRefresh;
-    private Realm mRealm;
-    private MultiTypeAdapter mAdapter;
-    private Items items = new Items();
-    private Subscription subscribeNet;
-    private Subscription subscribeRealm;
-    private List<Home> homeList;
     @BindView(R.id.list)
     RecyclerView mRecyclerView;
 
-    @Override
-    protected int contentView() {
-        return R.layout.activity_main;
-    }
-
-    @Override
-    protected boolean addBack() {
-        return false;
-    }
+    private MultiTypeAdapter mAdapter;
+    private HomePresenter mPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mRealm = Realm.getDefaultInstance();
-        homeList = new ArrayList<>();
         setTitle(R.string.bar_title_home);
-        initRecyclerView();
+        initViews();
         initNavigationView();
-        loadData();
+        showLoading();
+        mPresenter.fromRealmLoad();
+        topRefresh();
     }
 
-    private void initRecyclerView() {
+    private void initViews() {
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mAdapter = new MultiTypeAdapter();
         mAdapter.register(Home.class, new HomeItemBinder());
@@ -82,146 +56,63 @@ public class MainActivity extends RefreshActivity
         mRecyclerView.setAdapter(mAdapter);
     }
 
-    RecyclerView.OnScrollListener getOnBottomListener(LinearLayoutManager layoutManager) {
-        return new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView rv, int dx, int dy) {
-                bottomRefresh(layoutManager);
-            }
-        };
+    @Override
+    public void showData(List<Home> data) {
+        mPresenter.isRefresh = false;
+        mPresenter.mHomes.clear();
+        mAdapter.setItems(data);
+        mAdapter.notifyDataSetChanged();
+        hideLoading();
     }
 
-    @SuppressLint("WrongConstant")
-    private void loadData() {
-        setRefreshStatus(true);
-        if (NetWorkUtils.isNetworkConnected(this) &&
-                mRealm != null) {
-            fromNetWorkLoad();
-        } else {
-            Toast.makeText(this,
-                    R.string.error_net, Toast.LENGTH_SHORT).show();
-            setRefreshStatus(false);
-        }
-    }
-
-    /**
-     * When the local data is updated,
-     * the call is automatically triggered
-     */
-    private void fromRealmLoad() {
-        subscribeRealm = mRealm.where(Home.class)
-                .findAll()
-                .asObservable()
-                .filter(RealmResults::isLoaded)
-                .subscribe(this::setData, throwable -> {
-                    setRefreshStatus(false);
-                    Logger.d(throwable.getMessage());
-                });
-    }
-
-    private void fromNetWorkLoad() {
-        subscribeNet = ApiFactory.getGankApi()
-                .getHomeData(mPage)
-                .filter(gankData -> !gankData.isError())
-                .map(GankData::getResults)
-                .single(likeGankEntities -> likeGankEntities.size() > 0)
-                .map(this::conversionData)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(homes -> {
-                    if (isRefresh) deleteData();
-                    mRealm.executeTransaction(realm ->
-                            realm.copyToRealmOrUpdate(homes));
-                });
-    }
-
-    private List<Home> conversionData(List<LikeGankEntity> list) {
-        for (LikeGankEntity gankEntity : list) {
-            homeList.add(new Home(
-                    gankEntity.get_id(),
-                    gankEntity.getDesc(),
-                    gankEntity.getCreatedAt(),
-                    gankEntity.getType(),
-                    gankEntity.getUrl(),
-                    gankEntity.getWho()));
-        }
-        return homeList;
-    }
-
-    private void setData(List<Home> meiZis) {
-        if (meiZis.size() > 0) {
-            items.clear();
-            homeList.clear();
-            items.addAll(meiZis);
-            mAdapter.setItems(items);
-            mAdapter.notifyDataSetChanged();
-        }
-        setRefreshStatus(false);
-        isRefresh = false;
-    }
-
-    private void deleteData() {
-        mRealm.executeTransaction(realm
-                -> realm.where(Home.class)
-                .findAll()
-                .deleteAllFromRealm());
-    }
-
-    @SuppressLint("WrongConstant")
     @Override
     protected void topRefresh() {
-        isRefresh = true;
         if (NetWorkUtils.isNetworkConnected(this)) {
-            mPage = 1;
-            fromNetWorkLoad();
+            mPresenter.isRefresh = true;
+            HomePresenter.mPage = 1;
+            mPresenter.fromNetWorkLoad();
         } else {
-            Toast.makeText(this,
-                    R.string.error_net, Toast.LENGTH_SHORT).show();
-            setRefreshStatus(false);
+            showToast(getString(R.string.error_net));
+            hideLoading();
+            if (mPreferences != null) {
+                int page = mPreferences.getInt(HomePresenter.KEY_HOME_PAGE, 1);
+                if (page > HomePresenter.mPage) HomePresenter.mPage = page;
+            }
         }
     }
 
-    @SuppressLint("WrongConstant")
-    protected void bottomRefresh(LinearLayoutManager layoutManager) {
+    private void bottomListener(LinearLayoutManager layoutManager) {
         int lastItemPosition, firstItemPosition, itemCount;
         itemCount = mAdapter.getItemCount();
         lastItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
         firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
-        if (lastItemPosition == itemCount - 1) {
-            mPage += 1;
-            if (NetWorkUtils.isNetworkConnected(MainActivity.this)) {
-                setRefreshStatus(true);
-                fromNetWorkLoad();
+        if (lastItemPosition == itemCount - 1 && lastItemPosition - firstItemPosition > 0) {
+            if (NetWorkUtils.isNetworkConnected(this)) {
+                showLoading();
+                HomePresenter.mPage++;
+                mPresenter.fromNetWorkLoad();
             } else {
-                Toast.makeText(MainActivity.this,
-                        R.string.error_net, Toast.LENGTH_SHORT).show();
-                setRefreshStatus(false);
+                showToast(getString(R.string.error_net));
+                hideLoading();
             }
         } else if (firstItemPosition == 0) {
             setToolbarElevation(0);
         } else {
-            setToolbarElevation(8);
+            setToolbarElevation(6);
         }
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        fromRealmLoad();
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(PAGE, HomePresenter.mPage);
     }
 
     @Override
-    protected void onPause() {
-        setRefreshStatus(false);
-        if (null != subscribeNet) subscribeNet.unsubscribe();
-        if (null != subscribeRealm) subscribeRealm.unsubscribe();
-        super.onPause();
-    }
-
-    @Override
-    protected void onDestroy() {
-        if (null != mRealm) mRealm.close();
-        super.onDestroy();
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState != null)
+            HomePresenter.mPage = savedInstanceState.getInt(PAGE);
     }
 
     private void initNavigationView() {
@@ -249,10 +140,8 @@ public class MainActivity extends RefreshActivity
             builder.setTitle(R.string.prompt);
             builder.setMessage(R.string.prompt_information);
             builder.setCancelable(true);
-            builder.setPositiveButton("确定",
-                    (dialog, which) -> finish());
-            builder.setNegativeButton("取消",
-                    (dialog, which) -> dialog.dismiss());
+            builder.setPositiveButton("确定", (dialog, which) -> finish());
+            builder.setNegativeButton("取消", (dialog, which) -> dialog.dismiss());
             builder.create().show();
         }
     }
@@ -284,7 +173,6 @@ public class MainActivity extends RefreshActivity
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-
         if (id == R.id.nav_home) {
         } else if (id == R.id.nav_android) {
             startActivity(AndroidActivity.newIntent(this));
@@ -296,9 +184,49 @@ public class MainActivity extends RefreshActivity
         } else if (id == R.id.nav_about) {
             startActivity(AboutActivity.newIntent(this));
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected HomePresenter createPresenter() {
+        mPresenter = new HomePresenter(this);
+        return mPresenter;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        hideLoading();
+    }
+
+    @Override
+    public void showLoading() {
+        setRefreshStatus(true);
+    }
+
+    @Override
+    public void hideLoading() {
+        setRefreshStatus(false);
+    }
+
+    @Override
+    protected int contentView() {
+        return R.layout.activity_main;
+    }
+
+    @Override
+    protected boolean addBack() {
+        return false;
+    }
+
+    RecyclerView.OnScrollListener getOnBottomListener(LinearLayoutManager layoutManager) {
+        return new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView rv, int dx, int dy) {
+                bottomListener(layoutManager);
+            }
+        };
     }
 }

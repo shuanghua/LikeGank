@@ -5,31 +5,25 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="8dp"
     android:clickable="true"
-    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:orientation="horizontal"
     android:paddingLeft="24dp"
     android:paddingRight="12dp"
-    tools:ignore="KeyboardInaccessibleWidget">
+    tools:ignore="KeyboardInaccessibleWidget,RtlHardcoded">
 
-    <LinearLayout
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingRight="4dp"
+        android:text="@string/tag"
+        android:textColor="@color/md_black_1000"
+        android:textSize="14sp"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/item_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:gravity="center_vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingRight="4dp"
-            android:text="*"
-            android:textColor="@color/md_black_1000"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/item_content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/md_black_1000"
-            android:textSize="16sp"
-            tools:text="i积分积分哦就看哦额哦就ii积分积分哦就看哦额哦就ii积分积分哦就看哦额哦就i " />
-    </LinearLayout>
+        android:textColor="@color/md_black_1000"
+        android:textSize="16sp" />
 </LinearLayout>

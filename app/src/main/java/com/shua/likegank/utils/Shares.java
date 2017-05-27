@@ -25,8 +25,11 @@ import android.net.Uri;
 
 import com.shua.likegank.R;
 
+import rx.Subscriber;
+
 
 /**
+ * Shares
  * Created by drakeet on 8/17/15.
  */
 public class Shares {
@@ -34,7 +37,6 @@ public class Shares {
     public static void share(Context context, int stringRes) {
         share(context, context.getString(stringRes));
     }
-
 
     public static void shareImage(Context context, Uri uri, String title) {
         Intent shareIntent = new Intent();
@@ -51,7 +53,6 @@ public class Shares {
         intent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.share));
         intent.putExtra(Intent.EXTRA_TEXT, extraText);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(
-                Intent.createChooser(intent, context.getString(R.string.share)));
+        context.startActivity(Intent.createChooser(intent, context.getString(R.string.share)));
     }
 }

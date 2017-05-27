@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.Toast;
@@ -17,11 +18,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.github.chrisbanes.photoview.PhotoView;
-import com.github.chrisbanes.photoview.PhotoViewAttacher;
 import com.orhanobut.logger.Logger;
 import com.shua.likegank.R;
-import com.shua.likegank.ui.base.BaseActivity;
 import com.shua.likegank.utils.RxSave;
 import com.shua.likegank.utils.Shares;
 import com.tbruyelle.rxpermissions.RxPermissions;
@@ -32,6 +30,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import uk.co.senab.photoview.PhotoView;
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 
 /**
@@ -39,9 +39,9 @@ import rx.android.schedulers.AndroidSchedulers;
  * Created by SHUA on 2017/4/23.
  */
 
-public class PhotoViewActivity extends BaseActivity {
+public class PhotoViewActivity extends AppCompatActivity {
 
-    public static final String EXTRA_URL_MEIZI = "meizi_url";
+    public static final String EXTRA_URL_MEIZI = "MEIZI_URL";
 
     @BindView(R.id.photo_view)
     PhotoView mPhotoView;
@@ -90,7 +90,6 @@ public class PhotoViewActivity extends BaseActivity {
         }
     }
 
-
     private void setPhotoListener() {
         mAttacher.setOnDoubleTapListener(new GestureDetector.OnDoubleTapListener() {
             @Override
@@ -114,42 +113,35 @@ public class PhotoViewActivity extends BaseActivity {
         mAttacher.setOnLongClickListener(v -> {
             new AlertDialog.Builder(PhotoViewActivity.this)
                     .setItems(R.array.photo_dialog_list, (dialog, position) -> {
-                        switch (position) {
-                            case 0:
-                                shareImage();
-                                break;
-                            case 1:
-                                saveImage();
-                                break;
-                            default:
-                                break;
+                        if (position == 0) {
+                            shareImage();
+                        } else if (position == 1) {
+                            saveImage();
                         }
-                    })
-                    .create().show();
+                    }).create().show();
             return true;
         });
     }
 
     private void disPlayImager(String url) {
-        Glide.with(this)
-                .load(url)
-                .listener(new RequestListener<String, GlideDrawable>() {
-                    @Override
-                    public boolean onException(Exception e, String model
-                            , Target<GlideDrawable> target, boolean isFirstResource) {
-                        return false;
-                    }
+        Glide.with(this).load(url).listener(new RequestListener<String
+                , GlideDrawable>() {
+            @Override
+            public boolean onException(Exception e
+                    , String model
+                    , Target<GlideDrawable> target
+                    , boolean isFirstResource) {
+                return false;
+            }
 
-                    @Override
-                    public boolean onResourceReady(GlideDrawable resource
-                            , String model, Target<GlideDrawable> target
-                            , boolean isFromMemoryCache, boolean isFirstResource) {
-                        return false;
-                    }
-                })
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .crossFade()
-                .into(mPhotoView);
+            @Override
+            public boolean onResourceReady(GlideDrawable resource
+                    , String model, Target<GlideDrawable> target
+                    , boolean isFromMemoryCache
+                    , boolean isFirstResource) {
+                return false;
+            }
+        }).diskCacheStrategy(DiskCacheStrategy.SOURCE).crossFade().into(mPhotoView);
     }
 
     @SuppressLint("WrongConstant")
@@ -158,8 +150,7 @@ public class PhotoViewActivity extends BaseActivity {
                 .subscribe((Boolean granted) -> {
                     if (granted) {
                         subscribe = RxSave.saveImageAndGetPathObservable(
-                                PhotoViewActivity.this
-                                , url, url)
+                                PhotoViewActivity.this, url, url)
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(uri -> {
                                     File appDir = new File(Environment
@@ -169,34 +160,39 @@ public class PhotoViewActivity extends BaseActivity {
                                             R.string.picture_has_save_to)
                                             , appDir.getAbsolutePath());
                                     Toast.makeText(PhotoViewActivity.this
-                                            , msg
-                                            , Toast.LENGTH_SHORT).show();
+                                            , msg, Toast.LENGTH_SHORT).show();
                                 });
                     } else {
                         Toast.makeText(PhotoViewActivity.this
-                                , "权限已被拒绝！"
-                                , Toast.LENGTH_SHORT)
-                                .show();
+                                , "权限已被拒绝！", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
     @SuppressLint("WrongConstant")
     private void shareImage() {
-        RxSave.saveImageAndGetPathObservable(this, url, url)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(uri -> Shares.shareImage(this, uri,
-                        getString(R.string.share_to)),
-                        error -> Toast.makeText(this
-                                , error.getMessage()
-                                , Toast.LENGTH_SHORT)
-                                .show());
+        rxPermissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .subscribe((Boolean granted) -> {
+                    if (granted) {
+                        RxSave.saveImageAndGetPathObservable(this, url, url)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(uri -> Shares.shareImage(PhotoViewActivity.this,
+                                        uri, getString(R.string.share_to))
+                                        , throwable -> {
+                                            Logger.e(throwable.getMessage());
+                                            Toast.makeText(PhotoViewActivity.this,
+                                                    throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                                        });
+                    } else {
+                        Toast.makeText(PhotoViewActivity.this,
+                                "权限已被拒绝！", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (subscribe != null)
-            subscribe.unsubscribe();
+        if (subscribe != null) subscribe.unsubscribe();
     }
 }

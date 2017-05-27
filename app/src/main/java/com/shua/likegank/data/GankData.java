@@ -3,10 +3,11 @@ package com.shua.likegank.data;
 import java.util.List;
 
 /**
- * Created by SHUA on 2017/2/27.
+ * GankData
+ * Created by SHUA on 2017/3/27.
  */
 
-public class GankData{
+public class GankData {
 
     private boolean error;
     private List<LikeGankEntity> results;

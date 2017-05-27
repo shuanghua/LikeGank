@@ -4,12 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/ripple"
     android:clickable="true"
     android:orientation="vertical"
     android:paddingBottom="8dp"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
-    android:paddingTop="8dp">
+    android:paddingTop="8dp"
+    tools:ignore="KeyboardInaccessibleWidget">
 
     <TextView
         android:id="@+id/home_time"
@@ -41,6 +43,7 @@
                 tools:ignore="ContentDescription" />
 
             <TextView
+                android:fontFamily="@font/notosanscjkscthin"
                 android:id="@+id/home_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

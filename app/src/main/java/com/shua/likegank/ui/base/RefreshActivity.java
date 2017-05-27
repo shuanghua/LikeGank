@@ -1,6 +1,5 @@
 package com.shua.likegank.ui.base;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -14,12 +13,14 @@ import butterknife.BindView;
  * Created by SHUA on 2017/3/16.
  */
 
-public abstract class RefreshActivity extends ToolbarActivity {
-
-    protected abstract void topRefresh();
+public abstract class RefreshActivity<V, P extends BasePresenter> extends ToolbarActivity {
 
     @BindView(R.id.refresh_layout)
     SwipeRefreshLayout mRefreshLayout;
+
+    protected final static String PAGE = "PAGE";
+
+    protected abstract void topRefresh();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -1,6 +1,8 @@
 *.iml
 .gradle
 /local.properties
-/.idea/workspace.xml
-/.idea/libraries
 /build
+/Bug记录.txt
+libs/
+.idea
+app/src/main/java/com/shua/likegank/utils/DisplayUtil.java

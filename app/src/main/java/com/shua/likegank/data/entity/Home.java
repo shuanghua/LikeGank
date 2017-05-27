@@ -34,4 +34,15 @@ public class Home extends RealmObject {
         this.url = url;
         this.who = who;
     }
+
+    public int getPage() {
+        return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
+    }
+
+    private int page;
+
 }

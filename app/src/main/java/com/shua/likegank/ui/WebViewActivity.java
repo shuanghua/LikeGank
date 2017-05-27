@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebSettings;
@@ -13,6 +14,7 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import com.shua.likegank.R;
+import com.shua.likegank.ui.base.BasePresenter;
 import com.shua.likegank.ui.base.ToolbarActivity;
 import com.shua.likegank.utils.LikeGankUtils;
 
@@ -23,16 +25,14 @@ import static android.view.View.VISIBLE;
 
 public class WebViewActivity extends ToolbarActivity {
 
-    private static final String EXTRA_URL = "url";
-    private static final String EXTRA_TITLE = "title";
-
-    private String mUrl;
-
     @BindView(R.id.webView)
     WebView mWebView;
-
     @BindView(R.id.progressBar)
     ProgressBar mProgressBar;
+
+    private String mUrl;
+    private static final String EXTRA_URL = "URL";
+    private static final String EXTRA_TITLE = "TITLE";
 
     @Override
     protected int contentView() {
@@ -44,11 +44,17 @@ public class WebViewActivity extends ToolbarActivity {
         return true;
     }
 
+    @Override
+    protected BasePresenter createPresenter() {
+        return null;
+    }
+
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(getIntent().getStringExtra(EXTRA_TITLE));
+
         WebSettings settings = mWebView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setLoadWithOverviewMode(true);
@@ -57,7 +63,9 @@ public class WebViewActivity extends ToolbarActivity {
         settings.setUseWideViewPort(true);
         settings.setLoadWithOverviewMode(true);
         settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+
         mUrl = getIntent().getStringExtra(EXTRA_URL);
+        mWebView.loadUrl(mUrl);
         mWebView.setWebChromeClient(new WebChromeClient());
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
@@ -65,7 +73,6 @@ public class WebViewActivity extends ToolbarActivity {
                 return false;
             }
         });
-        mWebView.loadUrl(mUrl);
     }
 
     public class WebChromeClient extends android.webkit.WebChromeClient {
@@ -112,11 +119,29 @@ public class WebViewActivity extends ToolbarActivity {
                 intent.setAction(Intent.ACTION_VIEW);
                 Uri uri = Uri.parse(mUrl);
                 intent.setData(uri);
-                if (intent.resolveActivity(getPackageManager()) != null) {
+                if (intent.resolveActivity(getPackageManager()) != null)
                     startActivity(intent);
-                }
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        mWebView = null;
+        super.onDestroy();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && mWebView.canGoBack()) {
+            mWebView.goBack();
+            return true;
+        } else if (keyCode == KeyEvent.KEYCODE_BACK && !mWebView.canGoBack()) {
+            mWebView.destroy();
+            mWebView = null;
+            finish();
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

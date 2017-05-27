@@ -6,6 +6,9 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.orhanobut.logger.Logger;
+import com.shua.likegank.R;
+
 import java.text.SimpleDateFormat;
 
 /**
@@ -14,6 +17,8 @@ import java.text.SimpleDateFormat;
  */
 
 public class LikeGankUtils {
+    private static boolean mDebugLog = true;
+
     public static String timeString(String string) {
         String[] strings = string.split("T");
         return strings[0];
@@ -27,5 +32,11 @@ public class LikeGankUtils {
                 Context.CLIPBOARD_SERVICE);
         manager.setPrimaryClip(clipData);
         Toast.makeText(context, success, Toast.LENGTH_SHORT).show();
+    }
+
+    public static void debugLog(String log) {
+        if (mDebugLog) {
+            Logger.d(log);
+        }
     }
 }

@@ -1,0 +1,12 @@
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="com.shua.likegank.ui.LicenseActivity">
+
+    <include layout="@layout/app_toolbar" />
+
+    <include layout="@layout/list_recycler_refresh" />
+
+</android.support.design.widget.CoordinatorLayout>
