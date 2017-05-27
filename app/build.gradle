@@ -2,14 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'realm-android'
 
 android {
-    signingConfigs {
-        config {
-            keyAlias 'ShuangHua'
-            keyPassword '[Shhuanghua17]'
-            storeFile file('C:/Android/key_store.jks')
-            storePassword '[Shhuanghua17]'
-        }
-    }
+   
     compileSdkVersion 'android-O'
     buildToolsVersion '26.0.0 rc2'
     defaultConfig {
