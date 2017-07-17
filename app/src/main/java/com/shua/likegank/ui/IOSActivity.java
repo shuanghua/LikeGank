@@ -21,7 +21,8 @@ import java.util.List;
 import butterknife.BindView;
 import me.drakeet.multitype.MultiTypeAdapter;
 
-public class IOSActivity extends RefreshActivity<RefreshViewInterface, IOSPresenter> implements RefreshViewInterface<IOS> {
+public class IOSActivity extends RefreshActivity<RefreshViewInterface, IOSPresenter>
+        implements RefreshViewInterface<IOS> {
 
     @BindView(R.id.list)
     RecyclerView mRecycler;

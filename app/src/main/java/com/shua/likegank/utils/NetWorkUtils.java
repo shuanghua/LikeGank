@@ -2,7 +2,6 @@ package com.shua.likegank.utils;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 

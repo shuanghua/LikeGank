@@ -2,8 +2,6 @@ package com.shua.likegank;
 
 import android.app.Application;
 
-import com.squareup.leakcanary.LeakCanary;
-
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
@@ -17,14 +15,14 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        setLeakCanary();
+        //setLeakCanary();
         setRealm();
     }
 
-    private void setLeakCanary() {
-        if (LeakCanary.isInAnalyzerProcess(this)) return;
-        LeakCanary.install(this);
-    }
+//    private void setLeakCanary() {
+//        if (LeakCanary.isInAnalyzerProcess(this)) return;
+//        LeakCanary.install(this);
+//    }
 
     private void setRealm() {
         Realm.init(this);

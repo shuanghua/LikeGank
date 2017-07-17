@@ -9,7 +9,7 @@ import com.shua.likegank.R;
 import com.shua.likegank.api.ApiFactory;
 import com.shua.likegank.data.GankData;
 import com.shua.likegank.data.LikeGankEntity;
-import com.shua.likegank.data.entity.MeiZi;
+import com.shua.likegank.data.entity.FuLi;
 import com.shua.likegank.interfaces.RefreshViewInterface;
 import com.shua.likegank.ui.base.BasePresenter;
 import com.shua.likegank.utils.NetWorkUtils;
@@ -24,7 +24,6 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
- * ArticlePresenter
  * Created by moshu on 2017/5/13.
  */
 
@@ -36,19 +35,19 @@ public class ImagePresenter extends BasePresenter {
     public static int mPage = 1;
 
     private final Realm mRealm;
-    private RefreshViewInterface<MeiZi> mView;
-    public List<MeiZi> mMeiZis = new ArrayList<>();
+    private RefreshViewInterface<FuLi> mView;
+    public List<FuLi> mMeiZis = new ArrayList<>();
     private Subscription mUnbscribeRealm;
     private Subscription mUnsubscribeRetrofit;
 
-    public ImagePresenter(RefreshViewInterface<MeiZi> viewInterface) {
+    public ImagePresenter(RefreshViewInterface<FuLi> viewInterface) {
         this.mView = viewInterface;
         mRealm = Realm.getDefaultInstance();
     }
 
-    private List<MeiZi> conversionData(List<LikeGankEntity> list) {
+    private List<FuLi> conversionData(List<LikeGankEntity> list) {
         for (LikeGankEntity gankEntity : list)
-            mMeiZis.add(new MeiZi(gankEntity.getUrl()));
+            mMeiZis.add(new FuLi(gankEntity.get_id(), gankEntity.getUrl()));
         return mMeiZis;
     }
 
@@ -57,7 +56,7 @@ public class ImagePresenter extends BasePresenter {
      */
     @SuppressLint("WrongConstant")
     public void fromRealmLoad() {
-        mUnbscribeRealm = mRealm.where(MeiZi.class)
+        mUnbscribeRealm = mRealm.where(FuLi.class)
                 .findAll()
                 .asObservable()
                 .filter(RealmResults::isLoaded)
@@ -101,10 +100,10 @@ public class ImagePresenter extends BasePresenter {
     }
 
     private void clearData() {
-        mRealm.executeTransaction(realm -> realm.delete(MeiZi.class));
+        mRealm.executeTransaction(realm -> realm.delete(FuLi.class));
     }
 
-    private void saveData(List<MeiZi> data) {
+    private void saveData(List<FuLi> data) {
         mRealm.executeTransaction(realm -> realm.copyToRealmOrUpdate(data));
     }
 

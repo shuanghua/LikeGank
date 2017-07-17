@@ -10,7 +10,7 @@ import io.realm.annotations.PrimaryKey;
 public class Home extends RealmObject {
 
     @PrimaryKey
-    public String _id;
+    private String _id;
     public String title;
     public String createdAt;
 

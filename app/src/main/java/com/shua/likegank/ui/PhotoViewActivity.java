@@ -1,7 +1,6 @@
 package com.shua.likegank.ui;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -18,10 +17,10 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.orhanobut.logger.Logger;
 import com.shua.likegank.R;
 import com.shua.likegank.utils.RxSave;
 import com.shua.likegank.utils.Shares;
+import com.orhanobut.logger.Logger;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import java.io.File;
@@ -144,7 +143,6 @@ public class PhotoViewActivity extends AppCompatActivity {
         }).diskCacheStrategy(DiskCacheStrategy.SOURCE).crossFade().into(mPhotoView);
     }
 
-    @SuppressLint("WrongConstant")
     private void saveImage() {
         rxPermissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .subscribe((Boolean granted) -> {
@@ -153,12 +151,9 @@ public class PhotoViewActivity extends AppCompatActivity {
                                 PhotoViewActivity.this, url, url)
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(uri -> {
-                                    File appDir = new File(Environment
-                                            .getExternalStorageDirectory()
-                                            , "LikeGank");
+                                    File appDir = new File(Environment.getExternalStorageDirectory(), "LikeGank");
                                     String msg = String.format(getString(
-                                            R.string.picture_has_save_to)
-                                            , appDir.getAbsolutePath());
+                                            R.string.picture_has_save_to), appDir.getAbsolutePath());
                                     Toast.makeText(PhotoViewActivity.this
                                             , msg, Toast.LENGTH_SHORT).show();
                                 });
@@ -169,16 +164,14 @@ public class PhotoViewActivity extends AppCompatActivity {
                 });
     }
 
-    @SuppressLint("WrongConstant")
     private void shareImage() {
         rxPermissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .subscribe((Boolean granted) -> {
                     if (granted) {
                         RxSave.saveImageAndGetPathObservable(this, url, url)
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(uri -> Shares.shareImage(PhotoViewActivity.this,
-                                        uri, getString(R.string.share_to))
-                                        , throwable -> {
+                                .subscribe(uri ->
+                                        Shares.shareImage(PhotoViewActivity.this, uri, getString(R.string.share_to)), throwable -> {
                                             Logger.e(throwable.getMessage());
                                             Toast.makeText(PhotoViewActivity.this,
                                                     throwable.getMessage(), Toast.LENGTH_SHORT).show();

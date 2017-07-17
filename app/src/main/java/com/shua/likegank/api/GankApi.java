@@ -18,9 +18,9 @@ public interface GankApi {
     @GET("data/all/30/{page}")
     Observable<GankData> getHomeData(@Path("page") int page);
 
-    @GET("data/Android/50/{page}")
+    @GET("data/Android/30/{page}")
     Observable<GankData> getAndroidData(@Path("page") int page);
 
-    @GET("data/iOS/50/{page}")
+    @GET("data/iOS/40/{page}")
     Observable<GankData> getiOSData(@Path("page") int page);
 }

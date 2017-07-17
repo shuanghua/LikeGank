@@ -25,6 +25,8 @@ import com.shua.likegank.utils.NetWorkUtils;
 import java.util.List;
 
 import butterknife.BindView;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import me.drakeet.multitype.MultiTypeAdapter;
 
 public class MainActivity extends RefreshActivity<RefreshViewInterface, HomePresenter>

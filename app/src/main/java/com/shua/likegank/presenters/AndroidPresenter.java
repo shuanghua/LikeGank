@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.widget.Toast;
 
-import com.orhanobut.logger.Logger;
 import com.shua.likegank.R;
 import com.shua.likegank.api.ApiFactory;
 import com.shua.likegank.data.Category;
@@ -16,6 +15,7 @@ import com.shua.likegank.interfaces.RefreshViewInterface;
 import com.shua.likegank.ui.base.BasePresenter;
 import com.shua.likegank.utils.LikeGankUtils;
 import com.shua.likegank.utils.NetWorkUtils;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +27,8 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
+import static android.R.attr.data;
+
 /**
  * ArticlePresenter
  * Created by moshu on 2017/5/13.
@@ -35,7 +37,6 @@ import rx.schedulers.Schedulers;
 public class AndroidPresenter extends BasePresenter {
 
     public static final String KEY_ANDROID_PAGE = "android_page";
-
     public static int mPage = 1;
     public boolean isRefresh = true;
 
@@ -55,6 +56,7 @@ public class AndroidPresenter extends BasePresenter {
                     gankEntity.getPublishedAt(),
                     gankEntity.getDesc(),
                     gankEntity.getWho(),
+                    gankEntity.get_id(),
                     gankEntity.getUrl()));
         }
         return mAndroids;

@@ -9,7 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.shua.likegank.R;
-import com.shua.likegank.data.entity.MeiZi;
+import com.shua.likegank.data.entity.FuLi;
 import com.shua.likegank.interfaces.RefreshViewInterface;
 import com.shua.likegank.presenters.ImagePresenter;
 import com.shua.likegank.ui.base.RefreshActivity;
@@ -26,7 +26,7 @@ import me.drakeet.multitype.MultiTypeAdapter;
  * Created by SHUA on 2017/3/27.
  */
 public class ImageActivity extends RefreshActivity<RefreshViewInterface, ImagePresenter>
-        implements RefreshViewInterface<MeiZi> {
+        implements RefreshViewInterface<FuLi> {
 
     @BindView(R.id.list)
     RecyclerView mRecyclerView;
@@ -50,7 +50,7 @@ public class ImageActivity extends RefreshActivity<RefreshViewInterface, ImagePr
         final GridLayoutManager layoutManager =
                 new GridLayoutManager(this, SPAN_COUNT);
         mAdapter = new MultiTypeAdapter();
-        mAdapter.register(MeiZi.class, new ImageItemBinder());
+        mAdapter.register(FuLi.class, new ImageItemBinder());
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.addItemDecoration(new ImageSpacItemDecoration
                 (12, SPAN_COUNT, true));

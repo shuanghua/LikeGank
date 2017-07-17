@@ -12,7 +12,6 @@ import com.shua.likegank.data.entity.Content;
 import com.shua.likegank.ui.WebViewActivity;
 
 import me.drakeet.multitype.ItemViewBinder;
-
 /**
  * ContentItemBinder for LicenseActivity
  * Created by moshu on 2017/5/7.
@@ -41,7 +40,7 @@ public class ContentItemBinder
 
         ViewHolder(View itemView) {
             super(itemView);
-            this.content = itemView.findViewById(R.id.item_content);
+            this.content = (TextView) itemView.findViewById(R.id.item_content);
             itemView.setOnClickListener(view -> {
                 if (!"".equals(url)) {
                     view.getContext().startActivity(WebViewActivity

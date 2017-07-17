@@ -24,14 +24,14 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/imageView"
         android:layout_marginStart="13dp"
+        android:layout_marginTop="8dp"
+        android:layout_toEndOf="@+id/imageView"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="@string/likegank"
+        android:text="@string/app_name"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="@color/md_black_1000"
-        android:textSize="26sp"
-        android:layout_alignTop="@+id/imageView"
-        android:layout_toEndOf="@+id/imageView"
-        android:layout_marginTop="8dp" />
+        android:textSize="26sp" />
 
 </RelativeLayout>

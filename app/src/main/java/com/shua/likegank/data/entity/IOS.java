@@ -9,20 +9,21 @@ import io.realm.annotations.PrimaryKey;
  */
 
 public class IOS extends RealmObject {
-
+    @PrimaryKey
+    private String _id;
     public String time;
     public String content;
     public String author;
-    @PrimaryKey
     public String url;
 
     public IOS() {
     }
 
-    public IOS(String time, String content, String author, String url) {
+    public IOS(String time, String content, String author, String _id, String url) {
         this.time = time;
         this.content = content;
         this.author = author;
+        this._id = _id;
         this.url = url;
     }
 }

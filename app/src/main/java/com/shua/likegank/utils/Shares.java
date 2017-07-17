@@ -25,8 +25,6 @@ import android.net.Uri;
 
 import com.shua.likegank.R;
 
-import rx.Subscriber;
-
 
 /**
  * Shares

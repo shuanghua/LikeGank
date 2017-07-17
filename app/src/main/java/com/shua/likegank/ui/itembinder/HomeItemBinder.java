@@ -22,8 +22,7 @@ import me.drakeet.multitype.ItemViewBinder;
  * Created by SHUA on 2017/4/17.
  */
 
-public class HomeItemBinder extends ItemViewBinder<Home,
-        HomeItemBinder.HomeHolder> {
+public class HomeItemBinder extends ItemViewBinder<Home, HomeItemBinder.HomeHolder> {
 
     @NonNull
     @Override
@@ -89,9 +88,9 @@ public class HomeItemBinder extends ItemViewBinder<Home,
 
         HomeHolder(View itemView) {
             super(itemView);
-            this.mImageView = itemView.findViewById(R.id.home_image);
-            this.mTextTitle = itemView.findViewById(R.id.home_title);
-            this.mTextTime = itemView.findViewById(R.id.home_time);
+            this.mImageView = (ImageView) itemView.findViewById(R.id.home_image);
+            this.mTextTitle = (TextView) itemView.findViewById(R.id.home_title);
+            this.mTextTime = (TextView) itemView.findViewById(R.id.home_time);
 
             itemView.setOnClickListener(v -> {
                 switch (type) {

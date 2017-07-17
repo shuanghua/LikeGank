@@ -7,9 +7,6 @@ import android.content.Context;
 import android.widget.Toast;
 
 import com.orhanobut.logger.Logger;
-import com.shua.likegank.R;
-
-import java.text.SimpleDateFormat;
 
 /**
  * LikeGankUtils
