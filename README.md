@@ -1,7 +1,7 @@
 # LikeGank
-#### 使用 Realm + Rxjava + Retrofit2 + Multiype 开发的一个轻型应用。 
+#### 使用 Realm4.1.0 + Rxjava2 + Retrofit2 + Multiype 开发的一个轻型应用。
 #### 网络数据来自： [Gank]( http://gank.io/ "Gank")
-#### 参照应用：[Meizhi](https://github.com/drakeet/Meizhi "Meizhi")
+#### 参考应用：[Meizhi](https://github.com/drakeet/Meizhi "Meizhi")
 
 - 数据库：[Realm](https://github.com/realm/realm-java "Realm") 
 - 响应式：[Rxjava](https://github.com/ReactiveX/RxJava "Rxjava")

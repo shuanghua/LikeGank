@@ -38,7 +38,7 @@ public class ImageActivity extends RefreshActivity<RefreshViewInterface, ImagePr
 
     @Override
     protected void initViews() {
-        setTitle(R.string.bar_title_fuli);
+        setTitle(R.string.bar_title_image);
         final GridLayoutManager layoutManager =
                 new GridLayoutManager(this, SPAN_COUNT);
         mAdapter = new MultiTypeAdapter();
@@ -51,7 +51,7 @@ public class ImageActivity extends RefreshActivity<RefreshViewInterface, ImagePr
         mRecyclerView.setAdapter(mAdapter);
         showLoading();
         mPresenter.fromRealmLoad();
-        topRefresh();
+        refresh();
     }
 
     @Override
@@ -69,7 +69,7 @@ public class ImageActivity extends RefreshActivity<RefreshViewInterface, ImagePr
     }
 
     @Override
-    protected void topRefresh() {
+    protected void refresh() {
         if (NetWorkUtils.isNetworkConnected(this)) {
             mPresenter.isRefresh = true;
             ImagePresenter.mPage = 1;

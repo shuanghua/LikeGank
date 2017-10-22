@@ -33,7 +33,7 @@ public abstract class ToolbarActivity extends BaseActivity {
     }
 
     private void initToolbar(boolean isAddBack) {
-        mAppBarLayout = (AppBarLayout) findViewById(R.id.app_bar_layout);
+        mAppBarLayout = findViewById(R.id.app_bar_layout);
         if (mToolbar == null || mAppBarLayout == null) {
             throw new IllegalStateException(
                     getString(R.string.error_toolbar));
@@ -44,8 +44,7 @@ public abstract class ToolbarActivity extends BaseActivity {
                             | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
         setSupportActionBar(mToolbar);
-        if (isAddBack)
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(isAddBack);
         mToolbar.setNavigationOnClickListener(v -> onBackPressed());
     }
 

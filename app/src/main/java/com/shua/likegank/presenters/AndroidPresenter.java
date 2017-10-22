@@ -96,7 +96,7 @@ public class AndroidPresenter extends BasePresenter {
                     .map(gankEntity -> new Android(gankEntity.getPublishedAt(),
                             gankEntity.getDesc(), gankEntity.getWho(),
                             gankEntity.get_id(), gankEntity.getUrl()))
-                    .buffer(30)
+                    .buffer(60)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(this::addData);

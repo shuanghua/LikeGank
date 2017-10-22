@@ -41,7 +41,7 @@ public class AndroidActivity extends RefreshActivity<RefreshViewInterface, Andro
         mRecycler.setAdapter(mAdapter);
         showLoading();
         mPresenter.fromRealmLoad();
-        topRefresh();
+        refresh();
     }
 
     @Override
@@ -60,7 +60,7 @@ public class AndroidActivity extends RefreshActivity<RefreshViewInterface, Andro
     }
 
     @Override
-    protected void topRefresh() {
+    protected void refresh() {
         if (NetWorkUtils.isNetworkConnected(this)) {
             mPresenter.isRefresh = true;
             AndroidPresenter.mPage = 1;

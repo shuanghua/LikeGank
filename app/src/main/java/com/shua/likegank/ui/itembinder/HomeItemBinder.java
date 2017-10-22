@@ -33,8 +33,7 @@ public class HomeItemBinder extends ItemViewBinder<Home, HomeItemBinder.HomeHold
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull HomeHolder holder
-            , @NonNull Home data) {
+    protected void onBindViewHolder(@NonNull HomeHolder holder, @NonNull Home data) {
         switch (data.type) {
             case "Android":
                 holder.mImageView.setImageResource(R.mipmap.ic_menu_android);
@@ -88,9 +87,9 @@ public class HomeItemBinder extends ItemViewBinder<Home, HomeItemBinder.HomeHold
 
         HomeHolder(View itemView) {
             super(itemView);
-            this.mImageView = (ImageView) itemView.findViewById(R.id.home_image);
-            this.mTextTitle = (TextView) itemView.findViewById(R.id.home_title);
-            this.mTextTime = (TextView) itemView.findViewById(R.id.home_time);
+            this.mImageView = itemView.findViewById(R.id.home_image);
+            this.mTextTitle = itemView.findViewById(R.id.home_title);
+            this.mTextTime = itemView.findViewById(R.id.home_time);
 
             itemView.setOnClickListener(v -> {
                 switch (type) {

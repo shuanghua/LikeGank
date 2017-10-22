@@ -64,7 +64,7 @@ public class ImagePresenter extends BasePresenter {
                     .map(GankData::getResults)
                     .flatMap(Flowable::fromIterable)
                     .map(gankEntity -> new Content(gankEntity.get_id(), gankEntity.getUrl()))
-                    .buffer(20)
+                    .buffer(50)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(this::addData);

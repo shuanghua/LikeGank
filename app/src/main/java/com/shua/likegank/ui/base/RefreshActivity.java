@@ -20,12 +20,7 @@ public abstract class RefreshActivity<V, P extends BasePresenter> extends Toolba
 
     protected final static String PAGE = "PAGE";
 
-    protected abstract void topRefresh();
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+    protected abstract void refresh();
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
@@ -40,7 +35,7 @@ public abstract class RefreshActivity<V, P extends BasePresenter> extends Toolba
                     new SwipeRefreshLayout.OnRefreshListener() {
                         @Override
                         public void onRefresh() {
-                            topRefresh();
+                            refresh();
                         }
                     });
         }

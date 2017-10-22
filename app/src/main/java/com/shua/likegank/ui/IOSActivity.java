@@ -46,7 +46,7 @@ public class IOSActivity extends RefreshActivity<RefreshViewInterface, IOSPresen
     }
 
     @Override
-    protected void topRefresh() {
+    protected void refresh() {
         if (NetWorkUtils.isNetworkConnected(this)) {
             mPresenter.isRefresh = true;
             IOSPresenter.mPage = 1;
@@ -144,7 +144,7 @@ public class IOSActivity extends RefreshActivity<RefreshViewInterface, IOSPresen
 
         showLoading();
         mPresenter.fromRealmLoad();
-        topRefresh();
+        refresh();
     }
 
     RecyclerView.OnScrollListener getOnBottomListener(LinearLayoutManager layoutManager) {

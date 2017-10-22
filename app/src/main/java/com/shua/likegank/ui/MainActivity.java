@@ -8,7 +8,6 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -37,6 +36,12 @@ public class MainActivity extends RefreshActivity<RefreshViewInterface, HomePres
     private HomePresenter mPresenter;
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initNavigationView();
+    }
+
+    @Override
     protected void initViews() {
         setTitle(R.string.bar_title_home);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -47,21 +52,20 @@ public class MainActivity extends RefreshActivity<RefreshViewInterface, HomePres
         mRecyclerView.setAdapter(mAdapter);
         showLoading();
         mPresenter.fromRealmLoad();
-        topRefresh();
-        initNavigationView();
+        refresh();
     }
 
     @Override
     public void showData(List data) {
         mPresenter.isRefresh = false;
-        //mPresenter.mHomes.clear();
         mAdapter.setItems(data);
         mAdapter.notifyDataSetChanged();
         hideLoading();
     }
 
     @Override
-    protected void topRefresh() {
+    protected void refresh() {
+
         if (NetWorkUtils.isNetworkConnected(this)) {
             mPresenter.isRefresh = true;
             HomePresenter.mPage = 1;
@@ -117,7 +121,7 @@ public class MainActivity extends RefreshActivity<RefreshViewInterface, HomePres
                 drawer, mToolbar,
                 R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
         NavigationView mNavigationView = findViewById(R.id.nav_view);
         mNavigationView.setNavigationItemSelectedListener(this);
@@ -131,13 +135,7 @@ public class MainActivity extends RefreshActivity<RefreshViewInterface, HomePres
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle(R.string.prompt);
-            builder.setMessage(R.string.prompt_information);
-            builder.setCancelable(true);
-            builder.setPositiveButton("确定", (dialog, which) -> finish());
-            builder.setNegativeButton("取消", (dialog, which) -> dialog.dismiss());
-            builder.create().show();
+            super.onBackPressed();
         }
     }
 
@@ -164,20 +162,25 @@ public class MainActivity extends RefreshActivity<RefreshViewInterface, HomePres
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.nav_home) {
-        } else if (id == R.id.nav_android) {
-            startActivity(AndroidActivity.newIntent(this));
-        } else if (id == R.id.nav_ios) {
-            startActivity(IOSActivity.newIntent(this));
-        } else if (id == R.id.nav_surprise) {
-            Intent intent = new Intent(this, ImageActivity.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_about) {
-            startActivity(AboutActivity.newIntent(this));
+        switch (id) {
+            case R.id.nav_home:
+                break;
+            case R.id.nav_android:
+                startActivity(AndroidActivity.newIntent(this));
+                break;
+            case R.id.nav_ios:
+                startActivity(IOSActivity.newIntent(this));
+                break;
+            case R.id.nav_surprise:
+                Intent intent = new Intent(this, ImageActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.nav_about:
+                startActivity(AboutActivity.newIntent(this));
+                break;
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

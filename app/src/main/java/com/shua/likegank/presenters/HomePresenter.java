@@ -78,7 +78,7 @@ public class HomePresenter extends BasePresenter {
                     .map(gankEntity -> new Home(gankEntity.get_id(), gankEntity.getDesc(),
                             gankEntity.getPublishedAt(), gankEntity.getType(),
                             gankEntity.getUrl(), gankEntity.getWho()))
-                    .buffer(30)
+                    .buffer(60)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(this::addData);

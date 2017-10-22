@@ -3,10 +3,6 @@ package com.shua.likegank.data.entity;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-/**
- * Created by SHUA on 2017/4/29.
- */
-
 public class Home extends RealmObject {
 
     @PrimaryKey
@@ -17,6 +13,7 @@ public class Home extends RealmObject {
     public String type;
     public String url;
     public String who;
+    public int imageId;
 
     public Home() {
     }
@@ -33,16 +30,6 @@ public class Home extends RealmObject {
         this.type = type;
         this.url = url;
         this.who = who;
+        this.imageId = imageId;
     }
-
-    public int getPage() {
-        return page;
-    }
-
-    public void setPage(int page) {
-        this.page = page;
-    }
-
-    private int page;
-
 }

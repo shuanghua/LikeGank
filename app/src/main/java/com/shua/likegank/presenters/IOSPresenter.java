@@ -86,7 +86,7 @@ public class IOSPresenter extends BasePresenter {
                             gankEntity.getWho(),
                             gankEntity.get_id(),
                             gankEntity.getUrl()))
-                    .buffer(30)
+                    .buffer(60)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(this::addData);
