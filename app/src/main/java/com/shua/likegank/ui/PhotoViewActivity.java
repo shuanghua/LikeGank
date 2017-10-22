@@ -17,18 +17,18 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.orhanobut.logger.Logger;
 import com.shua.likegank.R;
 import com.shua.likegank.utils.RxSave;
 import com.shua.likegank.utils.Shares;
-import com.orhanobut.logger.Logger;
-import com.tbruyelle.rxpermissions.RxPermissions;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
@@ -46,7 +46,7 @@ public class PhotoViewActivity extends AppCompatActivity {
     PhotoView mPhotoView;
 
     private String url;
-    private Subscription subscribe;
+    private Disposable subscribe;
     private RxPermissions rxPermissions;
     private PhotoViewAttacher mAttacher;
 
@@ -56,7 +56,7 @@ public class PhotoViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_photo);
         ButterKnife.bind(this);
 
-        mPhotoView = (PhotoView) findViewById(R.id.photo_view);
+        mPhotoView = findViewById(R.id.photo_view);
         mAttacher = new PhotoViewAttacher(mPhotoView);
         mPhotoView.setImageResource(R.mipmap.ic_launcher);
         rxPermissions = new RxPermissions(this);
@@ -172,10 +172,10 @@ public class PhotoViewActivity extends AppCompatActivity {
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(uri ->
                                         Shares.shareImage(PhotoViewActivity.this, uri, getString(R.string.share_to)), throwable -> {
-                                            Logger.e(throwable.getMessage());
-                                            Toast.makeText(PhotoViewActivity.this,
-                                                    throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                                        });
+                                    Logger.e(throwable.getMessage());
+                                    Toast.makeText(PhotoViewActivity.this,
+                                            throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                                });
                     } else {
                         Toast.makeText(PhotoViewActivity.this,
                                 "权限已被拒绝！", Toast.LENGTH_SHORT).show();
@@ -186,6 +186,6 @@ public class PhotoViewActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (subscribe != null) subscribe.unsubscribe();
+        if (subscribe != null) subscribe.dispose();
     }
 }

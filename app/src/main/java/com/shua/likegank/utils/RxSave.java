@@ -35,33 +35,27 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import rx.Observable;
-import rx.Subscriber;
-import rx.schedulers.Schedulers;
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.FlowableOnSubscribe;
+import io.reactivex.schedulers.Schedulers;
 
-/**
- * 简单重构了下，并且修复了重复插入图片问题
- * Created by drakeet on 8/10/15.
- */
 public class RxSave {
-    public static Observable<Uri> saveImageAndGetPathObservable(Context context, String url, String title) {
-        return Observable.create((Observable.OnSubscribe<Bitmap>) subscriber -> {
+    public static Flowable<Uri> saveImageAndGetPathObservable(Context context, String url, String title) {
+        return Flowable.create((FlowableOnSubscribe<Bitmap>) subscribe -> {
             Bitmap bitmap = null;
             try {
                 bitmap = Glide.with(context)
-                        .load(url)
-                        .asBitmap()
-                        .into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-                        .get();
+                        .load(url).asBitmap()
+                        .into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).get();
             } catch (Exception e) {
-                subscriber.onError(e);
+                subscribe.onError(e);
             }
-            if (bitmap == null) {
-                subscriber.onError(new Exception("无法下载到图片"));
-            }
-            subscriber.onNext(bitmap);
-            subscriber.onCompleted();
-        })
+            if (bitmap == null)
+                subscribe.onError(new Exception("图片获取失败！"));
+            subscribe.onNext(bitmap);
+            subscribe.onComplete();
+        }, BackpressureStrategy.BUFFER)
                 .flatMap(bitmap -> {
                     File appDir = new File(Environment.getExternalStorageDirectory(), "LikeGank");
                     if (!appDir.exists()) {
@@ -88,8 +82,7 @@ public class RxSave {
                     // 通知图库更新
                     Intent scannerIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri);
                     context.sendBroadcast(scannerIntent);
-                    return Observable.just(uri);
-                })
-                .subscribeOn(Schedulers.io());
+                    return Flowable.just(uri);
+                }).subscribeOn(Schedulers.io());
     }
 }

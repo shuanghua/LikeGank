@@ -23,7 +23,7 @@ public abstract class BasePresenter<T> {
         return mViewRef.get();
     }
 
-    public boolean isViewAttached() {
+    private boolean isViewAttached() {
         return mViewRef != null && mViewRef.get() != null;
     }
 

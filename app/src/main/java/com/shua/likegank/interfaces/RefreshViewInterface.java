@@ -7,11 +7,10 @@ import java.util.List;
  * Created by moshu on 2017/5/17.
  */
 
-public interface RefreshViewInterface<T>  {
+public interface RefreshViewInterface {
     void showLoading();
 
     void hideLoading();
 
-    void showData(List<T> data);
-
+    void showData(List data);
 }

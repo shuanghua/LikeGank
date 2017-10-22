@@ -22,7 +22,7 @@ import butterknife.BindView;
 import me.drakeet.multitype.MultiTypeAdapter;
 
 public class AndroidActivity extends RefreshActivity<RefreshViewInterface, AndroidPresenter>
-        implements RefreshViewInterface<Android> {
+        implements RefreshViewInterface {
 
     @BindView(R.id.list)
     RecyclerView mRecycler;
@@ -30,17 +30,8 @@ public class AndroidActivity extends RefreshActivity<RefreshViewInterface, Andro
     private MultiTypeAdapter mAdapter;
     private AndroidPresenter mPresenter;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void initViews() {
         setTitle("Android");
-        initViews();
-        showLoading();
-        mPresenter.fromRealmLoad();
-        topRefresh();
-    }
-
-    private void initViews() {
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mAdapter = new MultiTypeAdapter();
         mAdapter.register(Category.class, new CategoryItemBinder());
@@ -48,6 +39,9 @@ public class AndroidActivity extends RefreshActivity<RefreshViewInterface, Andro
         mRecycler.setLayoutManager(layoutManager);
         mRecycler.addOnScrollListener(getOnBottomListener(layoutManager));
         mRecycler.setAdapter(mAdapter);
+        showLoading();
+        mPresenter.fromRealmLoad();
+        topRefresh();
     }
 
     @Override
@@ -58,9 +52,8 @@ public class AndroidActivity extends RefreshActivity<RefreshViewInterface, Andro
     }
 
     @Override
-    public void showData(List<Android> data) {
+    public void showData(List data) {
         mPresenter.isRefresh = false;
-        mPresenter.mAndroids.clear();
         mAdapter.setItems(data);
         mAdapter.notifyDataSetChanged();
         hideLoading();

@@ -8,20 +8,19 @@ import android.widget.Toast;
 import com.shua.likegank.R;
 import com.shua.likegank.api.ApiFactory;
 import com.shua.likegank.data.GankData;
-import com.shua.likegank.data.LikeGankEntity;
 import com.shua.likegank.data.entity.Home;
 import com.shua.likegank.interfaces.RefreshViewInterface;
 import com.shua.likegank.ui.base.BasePresenter;
 import com.shua.likegank.utils.NetWorkUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 import io.realm.RealmResults;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * ArticlePresenter
@@ -30,70 +29,60 @@ import rx.schedulers.Schedulers;
 
 public class HomePresenter extends BasePresenter {
 
-    public static final String KEY_HOME_PAGE = "home_page";
+    public static int mPage = 1;
+    public static final String KEY_HOME_PAGE = "HOME_PAGE";
 
     public boolean isRefresh = true;
-    public static int mPage = 1;
 
     private RefreshViewInterface mView;
-    private Realm mRealm = Realm.getDefaultInstance();
-    public List<Home> mHomes = new ArrayList<>();
-    private Subscription mUnbscribeRealm;
-    private Subscription mUnsubscribeRetrofit;
+    private Realm mRealm;
+    private Disposable mDisposable;
+    private Disposable mNetWorkDisposable;
 
     public HomePresenter(RefreshViewInterface viewInterface) {
         this.mView = viewInterface;
+        mRealm = Realm.getDefaultInstance();
     }
 
-    private List<Home> conversionData(List<LikeGankEntity> list) {
-        for (LikeGankEntity gankEntity : list) {
-            mHomes.add(new Home(gankEntity.get_id(), gankEntity.getDesc(),
-                    gankEntity.getPublishedAt(), gankEntity.getType(),
-                    gankEntity.getUrl(), gankEntity.getWho()));
-        }
-        return mHomes;
-    }
-
-    private void clearData() {
+    private void deleteData() {
         mRealm.executeTransaction(realm -> realm.delete(Home.class));
     }
 
-    private void saveData(List<Home> data) {
+
+    private void addData(List<Home> data) {
+        if (isRefresh) deleteData();
         mRealm.executeTransaction(realm -> realm.copyToRealmOrUpdate(data));
     }
 
     /**
      * The call is automatically triggered when the local data is updated
      */
+
     public void fromRealmLoad() {
-        mUnbscribeRealm = mRealm.where(Home.class)
+        mDisposable = mRealm.where(Home.class)
                 .findAll()
-                .asObservable()
+                .asFlowable()
                 .filter(RealmResults::isLoaded)
-                .subscribe(homes -> {
-                    if (homes.size() > 0) mView.showData(homes);
-                });
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(homes -> mView.showData(homes));
     }
 
     @SuppressLint("WrongConstant")
     public void fromNetWorkLoad() {
         if (NetWorkUtils.isNetworkConnected((Context) mView)) {
-            mUnsubscribeRetrofit = ApiFactory.getGankApi()
+            mNetWorkDisposable = ApiFactory.getGankApi()
                     .getHomeData(mPage)
                     .filter(gankData -> !gankData.isError())
                     .map(GankData::getResults)
-                    .single(likeGankEntities -> likeGankEntities.size() > 0)
-                    .map(this::conversionData)
+                    .flatMap(Flowable::fromIterable)
+                    .map(gankEntity -> new Home(gankEntity.get_id(), gankEntity.getDesc(),
+                            gankEntity.getPublishedAt(), gankEntity.getType(),
+                            gankEntity.getUrl(), gankEntity.getWho()))
+                    .buffer(30)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(data -> {
-                        if (isRefresh) clearData();
-                        saveData(data);
-                    }, throwable -> {
-                        Toast.makeText((Context) mView
-                                , throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                        mView.hideLoading();
-                    });
+                    .subscribe(this::addData);
+
         } else {
             Toast.makeText((Context) mView, R.string.error_net, Toast.LENGTH_SHORT).show();
             mView.hideLoading();
@@ -102,8 +91,8 @@ public class HomePresenter extends BasePresenter {
 
     @Override
     protected void unSubscribe() {
-        if (mUnbscribeRealm != null) mUnbscribeRealm.unsubscribe();
-        if (mUnsubscribeRetrofit != null) mUnsubscribeRetrofit.unsubscribe();
+        if (mDisposable != null) mDisposable.dispose();
+        if (mNetWorkDisposable != null) mNetWorkDisposable.dispose();
     }
 
     @Override

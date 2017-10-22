@@ -11,6 +11,7 @@ public class NetWorkUtils {
             @SuppressLint("WrongConstant") ConnectivityManager manager
                     = (ConnectivityManager) context
                     .getSystemService(Context.CONNECTIVITY_SERVICE);
+            assert manager != null;
             NetworkInfo networkInfo = manager.getActiveNetworkInfo();
             if (networkInfo != null) return networkInfo.isAvailable();
         }

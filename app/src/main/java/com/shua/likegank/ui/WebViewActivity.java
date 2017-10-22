@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,20 +38,9 @@ public class WebViewActivity extends ToolbarActivity {
         return R.layout.activity_web_view;
     }
 
-    @Override
-    protected boolean addBack() {
-        return true;
-    }
-
-    @Override
-    protected BasePresenter createPresenter() {
-        return null;
-    }
-
     @SuppressLint("SetJavaScriptEnabled")
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void initViews() {
         setTitle(getIntent().getStringExtra(EXTRA_TITLE));
 
         WebSettings settings = mWebView.getSettings();
@@ -73,6 +61,16 @@ public class WebViewActivity extends ToolbarActivity {
                 return false;
             }
         });
+    }
+
+    @Override
+    protected boolean addBack() {
+        return true;
+    }
+
+    @Override
+    protected BasePresenter createPresenter() {
+        return null;
     }
 
     public class WebChromeClient extends android.webkit.WebChromeClient {

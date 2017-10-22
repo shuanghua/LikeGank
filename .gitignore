@@ -2,8 +2,6 @@
 .gradle
 /local.properties
 /build
-/Bug记录.txt
-libs/
 .idea
-app/src/main/java/com/shua/likegank/utils/DisplayUtil.java
 /keystore.properties
+shuanghua.jks

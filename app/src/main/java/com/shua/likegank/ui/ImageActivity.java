@@ -9,7 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.shua.likegank.R;
-import com.shua.likegank.data.entity.FuLi;
+import com.shua.likegank.data.entity.Content;
 import com.shua.likegank.interfaces.RefreshViewInterface;
 import com.shua.likegank.presenters.ImagePresenter;
 import com.shua.likegank.ui.base.RefreshActivity;
@@ -26,7 +26,7 @@ import me.drakeet.multitype.MultiTypeAdapter;
  * Created by SHUA on 2017/3/27.
  */
 public class ImageActivity extends RefreshActivity<RefreshViewInterface, ImagePresenter>
-        implements RefreshViewInterface<FuLi> {
+        implements RefreshViewInterface {
 
     @BindView(R.id.list)
     RecyclerView mRecyclerView;
@@ -37,32 +37,26 @@ public class ImageActivity extends RefreshActivity<RefreshViewInterface, ImagePr
     private ImagePresenter mPresenter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void initViews() {
         setTitle(R.string.bar_title_fuli);
-        initViews();
-        showLoading();
-        mPresenter.fromRealmLoad();
-        topRefresh();
-    }
-
-    private void initViews() {
         final GridLayoutManager layoutManager =
                 new GridLayoutManager(this, SPAN_COUNT);
         mAdapter = new MultiTypeAdapter();
-        mAdapter.register(FuLi.class, new ImageItemBinder());
+        mAdapter.register(Content.class, new ImageItemBinder());
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.addItemDecoration(new ImageSpacItemDecoration
                 (12, SPAN_COUNT, true));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addOnScrollListener(getOnBottomListener(layoutManager));
         mRecyclerView.setAdapter(mAdapter);
+        showLoading();
+        mPresenter.fromRealmLoad();
+        topRefresh();
     }
 
     @Override
     public void showData(List data) {
         mPresenter.isRefresh = false;
-        mPresenter.mMeiZis.clear();
         mAdapter.setItems(data);
         mAdapter.notifyDataSetChanged();
         hideLoading();

@@ -25,12 +25,10 @@ import com.shua.likegank.utils.NetWorkUtils;
 import java.util.List;
 
 import butterknife.BindView;
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import me.drakeet.multitype.MultiTypeAdapter;
 
 public class MainActivity extends RefreshActivity<RefreshViewInterface, HomePresenter>
-        implements NavigationView.OnNavigationItemSelectedListener, RefreshViewInterface<Home> {
+        implements NavigationView.OnNavigationItemSelectedListener, RefreshViewInterface {
 
     @BindView(R.id.list)
     RecyclerView mRecyclerView;
@@ -39,29 +37,24 @@ public class MainActivity extends RefreshActivity<RefreshViewInterface, HomePres
     private HomePresenter mPresenter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void initViews() {
         setTitle(R.string.bar_title_home);
-        initViews();
-        initNavigationView();
-        showLoading();
-        mPresenter.fromRealmLoad();
-        topRefresh();
-    }
-
-    private void initViews() {
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mAdapter = new MultiTypeAdapter();
         mAdapter.register(Home.class, new HomeItemBinder());
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.addOnScrollListener(getOnBottomListener(layoutManager));
         mRecyclerView.setAdapter(mAdapter);
+        showLoading();
+        mPresenter.fromRealmLoad();
+        topRefresh();
+        initNavigationView();
     }
 
     @Override
-    public void showData(List<Home> data) {
+    public void showData(List data) {
         mPresenter.isRefresh = false;
-        mPresenter.mHomes.clear();
+        //mPresenter.mHomes.clear();
         mAdapter.setItems(data);
         mAdapter.notifyDataSetChanged();
         hideLoading();
@@ -118,7 +111,7 @@ public class MainActivity extends RefreshActivity<RefreshViewInterface, HomePres
     }
 
     private void initNavigationView() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this,
                 drawer, mToolbar,
@@ -126,7 +119,7 @@ public class MainActivity extends RefreshActivity<RefreshViewInterface, HomePres
                 R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-        NavigationView mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView mNavigationView = findViewById(R.id.nav_view);
         mNavigationView.setNavigationItemSelectedListener(this);
         mNavigationView.setItemIconTintList(null);
         mNavigationView.setCheckedItem(R.id.nav_home);
@@ -134,7 +127,7 @@ public class MainActivity extends RefreshActivity<RefreshViewInterface, HomePres
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -186,7 +179,7 @@ public class MainActivity extends RefreshActivity<RefreshViewInterface, HomePres
         } else if (id == R.id.nav_about) {
             startActivity(AboutActivity.newIntent(this));
         }
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

@@ -1,33 +1,29 @@
 package com.shua.likegank.presenters;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.widget.Toast;
 
+import com.orhanobut.logger.Logger;
 import com.shua.likegank.R;
 import com.shua.likegank.api.ApiFactory;
 import com.shua.likegank.data.Category;
 import com.shua.likegank.data.GankData;
-import com.shua.likegank.data.LikeGankEntity;
 import com.shua.likegank.data.entity.Android;
 import com.shua.likegank.interfaces.RefreshViewInterface;
 import com.shua.likegank.ui.base.BasePresenter;
 import com.shua.likegank.utils.LikeGankUtils;
 import com.shua.likegank.utils.NetWorkUtils;
-import com.orhanobut.logger.Logger;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import me.drakeet.multitype.Items;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-
-import static android.R.attr.data;
 
 /**
  * ArticlePresenter
@@ -36,33 +32,22 @@ import static android.R.attr.data;
 
 public class AndroidPresenter extends BasePresenter {
 
-    public static final String KEY_ANDROID_PAGE = "android_page";
     public static int mPage = 1;
+    public static final String KEY_ANDROID_PAGE = "ANDROID_PAGE";
+
     public boolean isRefresh = true;
 
     private RefreshViewInterface mView;
-    private Subscription mUnbscribeRealm;
-    private Subscription mUnsubscribeRetrofit;
-    public List<Android> mAndroids = new ArrayList<>();
-    private Realm mRealm = Realm.getDefaultInstance();
+    private Disposable mDisposable;
+    private Disposable mNetWorkDisposable;
+    private Realm mRealm;
 
     public AndroidPresenter(RefreshViewInterface viewInterface) {
         this.mView = viewInterface;
+        mRealm = Realm.getDefaultInstance();
     }
 
-    private List<Android> conversionData(List<LikeGankEntity> list) {
-        for (LikeGankEntity gankEntity : list) {
-            mAndroids.add(new Android(
-                    gankEntity.getPublishedAt(),
-                    gankEntity.getDesc(),
-                    gankEntity.getWho(),
-                    gankEntity.get_id(),
-                    gankEntity.getUrl()));
-        }
-        return mAndroids;
-    }
-
-    private void pareData(List<Android> androids) {
+    private Items pareData(List<Android> androids) {
         Items items = new Items();
         String time1 = LikeGankUtils.timeString(androids.get(0).time);
         String time2 = "";
@@ -76,52 +61,46 @@ public class AndroidPresenter extends BasePresenter {
                 time1 = time2;
             }
         }
-        mView.showData(items);
+        return items;
     }
 
-    private void clearData() {
+    private void deleteData() {
         mRealm.executeTransaction(realm -> realm.delete(Android.class));
     }
 
-    private void saveData(List<Android> data) {
+    private void addData(List<Android> data) {
+        if (isRefresh) deleteData();
         mRealm.executeTransaction(realm -> realm.copyToRealmOrUpdate(data));
     }
 
-    /**
-     * The call is automatically triggered when the local data is updated
-     */
     public void fromRealmLoad() {
-        mUnbscribeRealm = mRealm.where(Android.class)
+        mDisposable = mRealm.where(Android.class)
                 .findAll()
-                .asObservable()
-                .filter(RealmResults::isLoaded)
-                .subscribe(androids -> {
-                    if (androids.size() > 0) pareData(androids);
-                }, throwable -> {
+                .asFlowable()
+                .filter(androids -> androids.size() > 0)
+                .map(this::pareData)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(items -> mView.showData(items), throwable -> {
                     Logger.e(throwable.getMessage());
                     mView.hideLoading();
                 });
     }
 
-    @SuppressLint("WrongConstant")
     public void fromNetWorkLoad() {
         if (NetWorkUtils.isNetworkConnected((Context) mView)) {
-            mUnsubscribeRetrofit = ApiFactory.getGankApi()
+            mNetWorkDisposable = ApiFactory.getGankApi()
                     .getAndroidData(mPage)
                     .filter(gankData -> !gankData.isError())
                     .map(GankData::getResults)
-                    .single(likeGankEntities -> likeGankEntities.size() > 0)
-                    .map(this::conversionData)
+                    .flatMap(Flowable::fromIterable)
+                    .map(gankEntity -> new Android(gankEntity.getPublishedAt(),
+                            gankEntity.getDesc(), gankEntity.getWho(),
+                            gankEntity.get_id(), gankEntity.getUrl()))
+                    .buffer(30)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(data -> {
-                        if (isRefresh) clearData();
-                        saveData(data);
-                    }, throwable -> {
-                        Toast.makeText((Context) mView
-                                , throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                        mView.hideLoading();
-                    });
+                    .subscribe(this::addData);
+
         } else {
             Toast.makeText((Context) mView, R.string.error_net, Toast.LENGTH_SHORT).show();
             mView.hideLoading();
@@ -130,8 +109,8 @@ public class AndroidPresenter extends BasePresenter {
 
     @Override
     protected void unSubscribe() {
-        if (mUnbscribeRealm != null) mUnbscribeRealm.unsubscribe();
-        if (mUnsubscribeRetrofit != null) mUnsubscribeRetrofit.unsubscribe();
+        if (mDisposable != null) mDisposable.dispose();
+        if (mNetWorkDisposable != null) mNetWorkDisposable.dispose();
     }
 
     @Override

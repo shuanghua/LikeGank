@@ -1,12 +1,10 @@
 package com.shua.likegank.ui;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
@@ -22,14 +20,6 @@ public class AboutActivity extends ToolbarActivity {
     TextView mAboutVersion;
 
     private PackageInfo mInfo;
-
-    @SuppressLint("SetTextI18n")
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setTitle(getResources().getString(R.string.about));
-        mAboutVersion.setText("当前版本 V" + getAppVersion());
-    }
 
     private String getAppVersion() {
         PackageManager manager = this.getPackageManager();
@@ -48,6 +38,12 @@ public class AboutActivity extends ToolbarActivity {
     @Override
     protected int contentView() {
         return R.layout.activity_about;
+    }
+
+    @Override
+    protected void initViews() {
+        setTitle(getResources().getString(R.string.about));
+        mAboutVersion.setText("当前版本 V" + getAppVersion());
     }
 
     @Override

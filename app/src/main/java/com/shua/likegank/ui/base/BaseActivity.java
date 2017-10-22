@@ -7,6 +7,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
+import butterknife.ButterKnife;
+
 /**
  * BaseActivity
  * Created by SHUA on 2017/3/6.
@@ -21,10 +23,17 @@ public abstract class BaseActivity<V, T extends BasePresenter<V>> extends AppCom
 
     protected abstract T createPresenter();
 
+    abstract protected int contentView();
+
+    abstract protected void initViews();
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(contentView());
+        ButterKnife.bind(this);
         mBasePresenter = createPresenter();
+        initViews();
         mPreferences = getSharedPreferences(SP_NAME_PAGE, 0);
         if (mBasePresenter != null)
             mBasePresenter.attachView((V) this);

@@ -1,6 +1,10 @@
 package com.shua.likegank;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -27,7 +31,7 @@ public class App extends Application {
     private void setRealm() {
         Realm.init(this);
         RealmConfiguration config = new RealmConfiguration.Builder().build();
-        //Realm.deleteRealm(config);
+        Realm.deleteRealm(config);
         Realm.setDefaultConfiguration(config);
     }
 }

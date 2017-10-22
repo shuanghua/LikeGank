@@ -1,6 +1,5 @@
 package com.shua.likegank.presenters;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.widget.Toast;
@@ -9,23 +8,21 @@ import com.shua.likegank.R;
 import com.shua.likegank.api.ApiFactory;
 import com.shua.likegank.data.Category;
 import com.shua.likegank.data.GankData;
-import com.shua.likegank.data.LikeGankEntity;
 import com.shua.likegank.data.entity.IOS;
 import com.shua.likegank.interfaces.RefreshViewInterface;
 import com.shua.likegank.ui.base.BasePresenter;
 import com.shua.likegank.utils.LikeGankUtils;
 import com.shua.likegank.utils.NetWorkUtils;
-import com.orhanobut.logger.Logger;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import me.drakeet.multitype.Items;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * ArticlePresenter
@@ -34,41 +31,31 @@ import rx.schedulers.Schedulers;
 
 public class IOSPresenter extends BasePresenter {
 
-    public static final String KEY_IOS_PAGE = "iOS_page";
+    public static int mPage = 1;
+    public static final String KEY_IOS_PAGE = "IOS_PAGE";
 
     public boolean isRefresh = true;
-    public static int mPage = 1;
 
     private RefreshViewInterface mView;
-    private Realm mRealm = Realm.getDefaultInstance();
-    public List<IOS> mIOSs = new ArrayList<>();
-    private Subscription mUnbscribeRealm;
-    private Subscription mUnsubscribeRetrofit;
+    private Realm mRealm;
+
+    private Disposable mDisposable;
+    private Disposable mNetWorkDisposable;
 
     public IOSPresenter(RefreshViewInterface viewInterface) {
         this.mView = viewInterface;
+        mRealm = Realm.getDefaultInstance();
     }
 
-    private List<IOS> conversionData(List<LikeGankEntity> list) {
-        for (LikeGankEntity gankEntity : list) {
-            mIOSs.add(new IOS(
-                    gankEntity.getPublishedAt(),
-                    gankEntity.getDesc(),
-                    gankEntity.getWho(),
-                    gankEntity.get_id(),
-                    gankEntity.getUrl()));
-        }
-        return mIOSs;
-    }
-
-    private void pareData(List<IOS> IOSs) {
+    private void pareData(List<IOS> iosRealmResults) {
         Items items = new Items();
-        String time1 = LikeGankUtils.timeString(IOSs.get(0).time);
+        String time1 = LikeGankUtils.timeString(iosRealmResults.get(0).time);
         String time2 = "";
         items.add(new Category(time1));
-        for (int i = 0; i < IOSs.size(); i++) {
-            items.add(IOSs.get(i));
-            if (i < IOSs.size() - 1) time2 = LikeGankUtils.timeString(IOSs.get(i + 1).time);
+        for (int i = 0; i < iosRealmResults.size(); i++) {
+            items.add(iosRealmResults.get(i));
+            if (i < iosRealmResults.size() - 1)
+                time2 = LikeGankUtils.timeString(iosRealmResults.get(i + 1).time);
             if (!time1.equals(time2)) {
                 items.add(new Category(time2));
                 time1 = time2;
@@ -77,59 +64,52 @@ public class IOSPresenter extends BasePresenter {
         mView.showData(items);
     }
 
-    /**
-     * The call is automatically triggered when the local data is updated
-     */
     public void fromRealmLoad() {
-        mUnbscribeRealm = mRealm.where(IOS.class)
+        mDisposable = mRealm.where(IOS.class)
                 .findAll()
-                .asObservable()
+                .asFlowable()
                 .filter(RealmResults::isLoaded)
-                .subscribe(IOSs -> {
-                    if (IOSs.size() > 0) pareData(IOSs);
-                }, throwable -> {
-                    Logger.e(throwable.getMessage());
-                    mView.hideLoading();
-                });
+                .subscribe(iosRealmResults -> {
+                    if (iosRealmResults.size() > 0) pareData(iosRealmResults);
+                }, throwable -> mView.hideLoading());
     }
 
-    @SuppressLint("WrongConstant")
     public void fromNetWorkLoad() {
         if (NetWorkUtils.isNetworkConnected((Context) mView)) {
-            mUnsubscribeRetrofit = ApiFactory.getGankApi()
+            mNetWorkDisposable = ApiFactory.getGankApi()
                     .getiOSData(mPage)
                     .filter(gankData -> !gankData.isError())
                     .map(GankData::getResults)
-                    .single(likeGankEntities -> likeGankEntities.size() > 0)
-                    .map(this::conversionData)
+                    .flatMap(Flowable::fromIterable)
+                    .map(gankEntity -> new IOS(gankEntity.getPublishedAt(),
+                            gankEntity.getDesc(),
+                            gankEntity.getWho(),
+                            gankEntity.get_id(),
+                            gankEntity.getUrl()))
+                    .buffer(30)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(data -> {
-                        if (isRefresh) clearData();
-                        saveData(data);
-                    }, throwable -> {
-                        Toast.makeText((Context) mView
-                                , throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                        mView.hideLoading();
-                    });
+                    .subscribe(this::addData);
+
         } else {
             Toast.makeText((Context) mView, R.string.error_net, Toast.LENGTH_SHORT).show();
             mView.hideLoading();
         }
     }
 
-    private void clearData() {
+    private void deleteData() {
         mRealm.executeTransaction(realm -> realm.delete(IOS.class));
     }
 
-    private void saveData(List<IOS> data) {
+    private void addData(List<IOS> data) {
+        if (isRefresh) deleteData();
         mRealm.executeTransaction(realm -> realm.copyToRealmOrUpdate(data));
     }
 
     @Override
     protected void unSubscribe() {
-        if (mUnbscribeRealm != null) mUnbscribeRealm.unsubscribe();
-        if (mUnsubscribeRetrofit != null) mUnsubscribeRetrofit.unsubscribe();
+        if (mDisposable != null) mDisposable.dispose();
+        if (mNetWorkDisposable != null) mNetWorkDisposable.dispose();
     }
 
     @Override

@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.shua.likegank.R;
-import com.shua.likegank.data.entity.FuLi;
+import com.shua.likegank.data.entity.Content;
 import com.shua.likegank.ui.PhotoViewActivity;
 
 import me.drakeet.multitype.ItemViewBinder;
@@ -23,7 +23,7 @@ import me.drakeet.multitype.ItemViewBinder;
  * Created by SHUA on 2017/2/28.
  */
 
-public class ImageItemBinder extends ItemViewBinder<FuLi,
+public class ImageItemBinder extends ItemViewBinder<Content,
         ImageItemBinder.MeiziHolder> {
 
     /**
@@ -42,7 +42,7 @@ public class ImageItemBinder extends ItemViewBinder<FuLi,
 
     @Override
     protected void onBindViewHolder(@NonNull MeiziHolder holder
-            , @NonNull FuLi data) {
+            , @NonNull Content data) {
         Context context = holder.mImageView.getContext();
 
         Glide.with(context)

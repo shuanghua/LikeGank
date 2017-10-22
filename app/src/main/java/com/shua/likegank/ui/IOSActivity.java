@@ -22,7 +22,7 @@ import butterknife.BindView;
 import me.drakeet.multitype.MultiTypeAdapter;
 
 public class IOSActivity extends RefreshActivity<RefreshViewInterface, IOSPresenter>
-        implements RefreshViewInterface<IOS> {
+        implements RefreshViewInterface {
 
     @BindView(R.id.list)
     RecyclerView mRecycler;
@@ -30,25 +30,6 @@ public class IOSActivity extends RefreshActivity<RefreshViewInterface, IOSPresen
     private MultiTypeAdapter mAdapter;
     private IOSPresenter mPresenter;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setTitle("IOS");
-        initViews();
-        showLoading();
-        mPresenter.fromRealmLoad();
-        topRefresh();
-    }
-
-    private void initViews() {
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        mAdapter = new MultiTypeAdapter();
-        mAdapter.register(Category.class, new CategoryItemBinder());
-        mAdapter.register(IOS.class, new IOSItemBinder());
-        mRecycler.setLayoutManager(layoutManager);
-        mRecycler.addOnScrollListener(getOnBottomListener(layoutManager));
-        mRecycler.setAdapter(mAdapter);
-    }
 
     @Override
     protected IOSPresenter createPresenter() {
@@ -57,9 +38,8 @@ public class IOSActivity extends RefreshActivity<RefreshViewInterface, IOSPresen
     }
 
     @Override
-    public void showData(List<IOS> data) {
+    public void showData(List data) {
         mPresenter.isRefresh = false;
-        mPresenter.mIOSs.clear();
         mAdapter.setItems(data);
         mAdapter.notifyDataSetChanged();
         hideLoading();
@@ -149,6 +129,22 @@ public class IOSActivity extends RefreshActivity<RefreshViewInterface, IOSPresen
     @Override
     protected int contentView() {
         return R.layout.activity_ios;
+    }
+
+    @Override
+    protected void initViews() {
+        setTitle("IOS");
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        mAdapter = new MultiTypeAdapter();
+        mAdapter.register(Category.class, new CategoryItemBinder());
+        mAdapter.register(IOS.class, new IOSItemBinder());
+        mRecycler.setLayoutManager(layoutManager);
+        mRecycler.addOnScrollListener(getOnBottomListener(layoutManager));
+        mRecycler.setAdapter(mAdapter);
+
+        showLoading();
+        mPresenter.fromRealmLoad();
+        topRefresh();
     }
 
     RecyclerView.OnScrollListener getOnBottomListener(LinearLayoutManager layoutManager) {

@@ -54,7 +54,7 @@ public class LicenseActivity extends ToolbarActivity implements LicenseViewInter
         return mPresenter;
     }
 
-    private void initViews() {
+    protected void initViews() {
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRefreshLayout.setEnabled(false);
         mAdapter = new MultiTypeAdapter();

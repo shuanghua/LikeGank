@@ -23,14 +23,11 @@ public abstract class ToolbarActivity extends BaseActivity {
     @BindView(R.id.toolbar)
     protected Toolbar mToolbar;
 
-    abstract protected int contentView();
-
     abstract protected boolean addBack();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(contentView());
         ButterKnife.bind(this);
         initToolbar(addBack());
     }

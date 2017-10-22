@@ -2,9 +2,9 @@ package com.shua.likegank.api;
 
 import com.shua.likegank.data.GankData;
 
+import io.reactivex.Flowable;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
-import rx.Observable;
 
 /**
  * GankApi
@@ -13,14 +13,14 @@ import rx.Observable;
 public interface GankApi {
 
     @GET("data/福利/20/{page}")
-    Observable<GankData> getFuLiData(@Path("page") int page);
+    Flowable<GankData> getFuLiData(@Path("page") int page);
 
     @GET("data/all/30/{page}")
-    Observable<GankData> getHomeData(@Path("page") int page);
+    Flowable<GankData> getHomeData(@Path("page") int page);
 
     @GET("data/Android/30/{page}")
-    Observable<GankData> getAndroidData(@Path("page") int page);
+    Flowable<GankData> getAndroidData(@Path("page") int page);
 
-    @GET("data/iOS/40/{page}")
-    Observable<GankData> getiOSData(@Path("page") int page);
+    @GET("data/iOS/30/{page}")
+    Flowable<GankData> getiOSData(@Path("page") int page);
 }
