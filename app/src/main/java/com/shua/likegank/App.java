@@ -1,11 +1,11 @@
 package com.shua.likegank;
 
-import android.annotation.SuppressLint;
 import android.app.Application;
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 
+import com.crashlytics.android.Crashlytics;
+import com.squareup.leakcanary.LeakCanary;
+
+import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
@@ -19,14 +19,15 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        //setLeakCanary();
+        setLeakCanary();
         setRealm();
+        Fabric.with(this, new Crashlytics());
     }
 
-//    private void setLeakCanary() {
-//        if (LeakCanary.isInAnalyzerProcess(this)) return;
-//        LeakCanary.install(this);
-//    }
+    private void setLeakCanary() {
+        if (LeakCanary.isInAnalyzerProcess(this)) return;
+        LeakCanary.install(this);
+    }
 
     private void setRealm() {
         Realm.init(this);

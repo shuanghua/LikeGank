@@ -29,6 +29,7 @@ import com.shua.likegank.R;
 /**
  * Shares
  * Created by drakeet on 8/17/15.
+ * Modified by ShuangHua on 16/8/17.
  */
 public class Shares {
 
@@ -44,8 +45,7 @@ public class Shares {
         context.startActivity(Intent.createChooser(shareIntent, title));
     }
 
-
-    public static void share(Context context, String extraText) {
+    private static void share(Context context, String extraText) {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.share));

@@ -1,5 +1,6 @@
 package com.shua.likegank.ui;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -9,7 +10,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.shua.likegank.R;
-import com.shua.likegank.ui.base.BasePresenter;
 import com.shua.likegank.ui.base.ToolbarActivity;
 
 import butterknife.BindView;
@@ -18,8 +18,15 @@ import butterknife.OnClick;
 public class AboutActivity extends ToolbarActivity {
     @BindView(R.id.about_version)
     TextView mAboutVersion;
-
     private PackageInfo mInfo;
+
+    public static Intent newIntent(Context context) {
+        return new Intent(context, AboutActivity.class);
+    }
+
+    @Override
+    protected void initPresenter() {
+    }
 
     private String getAppVersion() {
         PackageManager manager = this.getPackageManager();
@@ -31,8 +38,9 @@ public class AboutActivity extends ToolbarActivity {
         return mInfo.versionName;
     }
 
-    public static Intent newIntent(Context context) {
-        return new Intent(context, AboutActivity.class);
+    @Override
+    protected boolean addBack() {
+        return true;
     }
 
     @Override
@@ -40,20 +48,11 @@ public class AboutActivity extends ToolbarActivity {
         return R.layout.activity_about;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void initViews() {
         setTitle(getResources().getString(R.string.about));
         mAboutVersion.setText("当前版本 V" + getAppVersion());
-    }
-
-    @Override
-    protected boolean addBack() {
-        return true;
-    }
-
-    @Override
-    protected BasePresenter createPresenter() {
-        return null;
     }
 
     @OnClick({R.id.about_likegank, R.id.about_gank, R.id.about_meizi, R.id.about_open_license})
@@ -69,6 +68,7 @@ public class AboutActivity extends ToolbarActivity {
                     startActivity(intent);
                 }
                 break;
+
             case R.id.about_gank:
                 intent.setAction(Intent.ACTION_VIEW);
                 uri = Uri.parse(getString(R.string.gank_link));
@@ -77,6 +77,7 @@ public class AboutActivity extends ToolbarActivity {
                     startActivity(intent);
                 }
                 break;
+
             case R.id.about_meizi:
                 intent.setAction(Intent.ACTION_VIEW);
                 uri = Uri.parse(getString(R.string.meizi_github));
@@ -85,6 +86,7 @@ public class AboutActivity extends ToolbarActivity {
                     startActivity(intent);
                 }
                 break;
+
             case R.id.about_open_license:
                 startActivity(LicenseActivity.newIntent(this));
                 break;

@@ -19,15 +19,13 @@ import me.drakeet.multitype.ItemViewBinder;
  * Created by SHUA on 2017/5/2.
  */
 
-public class AndroidItemBinder
-        extends ItemViewBinder<Android, AndroidItemBinder.ViewHolder> {
+public class AndroidItemBinder extends ItemViewBinder<Android, AndroidItemBinder.ViewHolder> {
 
     @NonNull
     @Override
     protected ViewHolder onCreateViewHolder(@NonNull LayoutInflater layoutInflater,
                                             @NonNull ViewGroup viewGroup) {
-        View view = layoutInflater.inflate(R.layout.item_content,
-                viewGroup, false);
+        View view = layoutInflater.inflate(R.layout.item_content, viewGroup, false);
         return new ViewHolder(view);
     }
 
@@ -38,13 +36,13 @@ public class AndroidItemBinder
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView content;
         String url;
         String title;
+        private TextView content;
 
         ViewHolder(View itemView) {
             super(itemView);
-            this.content = (TextView) itemView.findViewById(R.id.item_content);
+            this.content = itemView.findViewById(R.id.item_content);
             itemView.setOnClickListener(v -> v.getContext().startActivity(WebViewActivity
                     .newIntent(v.getContext(), url, title)));
         }

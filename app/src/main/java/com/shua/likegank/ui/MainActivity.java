@@ -15,23 +15,22 @@ import android.view.MenuItem;
 
 import com.shua.likegank.R;
 import com.shua.likegank.data.entity.Home;
-import com.shua.likegank.interfaces.RefreshViewInterface;
+import com.shua.likegank.interfaces.HomeViewInterface;
 import com.shua.likegank.presenters.HomePresenter;
 import com.shua.likegank.ui.base.RefreshActivity;
 import com.shua.likegank.ui.itembinder.HomeItemBinder;
-import com.shua.likegank.utils.NetWorkUtils;
 
 import java.util.List;
 
 import butterknife.BindView;
 import me.drakeet.multitype.MultiTypeAdapter;
 
-public class MainActivity extends RefreshActivity<RefreshViewInterface, HomePresenter>
-        implements NavigationView.OnNavigationItemSelectedListener, RefreshViewInterface {
+public class MainActivity extends RefreshActivity implements
+        NavigationView.OnNavigationItemSelectedListener, HomeViewInterface {
 
     @BindView(R.id.list)
     RecyclerView mRecyclerView;
-
+    LinearLayoutManager mLinearLayoutManager;
     private MultiTypeAdapter mAdapter;
     private HomePresenter mPresenter;
 
@@ -39,45 +38,25 @@ public class MainActivity extends RefreshActivity<RefreshViewInterface, HomePres
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initNavigationView();
-    }
-
-    @Override
-    protected void initViews() {
-        setTitle(R.string.bar_title_home);
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        mAdapter = new MultiTypeAdapter();
-        mAdapter.register(Home.class, new HomeItemBinder());
-        mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.addOnScrollListener(getOnBottomListener(layoutManager));
-        mRecyclerView.setAdapter(mAdapter);
-        showLoading();
         mPresenter.fromRealmLoad();
         refresh();
     }
 
+
     @Override
-    public void showData(List data) {
-        mPresenter.isRefresh = false;
-        mAdapter.setItems(data);
-        mAdapter.notifyDataSetChanged();
-        hideLoading();
+    protected void initViews() {
+        setTitle(R.string.bar_title_home);
+        mLinearLayoutManager = new LinearLayoutManager(this);
+        mAdapter = new MultiTypeAdapter();
+        mAdapter.register(Home.class, new HomeItemBinder());
+        mRecyclerView.setLayoutManager(mLinearLayoutManager);
+        mRecyclerView.addOnScrollListener(getOnBottomListener(mLinearLayoutManager));
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
     protected void refresh() {
-
-        if (NetWorkUtils.isNetworkConnected(this)) {
-            mPresenter.isRefresh = true;
-            HomePresenter.mPage = 1;
-            mPresenter.fromNetWorkLoad();
-        } else {
-            showToast(getString(R.string.error_net));
-            hideLoading();
-            if (mPreferences != null) {
-                int page = mPreferences.getInt(HomePresenter.KEY_HOME_PAGE, 1);
-                if (page > HomePresenter.mPage) HomePresenter.mPage = page;
-            }
-        }
+        mPresenter.requestData(HomePresenter.REQUEST_REFRESH);
     }
 
     private void bottomListener(LinearLayoutManager layoutManager) {
@@ -86,38 +65,29 @@ public class MainActivity extends RefreshActivity<RefreshViewInterface, HomePres
         lastItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
         firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
         if (lastItemPosition == itemCount - 1 && lastItemPosition - firstItemPosition > 0) {
-            if (NetWorkUtils.isNetworkConnected(this)) {
-                showLoading();
-                HomePresenter.mPage++;
-                mPresenter.fromNetWorkLoad();
-            } else {
-                showToast(getString(R.string.error_net));
-                hideLoading();
-            }
+            mPresenter.requestData(HomePresenter.REQUEST_LOAD_MORE);
         } else if (firstItemPosition == 0) {
-            setToolbarElevation(0);
+            isTransparent(true);
         } else {
-            setToolbarElevation(6);
+            isTransparent(false);
         }
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(PAGE, HomePresenter.mPage);
+    protected void initPresenter() {
+        mPresenter = new HomePresenter(this);
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState != null)
-            HomePresenter.mPage = savedInstanceState.getInt(PAGE);
+    public void showData(List<Home> result) {
+        mAdapter.setItems(result);
+        mAdapter.notifyDataSetChanged();
+        hideLoading();
     }
 
     private void initNavigationView() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this,
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,
                 drawer, mToolbar,
                 R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close);
@@ -132,11 +102,8 @@ public class MainActivity extends RefreshActivity<RefreshViewInterface, HomePres
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
+        if (drawer.isDrawerOpen(GravityCompat.START)) drawer.closeDrawer(GravityCompat.START);
+        else super.onBackPressed();
     }
 
     @Override
@@ -154,9 +121,7 @@ public class MainActivity extends RefreshActivity<RefreshViewInterface, HomePres
                 intent.setAction(Intent.ACTION_VIEW);
                 Uri uri = Uri.parse(getString(R.string.gank_link));
                 intent.setData(uri);
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(intent);
-                }
+                if (intent.resolveActivity(getPackageManager()) != null) startActivity(intent);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -188,15 +153,15 @@ public class MainActivity extends RefreshActivity<RefreshViewInterface, HomePres
     }
 
     @Override
-    protected HomePresenter createPresenter() {
-        mPresenter = new HomePresenter(this);
-        return mPresenter;
-    }
-
-    @Override
     protected void onPause() {
         super.onPause();
         hideLoading();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mPresenter.unSubscribe();
     }
 
     @Override

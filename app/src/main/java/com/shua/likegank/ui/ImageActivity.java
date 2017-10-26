@@ -1,7 +1,6 @@
 package com.shua.likegank.ui;
 
 import android.graphics.Rect;
-import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,11 +9,10 @@ import android.view.View;
 
 import com.shua.likegank.R;
 import com.shua.likegank.data.entity.Content;
-import com.shua.likegank.interfaces.RefreshViewInterface;
+import com.shua.likegank.interfaces.ImageViewInterface;
 import com.shua.likegank.presenters.ImagePresenter;
 import com.shua.likegank.ui.base.RefreshActivity;
 import com.shua.likegank.ui.itembinder.ImageItemBinder;
-import com.shua.likegank.utils.NetWorkUtils;
 
 import java.util.List;
 
@@ -25,14 +23,11 @@ import me.drakeet.multitype.MultiTypeAdapter;
  * NetWork to Realm to View
  * Created by SHUA on 2017/3/27.
  */
-public class ImageActivity extends RefreshActivity<RefreshViewInterface, ImagePresenter>
-        implements RefreshViewInterface {
-
-    @BindView(R.id.list)
-    RecyclerView mRecyclerView;
+public class ImageActivity extends RefreshActivity implements ImageViewInterface {
 
     private final static int SPAN_COUNT = 3;
-
+    @BindView(R.id.list)
+    RecyclerView mRecyclerView;
     private MultiTypeAdapter mAdapter;
     private ImagePresenter mPresenter;
 
@@ -55,33 +50,13 @@ public class ImageActivity extends RefreshActivity<RefreshViewInterface, ImagePr
     }
 
     @Override
-    public void showData(List data) {
-        mPresenter.isRefresh = false;
-        mAdapter.setItems(data);
-        mAdapter.notifyDataSetChanged();
-        hideLoading();
-    }
-
-    @Override
-    protected ImagePresenter createPresenter() {
+    protected void initPresenter() {
         mPresenter = new ImagePresenter(this);
-        return mPresenter;
     }
 
     @Override
     protected void refresh() {
-        if (NetWorkUtils.isNetworkConnected(this)) {
-            mPresenter.isRefresh = true;
-            ImagePresenter.mPage = 1;
-            mPresenter.fromNetWorkLoad();
-        } else {
-            showToast(getString(R.string.error_net));
-            hideLoading();
-            if (mPreferences != null) {
-                int page = mPreferences.getInt(ImagePresenter.KEY_IMAGE_PAGE, 1);
-                if (page > ImagePresenter.mPage) ImagePresenter.mPage = page;
-            }
-        }
+        mPresenter.requestData(ImagePresenter.REQUEST_REFRESH);
     }
 
     private void bottomListener(LinearLayoutManager layoutManager) {
@@ -90,32 +65,11 @@ public class ImageActivity extends RefreshActivity<RefreshViewInterface, ImagePr
         lastItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
         firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
         if (lastItemPosition == itemCount - 1 && lastItemPosition - firstItemPosition > 0) {
-            if (NetWorkUtils.isNetworkConnected(this)) {
-                showLoading();
-                ImagePresenter.mPage++;
-                mPresenter.fromNetWorkLoad();
-            } else {
-                showToast(getString(R.string.error_net));
-                hideLoading();
-            }
+            mPresenter.requestData(ImagePresenter.REQUEST_LOAD_MORE);
         } else if (firstItemPosition == 0) {
-            setToolbarElevation(0);
+            isTransparent(true);
         } else {
-            setToolbarElevation(6);
-        }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(PAGE, ImagePresenter.mPage);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState != null) {
-            ImagePresenter.mPage = savedInstanceState.getInt(PAGE);
+            isTransparent(true);
         }
     }
 
@@ -159,6 +113,13 @@ public class ImageActivity extends RefreshActivity<RefreshViewInterface, ImagePr
                 bottomListener(layoutManager);
             }
         };
+    }
+
+    @Override
+    public void showData(List<Content> result) {
+        mAdapter.setItems(result);
+        mAdapter.notifyDataSetChanged();
+        hideLoading();
     }
 
     class ImageSpacItemDecoration extends RecyclerView.ItemDecoration {

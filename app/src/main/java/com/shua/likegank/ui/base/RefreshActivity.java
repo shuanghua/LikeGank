@@ -13,12 +13,11 @@ import butterknife.BindView;
  * Created by SHUA on 2017/3/16.
  */
 
-public abstract class RefreshActivity<V, P extends BasePresenter> extends ToolbarActivity {
-
-    @BindView(R.id.refresh_layout)
-    SwipeRefreshLayout mRefreshLayout;
+public abstract class RefreshActivity extends ToolbarActivity {
 
     protected final static String PAGE = "PAGE";
+    @BindView(R.id.refresh_layout)
+    SwipeRefreshLayout mRefreshLayout;
 
     protected abstract void refresh();
 
@@ -31,13 +30,7 @@ public abstract class RefreshActivity<V, P extends BasePresenter> extends Toolba
 
     public void initRefresh() {
         if (mRefreshLayout != null) {
-            mRefreshLayout.setOnRefreshListener(
-                    new SwipeRefreshLayout.OnRefreshListener() {
-                        @Override
-                        public void onRefresh() {
-                            refresh();
-                        }
-                    });
+            mRefreshLayout.setOnRefreshListener(this::refresh);
         }
     }
 
@@ -46,12 +39,8 @@ public abstract class RefreshActivity<V, P extends BasePresenter> extends Toolba
             return;
         }
         if (!isRefresh) {
-            mRefreshLayout.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mRefreshLayout.setRefreshing(false);
-                }
-            }, 300);
+            mRefreshLayout.postDelayed(() ->
+                    mRefreshLayout.setRefreshing(false), 600);
         } else {
             mRefreshLayout.setRefreshing(true);
         }

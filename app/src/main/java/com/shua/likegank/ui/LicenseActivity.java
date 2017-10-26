@@ -16,9 +16,8 @@ import com.shua.likegank.ui.base.ToolbarActivity;
 import com.shua.likegank.ui.itembinder.CategoryItemBinder;
 import com.shua.likegank.ui.itembinder.ContentItemBinder;
 
-import java.util.List;
-
 import butterknife.BindView;
+import me.drakeet.multitype.Items;
 import me.drakeet.multitype.MultiTypeAdapter;
 
 public class LicenseActivity extends ToolbarActivity implements LicenseViewInterface {
@@ -29,6 +28,10 @@ public class LicenseActivity extends ToolbarActivity implements LicenseViewInter
 
     private LicensePresenter mPresenter;
     private MultiTypeAdapter mAdapter;
+
+    public static Intent newIntent(Context context) {
+        return new Intent(context, LicenseActivity.class);
+    }
 
     @Override
     protected int contentView() {
@@ -48,12 +51,6 @@ public class LicenseActivity extends ToolbarActivity implements LicenseViewInter
         mPresenter.loadData();
     }
 
-    @Override
-    protected LicensePresenter createPresenter() {//onCreate
-        mPresenter = new LicensePresenter(this);
-        return mPresenter;
-    }
-
     protected void initViews() {
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRefreshLayout.setEnabled(false);
@@ -65,16 +62,12 @@ public class LicenseActivity extends ToolbarActivity implements LicenseViewInter
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void initPresenter() {
+        mPresenter = new LicensePresenter(this);
     }
 
     @Override
-    public void showData(List data) {
-        mAdapter.setItems(data);
-    }
-
-    public static Intent newIntent(Context context) {
-        return new Intent(context, LicenseActivity.class);
+    public void showData(Items result) {
+        mAdapter.setItems(result);
     }
 }

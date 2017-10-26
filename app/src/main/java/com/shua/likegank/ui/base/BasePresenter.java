@@ -1,7 +1,5 @@
 package com.shua.likegank.ui.base;
 
-import android.content.SharedPreferences;
-
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 
@@ -10,21 +8,20 @@ import java.lang.ref.WeakReference;
  * Created by moshu on 2017/5/17.
  */
 
-public abstract class BasePresenter<T> {
+public abstract class BasePresenter<V> {
 
-    private Reference<T> mViewRef;
+    private Reference<V> mViewRef;
 
-
-    void attachView(T view) {
-        mViewRef = new WeakReference<T>(view);
-    }
-
-    protected T getView() {
+    protected V getView() {
         return mViewRef.get();
     }
 
     private boolean isViewAttached() {
         return mViewRef != null && mViewRef.get() != null;
+    }
+
+    void attachView(V view) {
+        mViewRef = new WeakReference<>(view);
     }
 
     void detachView() {
@@ -33,7 +30,4 @@ public abstract class BasePresenter<T> {
             mViewRef = null;
         }
     }
-
-    protected abstract void unSubscribe();
-    protected abstract void savePage(SharedPreferences sp);
 }

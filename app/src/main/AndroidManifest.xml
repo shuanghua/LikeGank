@@ -32,6 +32,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="Your Fabric ApiKey" />
+
         <activity
             android:name=".ui.ImageActivity"
             android:launchMode="singleTask"
@@ -42,7 +47,6 @@
             android:theme="@style/AppTheme.PhotoView" />
         <activity
             android:name=".ui.WebViewActivity"
-            android:label="@string/title_activity_web_view"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

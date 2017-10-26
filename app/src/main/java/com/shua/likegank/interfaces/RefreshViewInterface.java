@@ -1,16 +1,9 @@
 package com.shua.likegank.interfaces;
 
-import java.util.List;
-
-/**
- * RefreshInterface
- * Created by moshu on 2017/5/17.
- */
-
-public interface RefreshViewInterface {
+public interface RefreshViewInterface<T> extends BaseViewInterface<T> {
     void showLoading();
 
     void hideLoading();
 
-    void showData(List data);
+    //void showData(List data);
 }

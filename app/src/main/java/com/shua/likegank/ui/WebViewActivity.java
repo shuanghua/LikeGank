@@ -13,7 +13,6 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import com.shua.likegank.R;
-import com.shua.likegank.ui.base.BasePresenter;
 import com.shua.likegank.ui.base.ToolbarActivity;
 import com.shua.likegank.utils.LikeGankUtils;
 
@@ -24,14 +23,20 @@ import static android.view.View.VISIBLE;
 
 public class WebViewActivity extends ToolbarActivity {
 
+    private static final String EXTRA_URL = "URL";
+    private static final String EXTRA_TITLE = "TITLE";
     @BindView(R.id.webView)
     WebView mWebView;
     @BindView(R.id.progressBar)
     ProgressBar mProgressBar;
-
     private String mUrl;
-    private static final String EXTRA_URL = "URL";
-    private static final String EXTRA_TITLE = "TITLE";
+
+    public static Intent newIntent(Context context, String url, String title) {
+        Intent intent = new Intent(context, WebViewActivity.class);
+        intent.putExtra(EXTRA_URL, url);
+        intent.putExtra(EXTRA_TITLE, title);
+        return intent;
+    }
 
     @Override
     protected int contentView() {
@@ -64,35 +69,12 @@ public class WebViewActivity extends ToolbarActivity {
     }
 
     @Override
-    protected boolean addBack() {
-        return true;
+    protected void initPresenter() {
     }
 
     @Override
-    protected BasePresenter createPresenter() {
-        return null;
-    }
-
-    public class WebChromeClient extends android.webkit.WebChromeClient {
-        @SuppressLint("WrongConstant")
-        @Override
-        public void onProgressChanged(WebView view, int newProgress) {
-            if (newProgress == 100) {
-                mProgressBar.setVisibility(GONE);
-            } else {
-                if (mProgressBar.getVisibility() == GONE)
-                    mProgressBar.setVisibility(VISIBLE);
-                mProgressBar.setProgress(newProgress);
-            }
-            super.onProgressChanged(view, newProgress);
-        }
-    }
-
-    public static Intent newIntent(Context context, String url, String title) {
-        Intent intent = new Intent(context, WebViewActivity.class);
-        intent.putExtra(EXTRA_URL, url);
-        intent.putExtra(EXTRA_TITLE, title);
-        return intent;
+    protected boolean addBack() {
+        return true;
     }
 
     @Override
@@ -110,7 +92,7 @@ public class WebViewActivity extends ToolbarActivity {
                 return true;
             case R.id.action_copy_url:
                 LikeGankUtils.copyToClipBoard
-                        (this, mWebView.getUrl(), "复制成功");
+                        (this, mWebView.getUrl());
                 return true;
             case R.id.action_open_url:
                 Intent intent = new Intent();
@@ -141,5 +123,20 @@ public class WebViewActivity extends ToolbarActivity {
             finish();
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    public class WebChromeClient extends android.webkit.WebChromeClient {
+        @SuppressLint("WrongConstant")
+        @Override
+        public void onProgressChanged(WebView view, int newProgress) {
+            if (newProgress == 100) {
+                mProgressBar.setVisibility(GONE);
+            } else {
+                if (mProgressBar.getVisibility() == GONE)
+                    mProgressBar.setVisibility(VISIBLE);
+                mProgressBar.setProgress(newProgress);
+            }
+            super.onProgressChanged(view, newProgress);
+        }
     }
 }

@@ -40,6 +40,10 @@ import io.reactivex.Flowable;
 import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.schedulers.Schedulers;
 
+/**
+ * Created by drakeet on 8/17/15.
+ * Modified by ShuangHua on 20/10/17.
+ */
 public class RxSave {
     public static Flowable<Uri> saveImageAndGetPathObservable(Context context, String url, String title) {
         return Flowable.create((FlowableOnSubscribe<Bitmap>) subscribe -> {
@@ -58,9 +62,7 @@ public class RxSave {
         }, BackpressureStrategy.BUFFER)
                 .flatMap(bitmap -> {
                     File appDir = new File(Environment.getExternalStorageDirectory(), "LikeGank");
-                    if (!appDir.exists()) {
-                        appDir.mkdir();
-                    }
+                    if (!appDir.exists()) appDir.mkdir();
                     String fileName = title.replace('/', '-') + ".jpg";
                     File file = new File(appDir, fileName);
                     try {
@@ -72,6 +74,7 @@ public class RxSave {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+
                     Uri uri;
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         uri = FileProvider.getUriForFile(context,

@@ -1,20 +1,18 @@
 package com.shua.likegank.presenters;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.widget.Toast;
 
-import com.orhanobut.logger.Logger;
 import com.shua.likegank.R;
 import com.shua.likegank.api.ApiFactory;
 import com.shua.likegank.data.Category;
 import com.shua.likegank.data.GankData;
 import com.shua.likegank.data.entity.Android;
-import com.shua.likegank.interfaces.RefreshViewInterface;
-import com.shua.likegank.ui.base.BasePresenter;
+import com.shua.likegank.interfaces.AndroidViewInterface;
 import com.shua.likegank.utils.LikeGankUtils;
 import com.shua.likegank.utils.NetWorkUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Flowable;
@@ -22,29 +20,27 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
-import io.realm.RealmResults;
 import me.drakeet.multitype.Items;
 
 /**
- * ArticlePresenter
+ * AndroidPresenter
  * Created by moshu on 2017/5/13.
  */
 
-public class AndroidPresenter extends BasePresenter {
+public class AndroidPresenter extends NetWorkBasePresenter<AndroidViewInterface> {
 
-    public static int mPage = 1;
-    public static final String KEY_ANDROID_PAGE = "ANDROID_PAGE";
-
-    public boolean isRefresh = true;
-
-    private RefreshViewInterface mView;
+    public static final int REQUEST_REFRESH = 1;
+    public static final int REQUEST_LOAD_MORE = 2;
+    private static int mPage = 1;
+    private Realm mRealm;
+    private List<Android> mList;
     private Disposable mDisposable;
     private Disposable mNetWorkDisposable;
-    private Realm mRealm;
 
-    public AndroidPresenter(RefreshViewInterface viewInterface) {
-        this.mView = viewInterface;
+    public AndroidPresenter(AndroidViewInterface viewInterface) {
+        mView = viewInterface;
         mRealm = Realm.getDefaultInstance();
+        mList = new ArrayList<>();
     }
 
     private Items pareData(List<Android> androids) {
@@ -68,8 +64,7 @@ public class AndroidPresenter extends BasePresenter {
         mRealm.executeTransaction(realm -> realm.delete(Android.class));
     }
 
-    private void addData(List<Android> data) {
-        if (isRefresh) deleteData();
+    private void saveData(List<Android> data) {
         mRealm.executeTransaction(realm -> realm.copyToRealmOrUpdate(data));
     }
 
@@ -80,13 +75,10 @@ public class AndroidPresenter extends BasePresenter {
                 .filter(androids -> androids.size() > 0)
                 .map(this::pareData)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(items -> mView.showData(items), throwable -> {
-                    Logger.e(throwable.getMessage());
-                    mView.hideLoading();
-                });
+                .subscribe(result -> mView.showData(result));
     }
 
-    public void fromNetWorkLoad() {
+    private void fromNetWorkLoad() {
         if (NetWorkUtils.isNetworkConnected((Context) mView)) {
             mNetWorkDisposable = ApiFactory.getGankApi()
                     .getAndroidData(mPage)
@@ -99,7 +91,15 @@ public class AndroidPresenter extends BasePresenter {
                     .buffer(60)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(this::addData);
+                    .subscribe(androids -> {
+                        if (mPage == 1) {
+                            mList.addAll(androids);
+                            saveData(androids);
+                        } else {
+                            mList.addAll(androids);
+                            mView.showData(pareData(mList));
+                        }
+                    });
 
         } else {
             Toast.makeText((Context) mView, R.string.error_net, Toast.LENGTH_SHORT).show();
@@ -107,16 +107,31 @@ public class AndroidPresenter extends BasePresenter {
         }
     }
 
-    @Override
-    protected void unSubscribe() {
-        if (mDisposable != null) mDisposable.dispose();
-        if (mNetWorkDisposable != null) mNetWorkDisposable.dispose();
+    public void requestData(int requestType) {
+        if (NetWorkUtils.isNetworkConnected((Context) mView)) {
+            switch (requestType) {
+                case REQUEST_REFRESH:
+                    deleteData();
+                    mList.clear();
+                    mPage = 1;
+                    fromNetWorkLoad();
+                    break;
+                case REQUEST_LOAD_MORE:
+                    mView.showLoading();
+                    mPage++;
+                    fromNetWorkLoad();
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            Toast.makeText((Context) mView, R.string.error_net, Toast.LENGTH_SHORT).show();
+            mView.hideLoading();
+        }
     }
 
-    @Override
-    protected void savePage(SharedPreferences sp) {
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putInt(KEY_ANDROID_PAGE, mPage);
-        editor.apply();
+    public void unSubscribe() {
+        if (mDisposable != null) mDisposable.dispose();
+        if (mNetWorkDisposable != null) mNetWorkDisposable.dispose();
     }
 }

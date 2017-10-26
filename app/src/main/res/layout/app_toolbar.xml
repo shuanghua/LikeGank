@@ -10,8 +10,14 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        app:popupTheme="@style/AppTheme.PopupOverlay"
+        android:background="@android:color/transparent"
+        app:popupTheme="@android:color/transparent"
         app:theme="@style/ToolbarAppThem" />
-</android.support.design.widget.AppBarLayout>
 
+    <View
+        android:id="@+id/bottom_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="@drawable/shadow"
+        android:visibility="gone" />
+</android.support.design.widget.AppBarLayout>

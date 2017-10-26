@@ -1,13 +1,11 @@
 package com.shua.likegank.presenters;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
 import com.shua.likegank.R;
 import com.shua.likegank.data.Category;
 import com.shua.likegank.data.entity.Content;
 import com.shua.likegank.interfaces.LicenseViewInterface;
-import com.shua.likegank.ui.base.BasePresenter;
 
 import me.drakeet.multitype.Items;
 
@@ -16,7 +14,7 @@ import me.drakeet.multitype.Items;
  * Created by moshu on 2017/5/17.
  */
 
-public class LicensePresenter extends BasePresenter {
+public class LicensePresenter {
     private Context mContext;
     private LicenseViewInterface mView;
 
@@ -78,14 +76,5 @@ public class LicensePresenter extends BasePresenter {
                 "https://github.com/dcendents/android-maven-gradle-plugin"));
 
         mView.showData(items);
-    }
-
-
-    @Override
-    protected void unSubscribe() {
-    }
-
-    @Override
-    protected void savePage(SharedPreferences sp) {
     }
 }

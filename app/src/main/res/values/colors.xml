@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorApp">#aa00ff</color>
+    <color name="colorAppListBackground">#FFFFFF</color>
 
     <color name="google_bule">#4286f4</color>
 

@@ -6,15 +6,12 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.widget.Toast;
 
-import com.orhanobut.logger.Logger;
-
 /**
  * LikeGankUtils
  * Created by SHUA on 2017/4/29.
  */
 
 public class LikeGankUtils {
-    private static boolean mDebugLog = true;
 
     public static String timeString(String string) {
         String[] strings = string.split("T");
@@ -22,18 +19,11 @@ public class LikeGankUtils {
     }
 
     @SuppressLint("WrongConstant")
-    public static void copyToClipBoard(Context context, String text, String success) {
+    public static void copyToClipBoard(Context context, String text) {
         ClipData clipData = ClipData.newPlainText("LIKEGANK", text);
-        @SuppressLint("WrongConstant") ClipboardManager manager
-                = (ClipboardManager) context.getSystemService(
-                Context.CLIPBOARD_SERVICE);
-        manager.setPrimaryClip(clipData);
-        Toast.makeText(context, success, Toast.LENGTH_SHORT).show();
-    }
-
-    public static void debugLog(String log) {
-        if (mDebugLog) {
-            Logger.d(log);
-        }
+        ClipboardManager manager = (ClipboardManager) context
+                .getSystemService(Context.CLIPBOARD_SERVICE);
+        if (manager != null) manager.setPrimaryClip(clipData);
+        Toast.makeText(context, "复制成功", Toast.LENGTH_SHORT).show();
     }
 }

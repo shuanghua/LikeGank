@@ -50,6 +50,12 @@ public class PhotoViewActivity extends AppCompatActivity {
     private RxPermissions rxPermissions;
     private PhotoViewAttacher mAttacher;
 
+    public static Intent newIntent(Context context, String url) {
+        Intent intent = new Intent(context, PhotoViewActivity.class);
+        intent.putExtra(EXTRA_URL_MEIZI, url);
+        return intent;
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,12 +70,6 @@ public class PhotoViewActivity extends AppCompatActivity {
 
         disPlayImager(url);
         setPhotoListener();
-    }
-
-    public static Intent newIntent(Context context, String url) {
-        Intent intent = new Intent(context, PhotoViewActivity.class);
-        intent.putExtra(EXTRA_URL_MEIZI, url);
-        return intent;
     }
 
     private void setPhotoViewScaleScheme(MotionEvent e) {
@@ -123,8 +123,9 @@ public class PhotoViewActivity extends AppCompatActivity {
     }
 
     private void disPlayImager(String url) {
-        Glide.with(this).load(url).listener(new RequestListener<String
-                , GlideDrawable>() {
+        Glide.with(this)
+                .load(url)
+                .listener(new RequestListener<String, GlideDrawable>() {
             @Override
             public boolean onException(Exception e
                     , String model

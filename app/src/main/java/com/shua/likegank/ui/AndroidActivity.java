@@ -2,33 +2,35 @@ package com.shua.likegank.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.shua.likegank.R;
 import com.shua.likegank.data.Category;
 import com.shua.likegank.data.entity.Android;
-import com.shua.likegank.interfaces.RefreshViewInterface;
+import com.shua.likegank.interfaces.AndroidViewInterface;
 import com.shua.likegank.presenters.AndroidPresenter;
 import com.shua.likegank.ui.base.RefreshActivity;
 import com.shua.likegank.ui.itembinder.AndroidItemBinder;
 import com.shua.likegank.ui.itembinder.CategoryItemBinder;
-import com.shua.likegank.utils.NetWorkUtils;
 
 import java.util.List;
 
 import butterknife.BindView;
+import me.drakeet.multitype.Items;
 import me.drakeet.multitype.MultiTypeAdapter;
 
-public class AndroidActivity extends RefreshActivity<RefreshViewInterface, AndroidPresenter>
-        implements RefreshViewInterface {
+public class AndroidActivity extends RefreshActivity implements AndroidViewInterface {
 
     @BindView(R.id.list)
     RecyclerView mRecycler;
 
     private MultiTypeAdapter mAdapter;
     private AndroidPresenter mPresenter;
+
+    public static Intent newIntent(Context context) {
+        return new Intent(context, AndroidActivity.class);
+    }
 
     protected void initViews() {
         setTitle("Android");
@@ -45,34 +47,20 @@ public class AndroidActivity extends RefreshActivity<RefreshViewInterface, Andro
     }
 
     @Override
-    protected AndroidPresenter createPresenter() {
+    protected void initPresenter() {
         mPresenter = new AndroidPresenter(this);
-        mPresenter.fromNetWorkLoad();
-        return mPresenter;
     }
 
     @Override
-    public void showData(List data) {
-        mPresenter.isRefresh = false;
-        mAdapter.setItems(data);
+    public void showData(Items result) {
+        mAdapter.setItems(result);
         mAdapter.notifyDataSetChanged();
         hideLoading();
     }
 
     @Override
     protected void refresh() {
-        if (NetWorkUtils.isNetworkConnected(this)) {
-            mPresenter.isRefresh = true;
-            AndroidPresenter.mPage = 1;
-            mPresenter.fromNetWorkLoad();
-        } else {
-            showToast(getString(R.string.error_net));
-            hideLoading();
-            if (mPreferences != null) {
-                int page = mPreferences.getInt(AndroidPresenter.KEY_ANDROID_PAGE, 1);
-                if (page > AndroidPresenter.mPage) AndroidPresenter.mPage = page;
-            }
-        }
+        mPresenter.requestData(AndroidPresenter.REQUEST_REFRESH);
     }
 
     private void bottomListener(LinearLayoutManager layoutManager) {
@@ -81,37 +69,12 @@ public class AndroidActivity extends RefreshActivity<RefreshViewInterface, Andro
         lastItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
         firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
         if (lastItemPosition == itemCount - 1 && lastItemPosition - firstItemPosition > 0) {
-            if (NetWorkUtils.isNetworkConnected(this)) {
-                showLoading();
-                AndroidPresenter.mPage++;
-                mPresenter.fromNetWorkLoad();
-            } else {
-                showToast(getString(R.string.error_net));
-                hideLoading();
-            }
+            mPresenter.requestData(AndroidPresenter.REQUEST_LOAD_MORE);
         } else if (firstItemPosition == 0) {
-            setToolbarElevation(0);
+            isTransparent(true);
         } else {
-            setToolbarElevation(6);
+            isTransparent(false);
         }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(PAGE, AndroidPresenter.mPage);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState != null) {
-            AndroidPresenter.mPage = savedInstanceState.getInt(PAGE);
-        }
-    }
-
-    public static Intent newIntent(Context context) {
-        return new Intent(context, AndroidActivity.class);
     }
 
     @Override
@@ -123,6 +86,7 @@ public class AndroidActivity extends RefreshActivity<RefreshViewInterface, Andro
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mPresenter.unSubscribe();
     }
 
     @Override
