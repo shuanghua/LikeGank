@@ -12,7 +12,7 @@ import retrofit2.http.Path;
 
 public interface GankApi {
 
-    @GET("data/福利/40/{page}")
+    @GET("data/福利/39/{page}")
     Flowable<GankData> getFuLiData(@Path("page") int page);
 
     @GET("data/all/60/{page}")

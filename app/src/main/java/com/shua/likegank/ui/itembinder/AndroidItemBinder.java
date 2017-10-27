@@ -38,20 +38,18 @@ public class AndroidItemBinder extends ItemViewBinder<Android, AndroidItemBinder
 
         String url;
         String title;
-        private TextView content;
+        TextView content;
 
         ViewHolder(View itemView) {
             super(itemView);
             this.content = itemView.findViewById(R.id.item_content);
-            itemView.setOnClickListener(v -> v.getContext().startActivity(WebViewActivity
-                    .newIntent(v.getContext(), url, title)));
+            itemView.setOnClickListener(v -> v.getContext()
+                    .startActivity(WebViewActivity.newIntent(v.getContext(), url, title)));
         }
 
         public void setData(Android data) {
             content.setText(Html.fromHtml(data.content
-                    + "<font color='#9e9e9e'>"
-                    + content.getContext().getString(R.string.via) + data.author + ")"
-                    + "</font>"));
+                    + "<font color='#9e9e9e'>" + content.getContext().getString(R.string.via) + data.author + ")" + "</font>"));
             url = data.url;
             title = data.content;
         }

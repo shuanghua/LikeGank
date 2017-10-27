@@ -80,9 +80,14 @@ public class ImageActivity extends RefreshActivity implements ImageViewInterface
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
-        hideLoading();
+        mPresenter.unSubscribe();
     }
 
     @Override

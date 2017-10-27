@@ -14,8 +14,6 @@ import com.shua.likegank.ui.base.RefreshActivity;
 import com.shua.likegank.ui.itembinder.AndroidItemBinder;
 import com.shua.likegank.ui.itembinder.CategoryItemBinder;
 
-import java.util.List;
-
 import butterknife.BindView;
 import me.drakeet.multitype.Items;
 import me.drakeet.multitype.MultiTypeAdapter;
@@ -68,7 +66,7 @@ public class AndroidActivity extends RefreshActivity implements AndroidViewInter
         itemCount = mAdapter.getItemCount();
         lastItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
         firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
-        if (lastItemPosition == itemCount - 1 && lastItemPosition - firstItemPosition > 0) {
+        if (lastItemPosition == itemCount - 1 && lastItemPosition - firstItemPosition > 0 && lastItemPosition != 0) {
             mPresenter.requestData(AndroidPresenter.REQUEST_LOAD_MORE);
         } else if (firstItemPosition == 0) {
             isTransparent(true);
@@ -81,6 +79,11 @@ public class AndroidActivity extends RefreshActivity implements AndroidViewInter
     protected void onPause() {
         super.onPause();
         hideLoading();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 
     @Override

@@ -41,7 +41,7 @@ public class CategoryItemBinder
 
         ViewHolder(View itemView) {
             super(itemView);
-            this.category = (TextView) itemView.findViewById(R.id.android_category);
+            this.category = itemView.findViewById(R.id.android_category);
             paint = category.getPaint();
             paint.setFakeBoldText(true);
         }

@@ -3,7 +3,6 @@ package com.shua.likegank;
 import android.app.Application;
 
 import com.crashlytics.android.Crashlytics;
-import com.squareup.leakcanary.LeakCanary;
 
 import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
@@ -19,20 +18,20 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        setLeakCanary();
-        setRealm();
-        Fabric.with(this, new Crashlytics());
+//        if (LeakCanary.isInAnalyzerProcess(this)) {
+//            // This process is dedicated to LeakCanary for heap analysis.
+//            // You should not init your app in this process.
+//            return;
+//        }
+//        LeakCanary.install(this);
+        //Fabric.with(this, new Crashlytics());
+        initRealm();
     }
 
-    private void setLeakCanary() {
-        if (LeakCanary.isInAnalyzerProcess(this)) return;
-        LeakCanary.install(this);
-    }
-
-    private void setRealm() {
+    private void initRealm() {
         Realm.init(this);
         RealmConfiguration config = new RealmConfiguration.Builder().build();
-        Realm.deleteRealm(config);
+        //Realm.deleteRealm(config);
         Realm.setDefaultConfiguration(config);
     }
 }

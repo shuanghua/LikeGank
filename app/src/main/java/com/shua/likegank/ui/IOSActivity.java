@@ -27,7 +27,7 @@ public class IOSActivity extends RefreshActivity implements IOSViewInterface {
     private IOSPresenter mPresenter;
 
     public static Intent newIntent(Context context) {
-        return new Intent(context, AndroidActivity.class);
+        return new Intent(context, IOSActivity.class);
     }
 
     protected void initViews() {

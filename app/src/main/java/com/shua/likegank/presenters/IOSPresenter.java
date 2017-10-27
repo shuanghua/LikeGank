@@ -65,6 +65,7 @@ public class IOSPresenter extends NetWorkBasePresenter<IOSViewInterface> {
     }
 
     private void saveData(List<IOS> data) {
+        deleteData();
         mRealm.executeTransaction(realm -> realm.copyToRealmOrUpdate(data));
     }
 
@@ -72,7 +73,7 @@ public class IOSPresenter extends NetWorkBasePresenter<IOSViewInterface> {
         mDisposable = mRealm.where(IOS.class)
                 .findAll()
                 .asFlowable()
-                .filter(androids -> androids.size() > 0)
+                .filter(ioss -> ioss.size() > 0)
                 .map(this::pareData)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(result -> mView.showData(result));
@@ -110,7 +111,6 @@ public class IOSPresenter extends NetWorkBasePresenter<IOSViewInterface> {
         if (NetWorkUtils.isNetworkConnected((Context) mView)) {
             switch (requestType) {
                 case REQUEST_REFRESH:
-                    deleteData();
                     mList.clear();
                     mPage = 1;
                     fromNetWorkLoad();
@@ -132,5 +132,6 @@ public class IOSPresenter extends NetWorkBasePresenter<IOSViewInterface> {
     public void unSubscribe() {
         if (mDisposable != null) mDisposable.dispose();
         if (mNetWorkDisposable != null) mNetWorkDisposable.dispose();
+        if (mRealm != null) mRealm.close();
     }
 }

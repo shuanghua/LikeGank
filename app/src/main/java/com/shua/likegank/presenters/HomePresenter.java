@@ -100,11 +100,15 @@ public class HomePresenter extends NetWorkBasePresenter<HomeViewInterface> {
                 .asFlowable()
                 .filter(homes -> homes.size() > 0)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(homes -> mView.showData(homes));
+                .subscribe(homes -> {
+                    System.out.println(homes.size());
+                    mView.showData(homes);
+                });
     }
 
     public void unSubscribe() {
         if (mDisposable != null) mDisposable.dispose();
         if (mNetWorkDisposable != null) mNetWorkDisposable.dispose();
+        if (mRealm != null) mRealm.close();
     }
 }

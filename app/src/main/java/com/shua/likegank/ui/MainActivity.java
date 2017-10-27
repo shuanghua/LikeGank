@@ -39,9 +39,13 @@ public class MainActivity extends RefreshActivity implements
         super.onCreate(savedInstanceState);
         initNavigationView();
         mPresenter.fromRealmLoad();
-        refresh();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refresh();
+    }
 
     @Override
     protected void initViews() {

@@ -6,16 +6,16 @@
     android:layout_marginTop="8dp"
     android:background="@drawable/ripple"
     android:clickable="true"
+    android:focusable="true"
     android:gravity="center_horizontal"
     android:orientation="horizontal"
-    android:paddingLeft="24dp"
-    android:paddingRight="12dp"
-    tools:ignore="KeyboardInaccessibleWidget,RtlHardcoded">
+    android:paddingEnd="12dp"
+    android:paddingStart="24dp">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingRight="4dp"
+        android:paddingEnd="4dp"
         android:text="@string/tag"
         android:textColor="@color/md_black_1000"
         android:textSize="14sp"

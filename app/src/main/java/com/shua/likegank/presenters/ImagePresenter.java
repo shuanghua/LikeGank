@@ -70,7 +70,7 @@ public class ImagePresenter extends NetWorkBasePresenter<ImageViewInterface> {
                 .map(GankData::getResults)
                 .flatMap(Flowable::fromIterable)
                 .map(gankEntity -> new Content(gankEntity.get_id(), gankEntity.getUrl()))
-                .buffer(40)
+                .buffer(39)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(result -> {
@@ -104,5 +104,6 @@ public class ImagePresenter extends NetWorkBasePresenter<ImageViewInterface> {
     public void unSubscribe() {
         if (mDisposable != null) mDisposable.dispose();
         if (mNetWorkDisposable != null) mNetWorkDisposable.dispose();
+        if (mRealm != null) mRealm.close();
     }
 }

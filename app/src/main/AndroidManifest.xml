@@ -33,6 +33,7 @@
             </intent-filter>
         </activity>
 
+        <!-- Fill in your Fabric ApiKey, or delete the Fabric dependencies -->
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="Your Fabric ApiKey" />
@@ -40,22 +41,27 @@
         <activity
             android:name=".ui.ImageActivity"
             android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.PhotoViewActivity"
             android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.PhotoView" />
         <activity
             android:name=".ui.WebViewActivity"
             android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.AndroidActivity"
             android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.IOSActivity"
             android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.AboutActivity"

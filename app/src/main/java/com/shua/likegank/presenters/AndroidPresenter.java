@@ -3,6 +3,7 @@ package com.shua.likegank.presenters;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.orhanobut.logger.Logger;
 import com.shua.likegank.R;
 import com.shua.likegank.api.ApiFactory;
 import com.shua.likegank.data.Category;
@@ -44,6 +45,7 @@ public class AndroidPresenter extends NetWorkBasePresenter<AndroidViewInterface>
     }
 
     private Items pareData(List<Android> androids) {
+        System.out.println("开始");
         Items items = new Items();
         String time1 = LikeGankUtils.timeString(androids.get(0).time);
         String time2 = "";
@@ -57,6 +59,7 @@ public class AndroidPresenter extends NetWorkBasePresenter<AndroidViewInterface>
                 time1 = time2;
             }
         }
+        System.out.println("结束");
         return items;
     }
 
@@ -65,7 +68,8 @@ public class AndroidPresenter extends NetWorkBasePresenter<AndroidViewInterface>
     }
 
     private void saveData(List<Android> data) {
-        mRealm.executeTransaction(realm -> realm.copyToRealmOrUpdate(data));
+        deleteData();
+        mRealm.executeTransactionAsync(realm -> realm.copyToRealmOrUpdate(data));
     }
 
     public void fromRealmLoad() {
@@ -100,7 +104,6 @@ public class AndroidPresenter extends NetWorkBasePresenter<AndroidViewInterface>
                             mView.showData(pareData(mList));
                         }
                     });
-
         } else {
             Toast.makeText((Context) mView, R.string.error_net, Toast.LENGTH_SHORT).show();
             mView.hideLoading();
@@ -111,7 +114,6 @@ public class AndroidPresenter extends NetWorkBasePresenter<AndroidViewInterface>
         if (NetWorkUtils.isNetworkConnected((Context) mView)) {
             switch (requestType) {
                 case REQUEST_REFRESH:
-                    deleteData();
                     mList.clear();
                     mPage = 1;
                     fromNetWorkLoad();
@@ -133,5 +135,6 @@ public class AndroidPresenter extends NetWorkBasePresenter<AndroidViewInterface>
     public void unSubscribe() {
         if (mDisposable != null) mDisposable.dispose();
         if (mNetWorkDisposable != null) mNetWorkDisposable.dispose();
+        if (mRealm != null) mRealm.close();
     }
 }

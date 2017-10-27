@@ -14,10 +14,6 @@ import butterknife.ButterKnife;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-//    public static final String SP_NAME_PAGE = "NAME_PAGE";
-//    public static final String SATE_KEY = "LIST_STATE_KEY";
-//    public static final String FIRST_START = "FIRST_START";
-
     abstract protected int contentView();
 
     abstract protected void initViews();
@@ -36,9 +32,5 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-    }
-
-    protected void showToast(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 }
