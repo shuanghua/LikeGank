@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import com.shua.likegank.R;
 import com.shua.likegank.data.Category;
@@ -13,6 +14,8 @@ import com.shua.likegank.presenters.AndroidPresenter;
 import com.shua.likegank.ui.base.RefreshActivity;
 import com.shua.likegank.ui.itembinder.AndroidItemBinder;
 import com.shua.likegank.ui.itembinder.CategoryItemBinder;
+
+import java.util.logging.Logger;
 
 import butterknife.BindView;
 import me.drakeet.multitype.Items;
@@ -31,12 +34,14 @@ public class AndroidActivity extends RefreshActivity implements AndroidViewInter
     }
 
     protected void initViews() {
+        //Log.d("AndroidActivity--->>", "" + mPresenter.mPage);
         setTitle("Android");
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mAdapter = new MultiTypeAdapter();
         mAdapter.register(Category.class, new CategoryItemBinder());
         mAdapter.register(Android.class, new AndroidItemBinder());
         mRecycler.setLayoutManager(layoutManager);
+        mRecycler.setHasFixedSize(true);
         mRecycler.addOnScrollListener(getOnBottomListener(layoutManager));
         mRecycler.setAdapter(mAdapter);
         showLoading();
@@ -51,9 +56,9 @@ public class AndroidActivity extends RefreshActivity implements AndroidViewInter
 
     @Override
     public void showData(Items result) {
+        hideLoading();
         mAdapter.setItems(result);
         mAdapter.notifyDataSetChanged();
-        hideLoading();
     }
 
     @Override
@@ -79,11 +84,6 @@ public class AndroidActivity extends RefreshActivity implements AndroidViewInter
     protected void onPause() {
         super.onPause();
         hideLoading();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
     }
 
     @Override

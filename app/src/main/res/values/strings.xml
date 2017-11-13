@@ -26,6 +26,7 @@
     <string name="action_refresh">刷新此页</string>
     <string name="action_copy_url">复制链接</string>
     <string name="action_open_url">打开链接</string>
+    <string name="tip_no_new_data">服务器暂时没有新数据！</string>
 
     <string-array name="photo_dialog_list">
         <item name="share">分享图片</item>

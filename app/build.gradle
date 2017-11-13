@@ -13,7 +13,7 @@ keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 android {
 
     compileSdkVersion 27
-    buildToolsVersion '27.0.0'
+    buildToolsVersion '27.0.1'
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -21,7 +21,7 @@ android {
     }
 
     signingConfigs {
-        config {
+        release {
             keyAlias keystoreProperties['keyAlias']
             keyPassword keystoreProperties['keyPassword']
             storeFile file(keystoreProperties['storeFile'])
@@ -33,43 +33,75 @@ android {
         applicationId "com.shua.likegank"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 6
-        versionName "3.0"
+        versionCode 7
+        versionName "3.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
+        debug {
+            signingConfig signingConfigs.release
+        }
+
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            zipAlignEnabled true
+            signingConfig signingConfigs.release
+
+
+            //遍历输出文件
+            android.applicationVariants.all { variant ->
+                variant.outputs.all { output ->
+                    def outputFile = output.outputFile
+                    if (outputFile != null && outputFile.name.endsWith('release.apk')) {
+                        def fileName = "release_likegank_${defaultConfig.versionName}_${defaultConfig.versionCode}" +
+                                "_${variant.productFlavors[0].name}.apk"
+                        outputFileName = fileName
+                    }
+                }
+            }
         }
     }
-}
 
-dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    testImplementation 'junit:junit:4.12'
-    implementation 'com.android.support:appcompat-v7:27.0.0'
-    implementation 'com.android.support:design:27.0.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
-    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
-//    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
-//    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
-    implementation 'com.jakewharton:butterknife:8.5.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.5'
-    implementation 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.4@aar'
-    implementation 'me.drakeet.multitype:multitype:3.3.3'
-    implementation 'com.github.bumptech.glide:glide:3.7.0'
-    implementation 'com.orhanobut:logger:1.15'
-    implementation 'com.github.chrisbanes.photoview:library:1.2.4'
-    implementation('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
-        transitive = true
+    flavorDimensions "free"//定义了两个商店渠道
+    productFlavors {//产品特点
+        google {//免费
+            dimension "free"
+        }
+
+        kuan {//免费
+            dimension "free"
+        }
+    }
+
+
+
+    dependencies {
+        implementation fileTree(include: ['*.jar'], dir: 'libs')
+        androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
+            exclude group: 'com.android.support', module: 'support-annotations'
+        })
+        testImplementation 'junit:junit:4.12'
+        implementation 'com.android.support:appcompat-v7:27.0.1'
+        implementation 'com.android.support:design:27.0.1'
+        implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+        implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+        implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+        implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+        //    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+        //    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+        implementation 'com.jakewharton:butterknife:8.5.1'
+        annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+        implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+        implementation 'io.reactivex.rxjava2:rxjava:2.1.6'
+        implementation 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.4@aar'
+        implementation 'me.drakeet.multitype:multitype:3.3.3'
+        implementation 'com.github.bumptech.glide:glide:3.8.0'
+        implementation 'com.orhanobut:logger:1.15'
+        implementation 'com.github.chrisbanes.photoview:library:1.2.4'
+        implementation('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
+            transitive = true
+        }
     }
 }

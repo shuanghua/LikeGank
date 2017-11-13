@@ -40,7 +40,7 @@ public abstract class RefreshActivity extends ToolbarActivity {
         }
         if (!isRefresh) {
             mRefreshLayout.postDelayed(() ->
-                    mRefreshLayout.setRefreshing(false), 600);
+                    mRefreshLayout.setRefreshing(false), 300);
         } else {
             mRefreshLayout.setRefreshing(true);
         }

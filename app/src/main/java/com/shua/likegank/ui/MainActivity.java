@@ -54,6 +54,7 @@ public class MainActivity extends RefreshActivity implements
         mAdapter = new MultiTypeAdapter();
         mAdapter.register(Home.class, new HomeItemBinder());
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
+        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.addOnScrollListener(getOnBottomListener(mLinearLayoutManager));
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -61,20 +62,6 @@ public class MainActivity extends RefreshActivity implements
     @Override
     protected void refresh() {
         mPresenter.requestData(HomePresenter.REQUEST_REFRESH);
-    }
-
-    private void bottomListener(LinearLayoutManager layoutManager) {
-        int lastItemPosition, firstItemPosition, itemCount;
-        itemCount = mAdapter.getItemCount();
-        lastItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
-        firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
-        if (lastItemPosition == itemCount - 1 && lastItemPosition - firstItemPosition > 0) {
-            mPresenter.requestData(HomePresenter.REQUEST_LOAD_MORE);
-        } else if (firstItemPosition == 0) {
-            isTransparent(true);
-        } else {
-            isTransparent(false);
-        }
     }
 
     @Override
@@ -192,7 +179,17 @@ public class MainActivity extends RefreshActivity implements
         return new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView rv, int dx, int dy) {
-                bottomListener(layoutManager);
+                int lastItemPosition, firstItemPosition, itemCount;
+                itemCount = mAdapter.getItemCount();
+                lastItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
+                firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
+                if (lastItemPosition == itemCount - 1 && lastItemPosition - firstItemPosition > 0) {
+                    mPresenter.requestData(HomePresenter.REQUEST_LOAD_MORE);
+                } else if (firstItemPosition == 0) {
+                    isTransparent(true);
+                } else {
+                    isTransparent(false);
+                }
             }
         };
     }

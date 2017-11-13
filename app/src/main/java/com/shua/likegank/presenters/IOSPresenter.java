@@ -9,10 +9,9 @@ import com.shua.likegank.data.Category;
 import com.shua.likegank.data.GankData;
 import com.shua.likegank.data.entity.IOS;
 import com.shua.likegank.interfaces.IOSViewInterface;
-import com.shua.likegank.utils.LikeGankUtils;
+import com.shua.likegank.utils.AppUtils;
 import com.shua.likegank.utils.NetWorkUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Flowable;
@@ -20,6 +19,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
+import io.realm.RealmResults;
 import me.drakeet.multitype.Items;
 
 /**
@@ -31,27 +31,31 @@ public class IOSPresenter extends NetWorkBasePresenter<IOSViewInterface> {
 
     public static final int REQUEST_REFRESH = 1;
     public static final int REQUEST_LOAD_MORE = 2;
-    private static int mPage = 1;
+    private int mPage = 1;
+    private int mPageIndex = 1;
+    private Items items;
     private Realm mRealm;
-    private List<IOS> mList;
     private Disposable mDisposable;
     private Disposable mNetWorkDisposable;
+    private String time2 = "";
 
     public IOSPresenter(IOSViewInterface viewInterface) {
         mView = viewInterface;
         mRealm = Realm.getDefaultInstance();
-        mList = new ArrayList<>();
+        items = new Items();
     }
 
-    private Items pareData(List<IOS> iosList) {
-        Items items = new Items();
-        String time1 = LikeGankUtils.timeString(iosList.get(0).time);//拿到第一条数据的时间
-        String time2 = "";
-        items.add(new Category(time1));//先添加第一条数据的时间
-        for (int i = 0; i < iosList.size(); i++) {
-            items.add(iosList.get(i));
-            if (i < iosList.size() - 1)
-                time2 = LikeGankUtils.timeString(iosList.get(i + 1).time);//拿到第二条数据的时间
+    /**
+     * Group the data by time
+     */
+    private Items pareData(List<IOS> ioss) {
+        String time1 = AppUtils.timeString(ioss.get(0).time);//存储第一条数据的时间
+        if (!time1.equals(time2))//当第二页数据传过来时，第一页最后一个数据的时间和第二页第一条数据的时间不相等时
+            items.add(new Category(time1));//add 时间，说明当前页的第一条数据的时间可以作为一个新的Header
+        for (int i = 0; i < ioss.size(); i++) {
+            items.add(ioss.get(i));//add 内容
+            if (i < ioss.size() - 1)
+                time2 = AppUtils.timeString(ioss.get(i + 1).time);
             if (!time1.equals(time2)) {
                 items.add(new Category(time2));
                 time1 = time2;
@@ -60,20 +64,34 @@ public class IOSPresenter extends NetWorkBasePresenter<IOSViewInterface> {
         return items;
     }
 
-    private void deleteData() {
-        mRealm.executeTransaction(realm -> realm.delete(IOS.class));
-    }
-
-    private void saveData(List<IOS> data) {
-        deleteData();
-        mRealm.executeTransaction(realm -> realm.copyToRealmOrUpdate(data));
+    private void saveData(List<IOS> data) {//刷新时才调用到
+        RealmResults<IOS> all = mRealm.where(IOS.class).findAll();
+        if (all.size() > 0) {
+            IOS ios = all.get(0);
+            if (ios != null) {
+                if (!(ios.content).equals(data.get(0).content)) {
+                    mRealm.executeTransaction(realm -> {
+                        items.clear();
+                        time2 = "";
+                        realm.delete(IOS.class);
+                        realm.copyToRealmOrUpdate(data);
+                    });
+                } else {//数据一样不保存，同时不做 Adapter 刷新
+                    mPage = mPageIndex;
+                    AppUtils.toast(R.string.tip_no_new_data);
+                    mView.hideLoading();
+                }
+            }
+        } else {
+            mRealm.executeTransaction(realm -> realm.copyToRealmOrUpdate(data));
+        }
     }
 
     public void fromRealmLoad() {
         mDisposable = mRealm.where(IOS.class)
                 .findAll()
                 .asFlowable()
-                .filter(ioss -> ioss.size() > 0)
+                .filter(ios -> ios.size() > 0)
                 .map(this::pareData)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(result -> mView.showData(result));
@@ -83,7 +101,6 @@ public class IOSPresenter extends NetWorkBasePresenter<IOSViewInterface> {
         if (NetWorkUtils.isNetworkConnected((Context) mView)) {
             mNetWorkDisposable = ApiFactory.getGankApi()
                     .getiOSData(mPage)
-                    .filter(gankData -> !gankData.isError())
                     .map(GankData::getResults)
                     .flatMap(Flowable::fromIterable)
                     .map(gankEntity -> new IOS(gankEntity.getPublishedAt(),
@@ -92,17 +109,17 @@ public class IOSPresenter extends NetWorkBasePresenter<IOSViewInterface> {
                     .buffer(60)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(iosList -> {
+                    .subscribe(ioss -> {
                         if (mPage == 1) {
-                            mList.addAll(iosList);
-                            saveData(mList);
+                            saveData(ioss);
                         } else {
-                            mList.addAll(iosList);
-                            mView.showData(pareData(mList));
+                            mView.showData(pareData(ioss));
                         }
+                    }, throwable -> {
+                        mView.hideLoading();
                     });
         } else {
-            Toast.makeText((Context) mView, R.string.error_net, Toast.LENGTH_SHORT).show();
+            AppUtils.toast(R.string.error_net);
             mView.hideLoading();
         }
     }
@@ -111,7 +128,7 @@ public class IOSPresenter extends NetWorkBasePresenter<IOSViewInterface> {
         if (NetWorkUtils.isNetworkConnected((Context) mView)) {
             switch (requestType) {
                 case REQUEST_REFRESH:
-                    mList.clear();
+                    mPageIndex = mPage;
                     mPage = 1;
                     fromNetWorkLoad();
                     break;
@@ -133,5 +150,6 @@ public class IOSPresenter extends NetWorkBasePresenter<IOSViewInterface> {
         if (mDisposable != null) mDisposable.dispose();
         if (mNetWorkDisposable != null) mNetWorkDisposable.dispose();
         if (mRealm != null) mRealm.close();
+        mView = null;
     }
 }

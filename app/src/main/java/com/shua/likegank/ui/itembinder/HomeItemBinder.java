@@ -1,8 +1,11 @@
 package com.shua.likegank.ui.itembinder;
 
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +16,7 @@ import com.shua.likegank.R;
 import com.shua.likegank.data.entity.Home;
 import com.shua.likegank.ui.PhotoViewActivity;
 import com.shua.likegank.ui.WebViewActivity;
-import com.shua.likegank.utils.LikeGankUtils;
+import com.shua.likegank.utils.AppUtils;
 
 import me.drakeet.multitype.ItemViewBinder;
 
@@ -33,8 +36,8 @@ public class HomeItemBinder extends ItemViewBinder<Home, HomeItemBinder.HomeHold
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull HomeHolder holder, @NonNull Home data) {
-        switch (data.type) {
+    protected void onBindViewHolder(@NonNull HomeHolder holder, @NonNull Home home) {
+        switch (home.type) {
             case "Android":
                 holder.mImageView.setImageResource(R.mipmap.ic_menu_android);
                 break;
@@ -57,15 +60,23 @@ public class HomeItemBinder extends ItemViewBinder<Home, HomeItemBinder.HomeHold
                 holder.mImageView.setImageResource(R.mipmap.ic_launcher);
                 break;
         }
-        holder.mTextTime.setText(LikeGankUtils.timeString(data.createdAt));
-        holder.mTextTitle.setText(Html.fromHtml(data.title
-                + "<font color='#eeb211'>"
-                + holder.mTextTime.getContext().getString(R.string.via) + data.who + ")"
-                + "</font>"));
+        holder.mTextTime.setText(AppUtils.timeString(home.createdAt));
 
-        holder.url = data.url;
-        holder.title = data.title;
-        holder.type = data.type;
+        SpannableString span = new SpannableString(new StringBuilder()
+                .append(home.title)
+                .append("(via-")
+                .append(home.who)
+                .append(")"));
+        span.setSpan(new ForegroundColorSpan(Color.parseColor("#eeb211"))
+                , home.title.length()
+                , span.length()
+                , Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        holder.mTextTitle.setText(span);
+        holder.url = home.url;
+        holder.title = home.title;
+        holder.type = home.type;
+
 
         // set TextColor or use  SpannableStringBuilder.addend + StringStyles.format
 //        SpannableStringBuilder builder = new SpannableStringBuilder(data.title)

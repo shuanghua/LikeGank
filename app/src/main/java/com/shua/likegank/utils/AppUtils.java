@@ -11,7 +11,14 @@ import android.widget.Toast;
  * Created by SHUA on 2017/4/29.
  */
 
-public class LikeGankUtils {
+public class AppUtils {
+
+    private static Context mAppContext;
+    private static Toast toast = null;
+
+    public static void setAppContext(Context context) {
+        mAppContext = context;
+    }
 
     public static String timeString(String string) {
         String[] strings = string.split("T");
@@ -25,5 +32,15 @@ public class LikeGankUtils {
                 .getSystemService(Context.CLIPBOARD_SERVICE);
         if (manager != null) manager.setPrimaryClip(clipData);
         Toast.makeText(context, "复制成功", Toast.LENGTH_SHORT).show();
+    }
+
+    @SuppressLint("ShowToast")
+    public static void toast(int msg) {
+        if (toast == null) {
+            toast = Toast.makeText(mAppContext, msg, Toast.LENGTH_SHORT);
+        } else {
+            toast.setText(msg);
+        }
+        toast.show();
     }
 }

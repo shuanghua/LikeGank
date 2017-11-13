@@ -1,8 +1,13 @@
 package com.shua.likegank.ui.itembinder;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,18 +31,30 @@ public class AndroidItemBinder extends ItemViewBinder<Android, AndroidItemBinder
     protected ViewHolder onCreateViewHolder(@NonNull LayoutInflater layoutInflater,
                                             @NonNull ViewGroup viewGroup) {
         View view = layoutInflater.inflate(R.layout.item_content, viewGroup, false);
+
         return new ViewHolder(view);
     }
 
     @Override
     protected void onBindViewHolder(@NonNull ViewHolder viewHolder, @NonNull Android android) {
-        viewHolder.setData(android);
+
+        SpannableString span = new SpannableString(new StringBuilder()
+                .append(android.content)
+                .append("(via-")
+                .append(android.author)
+                .append(")"));
+        span.setSpan(new ForegroundColorSpan(Color.parseColor("#9e9e9e"))
+                , android.content.length()
+                , span.length()
+                , Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        viewHolder.content.setText(span);
+        viewHolder.url = android.url;
+        viewHolder.title = android.content;
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-
-        String url;
-        String title;
+        String url, title;
         TextView content;
 
         ViewHolder(View itemView) {
@@ -45,13 +62,6 @@ public class AndroidItemBinder extends ItemViewBinder<Android, AndroidItemBinder
             this.content = itemView.findViewById(R.id.item_content);
             itemView.setOnClickListener(v -> v.getContext()
                     .startActivity(WebViewActivity.newIntent(v.getContext(), url, title)));
-        }
-
-        public void setData(Android data) {
-            content.setText(Html.fromHtml(data.content
-                    + "<font color='#9e9e9e'>" + content.getContext().getString(R.string.via) + data.author + ")" + "</font>"));
-            url = data.url;
-            title = data.content;
         }
     }
 }

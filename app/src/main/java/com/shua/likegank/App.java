@@ -3,6 +3,7 @@ package com.shua.likegank;
 import android.app.Application;
 
 import com.crashlytics.android.Crashlytics;
+import com.shua.likegank.utils.AppUtils;
 
 import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
@@ -26,6 +27,7 @@ public class App extends Application {
 //        LeakCanary.install(this);
         //Fabric.with(this, new Crashlytics());
         initRealm();
+        AppUtils.setAppContext(getApplicationContext());
     }
 
     private void initRealm() {

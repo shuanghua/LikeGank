@@ -16,15 +16,7 @@ public class GankData {
         return error;
     }
 
-    public void setError(boolean error) {
-        this.error = error;
-    }
-
     public List<LikeGankEntity> getResults() {
         return results;
-    }
-
-    public void setResults(List<LikeGankEntity> results) {
-        this.results = results;
     }
 }

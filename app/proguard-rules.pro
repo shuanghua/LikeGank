@@ -2,6 +2,8 @@
 -keep class com.shua.likegank.data.** { *; }
 -keep class com.shua.likegank.data.entity.** { *; }
 
+-repackageclasses com.shua.likegank.data
+
 # Glide
 -keep public class * implements com.bumptech.glide.module.GlideModule
 -keep public enum com.bumptech.glide.load.resource.bitmap.ImageHeaderParser$** {

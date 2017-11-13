@@ -25,6 +25,7 @@
         <activity
             android:name=".ui.MainActivity"
             android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,7 +37,7 @@
         <!-- Fill in your Fabric ApiKey, or delete the Fabric dependencies -->
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="Your Fabric ApiKey" />
+            android:value="xxxxxxxxxxx" />
 
         <activity
             android:name=".ui.ImageActivity"

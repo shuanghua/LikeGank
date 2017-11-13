@@ -32,12 +32,12 @@ public class CategoryItemBinder
 
     @Override
     protected void onBindViewHolder(@NonNull ViewHolder viewHolder, @NonNull Category category) {
-        viewHolder.category.setText(category.text);
+        viewHolder.category.setText(category.getText());
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextPaint paint;
-        TextView category;
+        private final TextView category;
 
         ViewHolder(View itemView) {
             super(itemView);

@@ -5,15 +5,13 @@ import io.realm.annotations.PrimaryKey;
 
 public class Home extends RealmObject {
 
-    @PrimaryKey
-    private String _id;
     public String title;
     public String createdAt;
-
     public String type;
     public String url;
     public String who;
-    public int imageId;
+    @PrimaryKey
+    private String _id;
 
     public Home() {
     }
@@ -30,6 +28,5 @@ public class Home extends RealmObject {
         this.type = type;
         this.url = url;
         this.who = who;
-        this.imageId = imageId;
     }
 }

@@ -1,8 +1,13 @@
 package com.shua.likegank.ui.itembinder;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,34 +37,29 @@ public class IOSItemBinder extends ItemViewBinder<IOS, IOSItemBinder.ViewHolder>
     @Override
     protected void onBindViewHolder(@NonNull IOSItemBinder.ViewHolder viewHolder,
                                     @NonNull IOS ios) {
-        viewHolder.setData(ios);
+        SpannableString span = new SpannableString(new StringBuilder()
+                .append(ios.content)
+                .append("(via-")
+                .append(ios.author)
+                .append(")"));
+        span.setSpan(new ForegroundColorSpan(Color.parseColor("#9e9e9e"))
+                , ios.content.length()
+                , span.length()
+                , Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        viewHolder.content.setText(span);
+        viewHolder.url = ios.url;
+        viewHolder.title = ios.content;
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-
         TextView content;
-        String url;
-        String title;
+        String url, title;
 
         ViewHolder(View itemView) {
             super(itemView);
             this.content = itemView.findViewById(R.id.item_content);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    v.getContext().startActivity(WebViewActivity
-                            .newIntent(v.getContext(), url, title));
-                }
-            });
-        }
-
-        public void setData(IOS data) {
-            content.setText(Html.fromHtml(data.content
-                    + "<font color='#9e9e9e'>"
-                    + content.getContext().getString(R.string.via) + data.author + ")"
-                    + "</font>"));
-            url = data.url;
-            title = data.content;
+            itemView.setOnClickListener(v -> v.getContext().startActivity(WebViewActivity
+                    .newIntent(v.getContext(), url, title)));
         }
     }
 }

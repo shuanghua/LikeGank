@@ -14,7 +14,7 @@ import android.widget.ProgressBar;
 
 import com.shua.likegank.R;
 import com.shua.likegank.ui.base.ToolbarActivity;
-import com.shua.likegank.utils.LikeGankUtils;
+import com.shua.likegank.utils.AppUtils;
 
 import butterknife.BindView;
 
@@ -91,7 +91,7 @@ public class WebViewActivity extends ToolbarActivity {
                 mWebView.reload();
                 return true;
             case R.id.action_copy_url:
-                LikeGankUtils.copyToClipBoard
+                AppUtils.copyToClipBoard
                         (this, mWebView.getUrl());
                 return true;
             case R.id.action_open_url:

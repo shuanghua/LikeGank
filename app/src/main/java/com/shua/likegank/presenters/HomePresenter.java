@@ -28,7 +28,7 @@ public class HomePresenter extends NetWorkBasePresenter<HomeViewInterface> {
 
     public static final int REQUEST_REFRESH = 1;
     public static final int REQUEST_LOAD_MORE = 2;
-    private static int mPage = 1;
+    private int mPage = 1;
     private Realm mRealm;
     private List<Home> mList;
     private Disposable mDisposable;
@@ -44,8 +44,6 @@ public class HomePresenter extends NetWorkBasePresenter<HomeViewInterface> {
         if (NetWorkUtils.isNetworkConnected((Context) mView)) {
             switch (requestType) {
                 case REQUEST_REFRESH:
-                    deleteData();
-                    mList.clear();
                     mPage = 1;
                     fromNetWorkLoad();
                     break;
@@ -77,6 +75,7 @@ public class HomePresenter extends NetWorkBasePresenter<HomeViewInterface> {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(homes -> {
                     if (mPage == 1) {
+                        mList.clear();
                         mList.addAll(homes);
                         saveData(homes);
                     } else {
@@ -87,6 +86,7 @@ public class HomePresenter extends NetWorkBasePresenter<HomeViewInterface> {
     }
 
     private void saveData(List<Home> data) {
+        deleteData();
         mRealm.executeTransaction(realm -> realm.copyToRealmOrUpdate(data));
     }
 
@@ -100,10 +100,7 @@ public class HomePresenter extends NetWorkBasePresenter<HomeViewInterface> {
                 .asFlowable()
                 .filter(homes -> homes.size() > 0)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(homes -> {
-                    System.out.println(homes.size());
-                    mView.showData(homes);
-                });
+                .subscribe(homes -> mView.showData(homes));
     }
 
     public void unSubscribe() {
