@@ -10,8 +10,8 @@
         android:name=".App"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:screenOrientation="portrait"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:screenOrientation="portrait"
         android:theme="@style/AppTheme">
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -38,7 +38,7 @@
         <!-- Fill in your Fabric ApiKey, or delete the Fabric dependencies -->
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="xxxxxxxxxxx" />
+            android:value="9fe2d63dde816213c81be7ed00f452370bcc1867" />
 
         <activity
             android:name=".ui.ImageActivity"

@@ -11,7 +11,7 @@
 - 布局数据适配：[Multiype](https://github.com/drakeet/MultiType "Multiype") 
 - 图片显示：[Photoview](https://github.com/chrisbanes/PhotoView "Photoview") [Glide](https://github.com/bumptech/glide "Glide")
 
-[![](https://github.com/Shuanghua/LikeGank/blob/master/art/1.png)](https://github.com/Shuanghua/LikeGank/blob/master/art/1.png)[![](https://github.com/Shuanghua/LikeGank/blob/master/art/2.png)](https://github.com/Shuanghua/LikeGank/blob/master/art/2.png)[![](https://github.com/Shuanghua/LikeGank/blob/master/art/3.png)](https://github.com/Shuanghua/LikeGank/blob/master/art/3.png)[![](https://github.com/Shuanghua/LikeGank/blob/master/art/4.png)](https://github.com/Shuanghua/LikeGank/blob/master/art/4.png)[![](https://github.com/Shuanghua/LikeGank/blob/master/art/5.png)](https://github.com/Shuanghua/LikeGank/blob/master/art/5.png)
+[GooglePlay DEMO下载](https://play.google.com/store/apps/details?id=com.shua.likegank "GooglePlay") 
 
 # 开源协议
 LikeGnk 基于 GPL-3.0 开源协议，在使用本项目代码的之前请确保你了解这个协议。 详细内容参见 [GPL-3.0 LICENSE](https://github.com/Shuanghua/LikeGank/blob/master/LICENSE "GPL-3.0 LICENSE")
