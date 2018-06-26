@@ -19,3 +19,4 @@
 
 # 开源协议
 LikeGnk 基于 GPL-3.0 开源协议，在使用本项目代码的之前请确保你了解这个协议。 详细内容参见 [GPL-3.0 LICENSE](https://github.com/Shuanghua/LikeGank/blob/master/LICENSE "GPL-3.0 LICENSE")
+内容参见 [GPL-3.0 LICENSE](https://github.com/Shuanghua/LikeGank/blob/master/LICENSE "GPL-3.0 LICENSE")
