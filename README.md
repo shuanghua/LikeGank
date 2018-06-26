@@ -14,7 +14,6 @@
 - View 绑定：[Butterknife](https://github.com/JakeWharton/butterknife)
 - Log: [Logger](https://github.com/orhanobut/logger)
 - 运行时权限：[RxPermissions](https://github.com/tbruyelle/RxPermissions)
-- Java8 插件：[Android-maven-gradle-plugin](https://github.com/dcendents/android-maven-gradle-plugin)
 
 [GooglePlay下载](https://play.google.com/store/apps/details?id=com.shua.likegank "GooglePlay") 
 
