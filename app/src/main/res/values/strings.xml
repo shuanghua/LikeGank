@@ -49,7 +49,7 @@ Apache License 2.0 \n
 A permissive license whose main conditions require preservation of copyright and license notices. Contributors provide an express grant of patent rights. Licensed works, modifications, and larger works may be distributed under different terms and without source code.</string>
     <string name="about">关于</string>
     <string name="tag">*</string>
-    <string name="about_like_github">项目地址</string>
+    <string name="about_like_github">项目GitHub地址</string>
     <string name="about_gankapi_url">Gank 官网</string>
     <string name="about_meizi_github">妹纸Gank.io</string>
     <string name="open_license">开放源代码许可</string>

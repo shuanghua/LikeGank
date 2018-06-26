@@ -33,15 +33,15 @@ android {
         applicationId "com.shua.likegank"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 9
-        versionName "4.0"
+        versionCode 10
+        versionName "4.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         debug {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled false
+            //proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
 
@@ -68,10 +68,6 @@ android {
     flavorDimensions "free"//定义了两个商店渠道
     productFlavors {//产品特点
         google {//免费
-            dimension "free"
-        }
-
-        kuan {//免费
             dimension "free"
         }
     }

@@ -1,11 +1,8 @@
 package com.shua.likegank.ui.base;
 
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.ColorInt;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -25,6 +22,7 @@ public abstract class ToolbarActivity extends BaseActivity {
 
     @BindView(R.id.app_bar_layout)
     protected AppBarLayout mAppBarLayout;
+
     @BindView(R.id.toolbar)
     protected Toolbar mToolbar;
 
@@ -36,8 +34,8 @@ public abstract class ToolbarActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.bind(this);
         initToolbar(addBack());
+        ButterKnife.bind(this);
     }
 
     private void initToolbar(boolean isAddBack) {

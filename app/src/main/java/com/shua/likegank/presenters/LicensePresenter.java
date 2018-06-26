@@ -69,7 +69,7 @@ public class LicensePresenter {
 
         items.add(new Category("Logger"));
         items.add(new Content("Copyright 2015 Orhan Obut \n" + mContext.getResources().getString(R.string.license_LICENSE_2_0),
-                " https://github.com/orhanobut/logger"));
+                "https://github.com/orhanobut/logger"));
 
         items.add(new Category("Android-maven-gradle-plugin"));
         items.add(new Content(mContext.getResources().getString(R.string.license_LICENSE_2_0),
