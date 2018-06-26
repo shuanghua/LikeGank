@@ -1,6 +1,7 @@
 package com.shua.likegank.presenters;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.shua.likegank.R;
@@ -21,7 +22,7 @@ import io.realm.Realm;
 
 /**
  * ArticlePresenter
- * Created by moshu on 2017/5/13.
+ * Created by ShuangHua on 2017/5/13.
  */
 
 public class HomePresenter extends NetWorkBasePresenter<HomeViewInterface> {
@@ -56,7 +57,8 @@ public class HomePresenter extends NetWorkBasePresenter<HomeViewInterface> {
                     break;
             }
         } else {
-            Toast.makeText((Context) mView, R.string.error_net, Toast.LENGTH_SHORT).show();
+            Toast.makeText((Context) mView, R.string.error_net,
+                    Toast.LENGTH_SHORT).show();
             mView.hideLoading();
         }
     }
@@ -67,9 +69,12 @@ public class HomePresenter extends NetWorkBasePresenter<HomeViewInterface> {
                 .filter(gankData -> !gankData.isError())
                 .map(GankData::getResults)
                 .flatMap(Flowable::fromIterable)
-                .map(gankEntity -> new Home(gankEntity.get_id(), gankEntity.getDesc(),
-                        gankEntity.getPublishedAt(), gankEntity.getType(),
-                        gankEntity.getUrl(), gankEntity.getWho()))
+                .map(gankEntity -> new Home(gankEntity.get_id(),
+                        gankEntity.getDesc(),
+                        gankEntity.getPublishedAt(),
+                        gankEntity.getType(),
+                        gankEntity.getUrl(),
+                        gankEntity.getWho()))
                 .buffer(60)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -82,6 +87,9 @@ public class HomePresenter extends NetWorkBasePresenter<HomeViewInterface> {
                         mList.addAll(homes);
                         mView.showData(mList);
                     }
+                }, throwable -> {
+                    mView.hideLoading();
+                    Log.e("HomePresenter:", throwable.getMessage());
                 });
     }
 

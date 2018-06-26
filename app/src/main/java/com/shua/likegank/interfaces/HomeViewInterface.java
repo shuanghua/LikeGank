@@ -4,6 +4,9 @@ import com.shua.likegank.data.entity.Home;
 
 import java.util.List;
 
+/**
+ * 方便扩展
+ */
 public interface HomeViewInterface extends RefreshViewInterface<List<Home>> {
 
 }

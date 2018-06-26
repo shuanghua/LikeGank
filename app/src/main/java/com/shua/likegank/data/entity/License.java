@@ -4,7 +4,7 @@ import io.realm.RealmObject;
 
 /**
  * Open source license
- * Created by Shuanghua on 2017/5/6.
+ * Created by ShuangHua on 2017/5/6.
  */
 
 public class License extends RealmObject {

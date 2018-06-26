@@ -1,7 +1,7 @@
 package com.shua.likegank.presenters;
 
 import android.content.Context;
-import android.widget.Toast;
+import android.util.Log;
 
 import com.shua.likegank.R;
 import com.shua.likegank.api.ApiFactory;
@@ -61,7 +61,7 @@ public class ImagePresenter extends NetWorkBasePresenter<ImageViewInterface> {
                     break;
             }
         } else {
-            Toast.makeText((Context) mView, R.string.error_net, Toast.LENGTH_SHORT).show();
+            AppUtils.toast(R.string.error_net);
             mView.hideLoading();
         }
     }
@@ -83,6 +83,10 @@ public class ImagePresenter extends NetWorkBasePresenter<ImageViewInterface> {
                         mList.addAll(result);
                         mView.showData(mList);
                     }
+                }, throwable -> {
+                    Log.e("ImagePresenter:", throwable.getMessage());
+                    mView.hideLoading();
+                    AppUtils.toast(R.string.error_net);
                 });
     }
 
@@ -98,7 +102,7 @@ public class ImagePresenter extends NetWorkBasePresenter<ImageViewInterface> {
                         mList.addAll(data);
                         realm.copyToRealmOrUpdate(data);
                     });
-                } else {//数据一样不保存，同时不做 Adapter 刷新
+                } else {
                     mPage = mPageIndex;
                     AppUtils.toast(R.string.tip_no_new_data);
                     mView.hideLoading();
@@ -106,7 +110,9 @@ public class ImagePresenter extends NetWorkBasePresenter<ImageViewInterface> {
             }
         } else {
             mList.addAll(data);
-            mRealm.executeTransaction(realm -> realm.copyToRealmOrUpdate(data));//第一次进入应用时
+            mRealm.executeTransaction(
+                    realm -> realm.copyToRealmOrUpdate(data)
+            );//第一次进入应用时
         }
     }
 
@@ -116,7 +122,10 @@ public class ImagePresenter extends NetWorkBasePresenter<ImageViewInterface> {
                 .asFlowable()
                 .filter(results -> results.size() > 0)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(results -> mView.showData(results));
+                .subscribe(
+                        results -> mView.showData(results),
+                        throwable -> Log.e("ImagePresenter:", throwable.getMessage())
+                );
     }
 
     public void unSubscribe() {

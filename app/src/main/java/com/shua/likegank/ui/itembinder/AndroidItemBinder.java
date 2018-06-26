@@ -31,7 +31,6 @@ public class AndroidItemBinder extends ItemViewBinder<Android, AndroidItemBinder
     protected ViewHolder onCreateViewHolder(@NonNull LayoutInflater layoutInflater,
                                             @NonNull ViewGroup viewGroup) {
         View view = layoutInflater.inflate(R.layout.item_content, viewGroup, false);
-
         return new ViewHolder(view);
     }
 

@@ -10,7 +10,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.shua.likegank.R;
 import com.shua.likegank.data.entity.Content;
 import com.shua.likegank.ui.PhotoViewActivity;
@@ -30,6 +32,8 @@ public class ImageItemBinder extends ItemViewBinder<Content, ImageItemBinder.Mei
      */
     //private static final String URL_MEIZI_DIMENSION = "?imageView2/0/w/100";
     private Context mContext;
+    private RequestOptions options;
+
 
     @NonNull
     @Override
@@ -38,6 +42,10 @@ public class ImageItemBinder extends ItemViewBinder<Content, ImageItemBinder.Mei
         View root = inflater.inflate(R.layout.item_fuli, parent, false);
         MeiziHolder holder = new MeiziHolder(root);
         mContext = holder.mImageView.getContext();
+        options = new RequestOptions()
+                .placeholder(R.mipmap.ic_bg_fuli)
+                .priority(Priority.HIGH)
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE);
         return holder;
     }
 
@@ -45,15 +53,8 @@ public class ImageItemBinder extends ItemViewBinder<Content, ImageItemBinder.Mei
     protected void onBindViewHolder(@NonNull MeiziHolder holder, @NonNull Content data) {
         Glide.with(mContext)
                 .load(data.url)
-                .placeholder(R.mipmap.ic_bg_fuli)
-                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                .apply(options)
                 .into(holder.mImageView);
-
-//        Glide.with(context)
-//                .load(data.url + URL_MEIZI_DIMENSION)
-//                .placeholder(R.mipmap.ic_bg_fuli)
-//                .diskCacheStrategy(DiskCacheStrategy.RESULT)
-//                .into(holder.mImageView);
         holder.position = getPosition(holder);
         holder.url = data.url;
     }
@@ -67,11 +68,15 @@ public class ImageItemBinder extends ItemViewBinder<Content, ImageItemBinder.Mei
             super(itemView);
             this.mImageView = itemView.findViewById(R.id.fuli_image);
             itemView.setOnClickListener((View v) ->
-                    itemView.getContext()
-                            .startActivity(PhotoViewActivity
-                                    .newIntent(itemView.getContext(), url)));
+                    itemView.getContext().startActivity(
+                            PhotoViewActivity.newIntent(itemView.getContext(), url)
+                    )
+            );
 
-            DisplayMetrics dm = mImageView.getContext().getResources().getDisplayMetrics();
+            DisplayMetrics dm = mImageView
+                    .getContext()
+                    .getResources()
+                    .getDisplayMetrics();
             int mLikeImageW = dm.widthPixels / 2;
             int mLikeImageH = dm.heightPixels / 3;
             ViewGroup.LayoutParams params = mImageView.getLayoutParams();

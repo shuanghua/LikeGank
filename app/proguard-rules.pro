@@ -2,31 +2,36 @@
 -keep class com.shua.likegank.data.** { *; }
 -keep class com.shua.likegank.data.entity.** { *; }
 
--repackageclasses com.shua.likegank.data
-
 # Glide
 -keep public class * implements com.bumptech.glide.module.GlideModule
--keep public enum com.bumptech.glide.load.resource.bitmap.ImageHeaderParser$** {
+-keep public class * extends com.bumptech.glide.module.AppGlideModule
+-keep public enum com.bumptech.glide.load.ImageHeaderParser$** {
   **[] $VALUES;
   public *;
 }
-# RxJava RxAndroid
--dontwarn sun.misc.**
--keepclassmembers class rx.internal.util.unsafe.*ArrayQueue*Field* {
-    long producerIndex;
-    long consumerIndex;
-}
+
 # Gson
 -keep class com.google.gson.stream.** { *; }
 -keepattributes EnclosingMetho
-# Retrofit
+
+# Retrofit2
 -dontwarn retrofit2.**
+-dontwarn retrofit2.Platform$Java8
 -keep class retrofit2.** { *; }
-#-keepattributes Signature-keepattributes Exceptions
-# OkHttp3
--dontwarn okhttp3.logging.**
--keep class okhttp3.internal.**{*;}
+-keepattributes Signature
+-keepclassmembers,allowshrinking,allowobfuscation interface * {
+    @retrofit2.http.* <methods>;
+}
+
+-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+-dontwarn javax.annotation.**
+-dontwarn okhttp3.**
 -dontwarn okio.**
+-dontwarn javax.annotation.**
+-dontwarn org.conscrypt.**
+-keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
+
+
 # Butterknife
 -keep class butterknife.** { *; }
 -dontwarn butterknife.internal.**

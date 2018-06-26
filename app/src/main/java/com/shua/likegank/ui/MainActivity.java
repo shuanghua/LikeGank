@@ -38,6 +38,11 @@ public class MainActivity extends RefreshActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initNavigationView();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         mPresenter.fromRealmLoad();
     }
 
@@ -145,14 +150,14 @@ public class MainActivity extends RefreshActivity implements
 
     @Override
     protected void onPause() {
+        this.hideLoading();
         super.onPause();
-        hideLoading();
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         mPresenter.unSubscribe();
+        super.onDestroy();
     }
 
     @Override
@@ -183,7 +188,8 @@ public class MainActivity extends RefreshActivity implements
                 itemCount = mAdapter.getItemCount();
                 lastItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
                 firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
-                if (lastItemPosition == itemCount - 1 && lastItemPosition - firstItemPosition > 0) {
+                if (lastItemPosition == itemCount - 1 &&
+                        lastItemPosition - firstItemPosition > 0) {
                     mPresenter.requestData(HomePresenter.REQUEST_LOAD_MORE);
                 } else if (firstItemPosition == 0) {
                     isTransparent(true);

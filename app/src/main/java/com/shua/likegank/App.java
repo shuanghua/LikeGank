@@ -25,9 +25,14 @@ public class App extends Application {
 //            return;
 //        }
 //        LeakCanary.install(this);
-        //Fabric.with(this, new Crashlytics());
-        initRealm();
         AppUtils.setAppContext(getApplicationContext());
+
+        final Fabric fabric = new Fabric.Builder(this)
+                .kits(new Crashlytics())
+                .debuggable(true)           // Enables Crashlytics debugger
+                .build();
+        Fabric.with(fabric);
+        initRealm();
     }
 
     private void initRealm() {

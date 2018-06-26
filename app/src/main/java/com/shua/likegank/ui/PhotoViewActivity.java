@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
@@ -13,8 +14,8 @@ import android.view.MotionEvent;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.orhanobut.logger.Logger;
@@ -28,14 +29,14 @@ import java.io.File;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.CompositeDisposable;
 import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
 
 /**
  * Display image
- * Created by SHUA on 2017/4/23.
+ * Created by ShuangHua on 2017/4/23.
  */
 
 public class PhotoViewActivity extends AppCompatActivity {
@@ -44,9 +45,8 @@ public class PhotoViewActivity extends AppCompatActivity {
 
     @BindView(R.id.photo_view)
     PhotoView mPhotoView;
-
+    private CompositeDisposable mDisposable;
     private String url;
-    private Disposable subscribe;
     private RxPermissions rxPermissions;
     private PhotoViewAttacher mAttacher;
 
@@ -61,6 +61,7 @@ public class PhotoViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo);
         ButterKnife.bind(this);
+        mDisposable = new CompositeDisposable();
 
         mPhotoView = findViewById(R.id.photo_view);
         mAttacher = new PhotoViewAttacher(mPhotoView);
@@ -68,7 +69,7 @@ public class PhotoViewActivity extends AppCompatActivity {
         rxPermissions = new RxPermissions(this);
         url = getIntent().getStringExtra(EXTRA_URL_MEIZI);
 
-        disPlayImager(url);
+        disPlayImage(url);
         setPhotoListener();
     }
 
@@ -122,33 +123,36 @@ public class PhotoViewActivity extends AppCompatActivity {
         });
     }
 
-    private void disPlayImager(String url) {
-        Glide.with(this)
-                .load(url)
-                .listener(new RequestListener<String, GlideDrawable>() {
+    private void disPlayImage(String url) {
+        Glide.with(this).load(url).listener(new RequestListener<Drawable>() {
             @Override
-            public boolean onException(Exception e
-                    , String model
-                    , Target<GlideDrawable> target
-                    , boolean isFirstResource) {
+            public boolean onLoadFailed(
+                    @Nullable GlideException e,
+                    Object model,
+                    Target<Drawable> target,
+                    boolean isFirstResource) {
+                Toast.makeText(PhotoViewActivity.this, "图片加载出错！",
+                        Toast.LENGTH_SHORT).show();
                 return false;
             }
 
             @Override
-            public boolean onResourceReady(GlideDrawable resource
-                    , String model, Target<GlideDrawable> target
-                    , boolean isFromMemoryCache
-                    , boolean isFirstResource) {
+            public boolean onResourceReady(
+                    Drawable resource,
+                    Object model,
+                    Target<Drawable> target,
+                    DataSource dataSource,
+                    boolean isFirstResource) {
                 return false;
             }
-        }).diskCacheStrategy(DiskCacheStrategy.SOURCE).crossFade().into(mPhotoView);
+        }).into(mPhotoView);
     }
 
     private void saveImage() {
-        rxPermissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .subscribe((Boolean granted) -> {
+        mDisposable.add(rxPermissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .subscribe(granted -> {
                     if (granted) {
-                        subscribe = RxSave.saveImageAndGetPathObservable(
+                        mDisposable.add(RxSave.saveImageAndGetPathObservable(
                                 PhotoViewActivity.this, url, url)
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(uri -> {
@@ -157,36 +161,41 @@ public class PhotoViewActivity extends AppCompatActivity {
                                             R.string.picture_has_save_to), appDir.getAbsolutePath());
                                     Toast.makeText(PhotoViewActivity.this
                                             , msg, Toast.LENGTH_SHORT).show();
-                                });
+                                }));
                     } else {
                         Toast.makeText(PhotoViewActivity.this
                                 , "权限已被拒绝！", Toast.LENGTH_SHORT).show();
                     }
-                });
+                }));
     }
 
     private void shareImage() {
-        rxPermissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .subscribe((Boolean granted) -> {
+        mDisposable.add(rxPermissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .subscribe(granted -> {
                     if (granted) {
                         RxSave.saveImageAndGetPathObservable(this, url, url)
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(uri ->
-                                        Shares.shareImage(PhotoViewActivity.this, uri, getString(R.string.share_to)), throwable -> {
-                                    Logger.e(throwable.getMessage());
-                                    Toast.makeText(PhotoViewActivity.this,
-                                            throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                                });
+                                .subscribe(uri -> Shares.shareImage(
+                                        PhotoViewActivity.this,
+                                        uri,
+                                        getString(R.string.share_to)),
+                                        throwable -> {
+                                            Logger.e(throwable.getMessage());
+                                            Toast.makeText(PhotoViewActivity.this,
+                                                    throwable.getMessage(),
+                                                    Toast.LENGTH_SHORT).show();
+                                        });
                     } else {
                         Toast.makeText(PhotoViewActivity.this,
                                 "权限已被拒绝！", Toast.LENGTH_SHORT).show();
                     }
-                });
+                })
+        );
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (subscribe != null) subscribe.dispose();
+        if (mDisposable != null) mDisposable.dispose();
     }
 }

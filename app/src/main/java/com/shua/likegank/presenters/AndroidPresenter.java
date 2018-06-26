@@ -1,7 +1,7 @@
 package com.shua.likegank.presenters;
 
 import android.content.Context;
-import android.widget.Toast;
+import android.util.Log;
 
 import com.shua.likegank.R;
 import com.shua.likegank.api.ApiFactory;
@@ -45,13 +45,11 @@ public class AndroidPresenter extends NetWorkBasePresenter<AndroidViewInterface>
         items = new Items();
     }
 
-    /**
-     * Group the data by time
-     */
     private Items pareData(List<Android> androids) {
         String time1 = AppUtils.timeString(androids.get(0).time);//存储第一条数据的时间
-        if (!time1.equals(time2))//当第二页数据传过来时，第一页最后一个数据的时间和第二页第一条数据的时间不相等时
+        if (!time1.equals(time2)) {//当第二页数据传过来时，第一页最后一个数据的时间和第二页第一条数据的时间不相等时
             items.add(new Category(time1));//add 时间，说明当前页的第一条数据的时间可以作为一个新的Header
+        }
         for (int i = 0; i < androids.size(); i++) {
             items.add(androids.get(i));//add 内容
             if (i < androids.size() - 1)
@@ -76,7 +74,7 @@ public class AndroidPresenter extends NetWorkBasePresenter<AndroidViewInterface>
                         realm.delete(Android.class);
                         realm.copyToRealmOrUpdate(data);
                     });
-                } else {//数据一样不保存，同时不做 Adapter 刷新
+                } else {//新数据和本地数据一样,不保存，同时不做 Adapter 刷新
                     mPage = mPageIndex;
                     AppUtils.toast(R.string.tip_no_new_data);
                     mView.hideLoading();
@@ -117,12 +115,11 @@ public class AndroidPresenter extends NetWorkBasePresenter<AndroidViewInterface>
                         }
                     }, throwable -> {
                         mView.hideLoading();
-                        System.out.println(throwable.toString());
-                        Toast.makeText((Context) mView, "没有数据了"
-                                , Toast.LENGTH_SHORT).show();
+                        Log.e("AndroidPresenter:", throwable.getMessage());
+                        AppUtils.toast(R.string.not_data);
                     });
         } else {
-            Toast.makeText((Context) mView, R.string.error_net, Toast.LENGTH_SHORT).show();
+            AppUtils.toast(R.string.error_net);
             mView.hideLoading();
         }
     }
@@ -144,7 +141,7 @@ public class AndroidPresenter extends NetWorkBasePresenter<AndroidViewInterface>
                     break;
             }
         } else {
-            Toast.makeText((Context) mView, R.string.error_net, Toast.LENGTH_SHORT).show();
+            AppUtils.toast(R.string.error_net);
             mView.hideLoading();
         }
     }

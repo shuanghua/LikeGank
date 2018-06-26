@@ -3,7 +3,7 @@ package com.shua.likegank.data;
 import java.util.List;
 
 /**
- * LikeGankEntity
+ * LikeGank CommonBody
  * Created by SHUA on 2017/3/6.
  */
 

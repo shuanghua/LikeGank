@@ -29,6 +29,7 @@ import android.os.Environment;
 import android.support.v4.content.FileProvider;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 
 import java.io.File;
@@ -50,8 +51,11 @@ public class RxSave {
             Bitmap bitmap = null;
             try {
                 bitmap = Glide.with(context)
-                        .load(url).asBitmap()
-                        .into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).get();
+                        .asBitmap()
+                        .load(url)
+                        .submit(Target.SIZE_ORIGINAL,
+                                Target.SIZE_ORIGINAL)
+                        .get();
             } catch (Exception e) {
                 subscribe.onError(e);
             }

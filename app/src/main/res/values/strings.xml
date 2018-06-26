@@ -21,6 +21,7 @@
 
     <string name="error_toolbar">没有找到 Tooblbar 或者 AppBarLayout ！</string>
     <string name="error_net">网络不可用！</string>
+    <string name="not_data">没有数据了！</string>
     <string name="error_delete">Delete error!</string>
     <string name="share_to">分享到：</string>
     <string name="action_refresh">刷新此页</string>
@@ -55,4 +56,5 @@ A permissive license whose main conditions require preservation of copyright and
     <string name="about_Introduction">LikeGank 是我抽空学习@drakeet 妹纸Gank.io 写的一个练手应用，学习涵盖了 Relm Rxjava Retrofit Multitype Photoview 等等一些热门的开源框架。LikeGank 中所有的网络数据均来自@代码家 GankApi</string>
     <string name="likegank_github">https://github.com/Shuanghua/LikeGank</string>
     <string name="meizi_github">https://github.com/drakeet/Meizhi</string>
+    <string name="asset_statements" translatable="false">[{\n  \"relation\": [\"delegate_permission/common.handle_all_urls\"],\n  \"target\": {\n    \"namespace\": \"web\",\n    \"site\": \"https://fabric.io\",\n  }\n}]</string>
 </resources>

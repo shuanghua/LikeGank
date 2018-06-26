@@ -1,10 +1,8 @@
 package com.shua.likegank.ui.itembinder;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;

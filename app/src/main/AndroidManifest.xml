@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.shua.likegank">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -12,7 +13,11 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:screenOrientation="portrait"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+        <meta-data
+            android:name="asset_statements"
+            android:resource="@string/asset_statements" />
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -38,7 +43,7 @@
         <!-- Fill in your Fabric ApiKey, or delete the Fabric dependencies -->
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="9fe2d63dde816213c81be7ed00f452370bcc1867" />
+            android:value="-------------请配置key,或者删除fabric-----------------------" />
 
         <activity
             android:name=".ui.ImageActivity"

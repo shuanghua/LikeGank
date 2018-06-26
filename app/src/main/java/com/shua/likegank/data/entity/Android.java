@@ -5,7 +5,7 @@ import io.realm.annotations.PrimaryKey;
 
 /**
  * Android Entity
- * Created by SHUA on 2017/5/2.
+ * Created by ShuangHua on 2017/5/2.
  */
 
 public class Android extends RealmObject {

@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
  * GankData
- * Created by SHUA on 2017/3/27.
+ * Created by ShuangHua on 2017/3/27.
  */
 
 public class GankData {

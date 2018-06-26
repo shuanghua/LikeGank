@@ -16,6 +16,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 public class AboutActivity extends ToolbarActivity {
+
     @BindView(R.id.about_version)
     TextView mAboutVersion;
     private PackageInfo mInfo;
@@ -55,7 +56,10 @@ public class AboutActivity extends ToolbarActivity {
         mAboutVersion.setText("当前版本 V" + getAppVersion());
     }
 
-    @OnClick({R.id.about_likegank, R.id.about_gank, R.id.about_meizi, R.id.about_open_license})
+    @OnClick({R.id.about_likegank,
+            R.id.about_gank,
+            R.id.about_meizi,
+            R.id.about_open_license})
     public void onClick(View view) {
         Intent intent = new Intent();
         Uri uri;

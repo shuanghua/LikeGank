@@ -1,6 +1,7 @@
 package com.shua.likegank.presenters;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.shua.likegank.R;
@@ -116,6 +117,7 @@ public class IOSPresenter extends NetWorkBasePresenter<IOSViewInterface> {
                             mView.showData(pareData(ioss));
                         }
                     }, throwable -> {
+                        Log.e("IOSPresenter:", throwable.getMessage());
                         mView.hideLoading();
                     });
         } else {
