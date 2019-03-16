@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="prompt">提示</string>
-    <string name="error_delete">Delete error!</string>
-    <string name="meizi_transition_name">name</string>
-</resources>

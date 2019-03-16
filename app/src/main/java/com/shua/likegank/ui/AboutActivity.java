@@ -19,6 +19,7 @@ public class AboutActivity extends ToolbarActivity {
 
     @BindView(R.id.about_version)
     TextView mAboutVersion;
+
     private PackageInfo mInfo;
 
     public static Intent newIntent(Context context) {
@@ -58,7 +59,6 @@ public class AboutActivity extends ToolbarActivity {
 
     @OnClick({R.id.about_likegank,
             R.id.about_gank,
-            R.id.about_meizi,
             R.id.about_open_license})
     public void onClick(View view) {
         Intent intent = new Intent();
@@ -76,15 +76,6 @@ public class AboutActivity extends ToolbarActivity {
             case R.id.about_gank:
                 intent.setAction(Intent.ACTION_VIEW);
                 uri = Uri.parse(getString(R.string.gank_link));
-                intent.setData(uri);
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(intent);
-                }
-                break;
-
-            case R.id.about_meizi:
-                intent.setAction(Intent.ACTION_VIEW);
-                uri = Uri.parse(getString(R.string.meizi_github));
                 intent.setData(uri);
                 if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivity(intent);

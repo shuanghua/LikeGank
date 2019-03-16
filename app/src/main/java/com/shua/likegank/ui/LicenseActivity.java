@@ -3,9 +3,10 @@ package com.shua.likegank.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.shua.likegank.R;
 import com.shua.likegank.data.Category;
@@ -20,6 +21,9 @@ import butterknife.BindView;
 import me.drakeet.multitype.Items;
 import me.drakeet.multitype.MultiTypeAdapter;
 
+/**
+ * 不需要 RefreshView ,但是需要 showData()
+ */
 public class LicenseActivity extends ToolbarActivity implements LicenseViewInterface {
     @BindView(R.id.list)
     RecyclerView mRecyclerView;

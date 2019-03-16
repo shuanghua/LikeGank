@@ -3,16 +3,16 @@ package com.shua.likegank.ui;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.android.material.navigation.NavigationView;
 import com.shua.likegank.R;
 import com.shua.likegank.data.entity.Home;
 import com.shua.likegank.interfaces.HomeViewInterface;
@@ -49,6 +49,7 @@ public class MainActivity extends RefreshActivity implements
     @Override
     protected void onResume() {
         super.onResume();
+
         refresh();
     }
 
@@ -112,6 +113,7 @@ public class MainActivity extends RefreshActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
+            //右上角用系统浏览器打开 Gank 官网
             case R.id.action_gank_link:
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_VIEW);
@@ -183,7 +185,7 @@ public class MainActivity extends RefreshActivity implements
     RecyclerView.OnScrollListener getOnBottomListener(LinearLayoutManager layoutManager) {
         return new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(RecyclerView rv, int dx, int dy) {
+            public void onScrolled(@NonNull RecyclerView rv, int dx, int dy) {
                 int lastItemPosition, firstItemPosition, itemCount;
                 itemCount = mAdapter.getItemCount();
                 lastItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
@@ -191,10 +193,6 @@ public class MainActivity extends RefreshActivity implements
                 if (lastItemPosition == itemCount - 1 &&
                         lastItemPosition - firstItemPosition > 0) {
                     mPresenter.requestData(HomePresenter.REQUEST_LOAD_MORE);
-                } else if (firstItemPosition == 0) {
-                    isTransparent(true);
-                } else {
-                    isTransparent(false);
                 }
             }
         };

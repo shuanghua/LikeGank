@@ -1,8 +1,12 @@
 <resources>
-    <style name="AppTheme.NoActionBar">
+
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/md_white_1000</item>
+        <item name="colorPrimaryDark">@color/md_grey_300</item>
+        <item name="colorAccent">@color/colorApp</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">@color/md_white_1000</item>
     </style>
 
     <!--requestWindowFeature-->

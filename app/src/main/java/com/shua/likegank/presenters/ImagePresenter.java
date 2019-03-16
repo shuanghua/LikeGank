@@ -66,12 +66,15 @@ public class ImagePresenter extends NetWorkBasePresenter<ImageViewInterface> {
         }
     }
 
+    private static final String ERROR_HOST = "http://7xi8d6.com1.z0.glb.clouddn.com";
+
     private void fromNetWorkLoad() {
         mNetWorkDisposable = ApiFactory.getGankApi()
                 .getFuLiData(mPage)
                 .filter(gankData -> !gankData.isError())
                 .map(GankData::getResults)
                 .flatMap(Flowable::fromIterable)
+                .filter(gankEntity -> !gankEntity.getUrl().contains(ERROR_HOST))
                 .map(gankEntity -> new Content(gankEntity.get_id(), gankEntity.getUrl()))
                 .buffer(39)
                 .subscribeOn(Schedulers.io())
