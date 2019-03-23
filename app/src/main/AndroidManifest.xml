@@ -41,11 +41,6 @@
             </intent-filter>
         </activity>
 
-        <!-- Fill in your Fabric ApiKey, or delete the Fabric dependencies -->
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="9fe2d63dde816213c81be7ed00f452370bcc1867" />
-
         <activity
             android:name=".ui.ImageActivity"
             android:launchMode="singleTask"

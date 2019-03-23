@@ -4,13 +4,10 @@ buildscript {
     repositories {
         google()
         jcenter()
-        maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.3.2'
         classpath "io.realm:realm-gradle-plugin:5.9.1"
-        classpath 'io.fabric.tools:gradle:1.25.4'
-        classpath 'com.google.gms:google-services:4.2.0'
         classpath 'com.jakewharton:butterknife-gradle-plugin:10.1.0'
     }
 }
@@ -19,17 +16,11 @@ allprojects {
     repositories {
         google()
         jcenter()
-        mavenCentral()
-        maven { url 'https://maven.fabric.io/public' }
     }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
-}
-
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
 }
 
 

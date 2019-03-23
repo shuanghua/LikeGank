@@ -49,7 +49,6 @@ public class MainActivity extends RefreshActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-
         refresh();
     }
 

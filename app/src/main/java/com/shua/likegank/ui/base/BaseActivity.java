@@ -1,11 +1,9 @@
 package com.shua.likegank.ui.base;
 
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.google.firebase.analytics.FirebaseAnalytics;
-
 import butterknife.ButterKnife;
 
 /**
@@ -21,13 +19,10 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     abstract protected void initPresenter();
 
-    protected FirebaseAnalytics mFirebaseAnalytics;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(contentView());
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         ButterKnife.bind(this);
         initPresenter();
         initViews();
