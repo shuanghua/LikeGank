@@ -25,10 +25,12 @@ public class WebViewActivity extends ToolbarActivity {
 
     private static final String EXTRA_URL = "URL";
     private static final String EXTRA_TITLE = "TITLE";
+
     @BindView(R.id.webView)
     WebView mWebView;
     @BindView(R.id.progressBar)
     ProgressBar mProgressBar;
+
     private String mUrl;
 
     public static Intent newIntent(Context context, String url, String title) {

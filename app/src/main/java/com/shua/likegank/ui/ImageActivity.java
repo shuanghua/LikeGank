@@ -1,10 +1,13 @@
 package com.shua.likegank.ui;
 
 import android.graphics.Rect;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.View;
 
 import com.shua.likegank.R;
@@ -39,11 +42,12 @@ public class ImageActivity extends RefreshActivity implements ImageViewInterface
         mAdapter = new MultiTypeAdapter();
         mAdapter.register(Content.class, new ImageItemBinder());
         mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.addItemDecoration(new ImageSpacItemDecoration
+        mRecyclerView.addItemDecoration(new ImageSpaceItemDecoration
                 (12, SPAN_COUNT, true));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addOnScrollListener(getOnBottomListener(layoutManager));
         mRecyclerView.setAdapter(mAdapter);
+
         showLoading();
         mPresenter.fromRealmLoad();
         refresh();
@@ -66,10 +70,6 @@ public class ImageActivity extends RefreshActivity implements ImageViewInterface
         firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
         if (lastItemPosition == itemCount - 1 && lastItemPosition - firstItemPosition > 0) {
             mPresenter.requestData(ImagePresenter.REQUEST_LOAD_MORE);
-        } else if (firstItemPosition == 0) {
-            isTransparent(true);
-        } else {
-            isTransparent(true);
         }
     }
 
@@ -107,13 +107,13 @@ public class ImageActivity extends RefreshActivity implements ImageViewInterface
 
     @Override
     protected int contentView() {
-        return R.layout.activity_fuli;
+        return R.layout.activity_image;
     }
 
     private RecyclerView.OnScrollListener getOnBottomListener(GridLayoutManager layoutManager) {
         return new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 bottomListener(layoutManager);
             }
@@ -127,35 +127,35 @@ public class ImageActivity extends RefreshActivity implements ImageViewInterface
         hideLoading();
     }
 
-    class ImageSpacItemDecoration extends RecyclerView.ItemDecoration {
-        int spac;
+    class ImageSpaceItemDecoration extends RecyclerView.ItemDecoration {
+        int space;
         int count;
         boolean isEdge;
 
-        ImageSpacItemDecoration(int spac, int count, boolean isEdge) {
-            this.spac = spac;
+        ImageSpaceItemDecoration(int space, int count, boolean isEdge) {
+            this.space = space;
             this.count = count;
             this.isEdge = isEdge;
         }
 
         @Override
-        public void getItemOffsets(Rect outRect, View view
-                , RecyclerView parent, RecyclerView.State state) {
+        public void getItemOffsets(@NonNull Rect outRect, @NonNull View view
+                , @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
             int position = parent.getChildAdapterPosition(view); // item position
             int column = position % count; // item column
 
             if (isEdge) {
-                outRect.left = spac - column * spac / count;
-                outRect.right = (column + 1) * spac / count;
+                outRect.left = space - column * space / count;
+                outRect.right = (column + 1) * space / count;
                 if (position < count) { // top edge
-                    outRect.top = spac;
+                    outRect.top = space;
                 }
-                outRect.bottom = spac; // item bottom
+                outRect.bottom = space; // item bottom
             } else {
-                outRect.left = column * spac / count;
-                outRect.right = spac - (column + 1) * spac / count;
+                outRect.left = column * space / count;
+                outRect.right = space - (column + 1) * space / count;
                 if (position >= count) {
-                    outRect.top = spac;
+                    outRect.top = space;
                 }
             }
         }

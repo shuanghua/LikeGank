@@ -1,11 +1,11 @@
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <android.support.design.widget.AppBarLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,7 +14,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <android.support.v7.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -22,15 +22,9 @@
             app:popupTheme="@android:color/transparent"
             app:theme="@style/ToolbarAppThem" />
 
-        <View
-            android:id="@+id/bottom_shadow"
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:background="@drawable/shadow"
-            android:visibility="gone" />
-    </android.support.design.widget.AppBarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/nestedScrollView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -52,7 +46,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
-                app:srcCompat="@mipmap/ic_launcher" />
+                android:contentDescription="TODO"
+                app:srcCompat="@mipmap/ic_launcher"
+                tools:ignore="ContentDescription,HardcodedText" />
 
             <TextView
                 android:id="@+id/about_version"
@@ -64,12 +60,14 @@
                 tools:text="当前版本：4.1" />
 
             <TextView
+                android:layout_gravity="center"
                 android:id="@+id/about_introduction"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="350dp"
+                android:layout_height="250dp"
                 android:layout_marginTop="24dp"
                 android:padding="18dp"
                 android:text="@string/about_Introduction"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textSize="14sp" />
 
             <Button
@@ -78,30 +76,29 @@
                 android:layout_margin="8dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="8dp"
-                android:background="#fff"
-                android:text="@string/about_like_github"
-                android:textAlignment="textStart" />
+                android:text="@string/about_like_github" />
 
             <Button
                 android:id="@+id/about_gank"
                 style="@style/About_Button"
                 android:layout_margin="8dp"
-                android:background="#fff"
                 android:text="@string/about_gankapi_url" />
-
-            <Button
-                android:id="@+id/about_meizi"
-                style="@style/About_Button"
-                android:layout_margin="8dp"
-                android:background="#fff"
-                android:text="@string/about_meizi_github" />
 
             <Button
                 android:id="@+id/about_open_license"
                 style="@style/About_Button"
                 android:layout_margin="8dp"
-                android:background="#fff"
                 android:text="@string/open_license" />
+
+            <TextView
+                android:textSize="12sp"
+                android:textColor="@color/md_grey_500"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:gravity="center"
+                android:text="@string/gankapi_data_support"
+                android:layout_marginTop="60dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
         </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
-</android.support.constraint.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

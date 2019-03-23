@@ -8,6 +8,8 @@
         android:id="@+id/fuli_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="TODO"
         android:scaleType="centerCrop"
-        tools:src="@mipmap/ic_bg_fuli" />
+        tools:src="@mipmap/ic_bg_fuli"
+        tools:ignore="ContentDescription,HardcodedText" />
 </RelativeLayout>

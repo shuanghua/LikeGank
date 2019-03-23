@@ -1,6 +1,6 @@
 package com.shua.likegank.data;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public class Category {
 

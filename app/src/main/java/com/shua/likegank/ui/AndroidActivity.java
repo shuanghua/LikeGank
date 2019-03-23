@@ -2,9 +2,8 @@ package com.shua.likegank.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.shua.likegank.R;
 import com.shua.likegank.data.Category;
@@ -14,8 +13,6 @@ import com.shua.likegank.presenters.AndroidPresenter;
 import com.shua.likegank.ui.base.RefreshActivity;
 import com.shua.likegank.ui.itembinder.AndroidItemBinder;
 import com.shua.likegank.ui.itembinder.CategoryItemBinder;
-
-import java.util.logging.Logger;
 
 import butterknife.BindView;
 import me.drakeet.multitype.Items;
@@ -73,11 +70,16 @@ public class AndroidActivity extends RefreshActivity implements AndroidViewInter
         firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
         if (lastItemPosition == itemCount - 1 && lastItemPosition - firstItemPosition > 0 && lastItemPosition != 0) {
             mPresenter.requestData(AndroidPresenter.REQUEST_LOAD_MORE);
-        } else if (firstItemPosition == 0) {
-            isTransparent(true);
-        } else {
-            isTransparent(false);
         }
+    }
+
+    RecyclerView.OnScrollListener getOnBottomListener(LinearLayoutManager layoutManager) {
+        return new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView rv, int dx, int dy) {
+                bottomListener(layoutManager);
+            }
+        };
     }
 
     @Override
@@ -110,14 +112,5 @@ public class AndroidActivity extends RefreshActivity implements AndroidViewInter
     @Override
     protected int contentView() {
         return R.layout.activity_android;
-    }
-
-    RecyclerView.OnScrollListener getOnBottomListener(LinearLayoutManager layoutManager) {
-        return new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView rv, int dx, int dy) {
-                bottomListener(layoutManager);
-            }
-        };
     }
 }

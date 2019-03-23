@@ -2,8 +2,8 @@ package com.shua.likegank.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.shua.likegank.R;
 import com.shua.likegank.data.Category;
@@ -68,10 +68,6 @@ public class IOSActivity extends RefreshActivity implements IOSViewInterface {
         firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
         if (lastItemPosition == itemCount - 1 && lastItemPosition - firstItemPosition > 0) {
             mPresenter.requestData(IOSPresenter.REQUEST_LOAD_MORE);
-        } else if (firstItemPosition == 0) {
-            isTransparent(true);
-        } else {
-            isTransparent(false);
         }
     }
 
