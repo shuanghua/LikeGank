@@ -1,56 +1,48 @@
 package com.shua.likegank.ui;
 
 import android.graphics.Rect;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.view.View;
-
-import com.shua.likegank.R;
 import com.shua.likegank.data.entity.Content;
+import com.shua.likegank.databinding.FragmentGirlsBinding;
 import com.shua.likegank.interfaces.ImageViewInterface;
 import com.shua.likegank.presenters.ImagePresenter;
-import com.shua.likegank.ui.base.RefreshActivity;
+import com.shua.likegank.ui.base.RefreshFragment;
 import com.shua.likegank.ui.itembinder.ImageItemBinder;
 
 import java.util.List;
 
-import butterknife.BindView;
 import me.drakeet.multitype.MultiTypeAdapter;
 
 /**
  * NetWork to Realm to View
  * Created by SHUA on 2017/3/27.
  */
-public class ImageActivity extends RefreshActivity implements ImageViewInterface {
+public class GirlsFragment extends RefreshFragment<FragmentGirlsBinding> implements ImageViewInterface {
 
     private final static int SPAN_COUNT = 3;
-    @BindView(R.id.list)
-    RecyclerView mRecyclerView;
     private MultiTypeAdapter mAdapter;
     private ImagePresenter mPresenter;
 
-    @Override
-    protected void initViews() {
-        setTitle(R.string.bar_title_image);
-        final GridLayoutManager layoutManager =
-                new GridLayoutManager(this, SPAN_COUNT);
-        mAdapter = new MultiTypeAdapter();
-        mAdapter.register(Content.class, new ImageItemBinder());
-        mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.addItemDecoration(new ImageSpaceItemDecoration
-                (12, SPAN_COUNT, true));
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.addOnScrollListener(getOnBottomListener(layoutManager));
-        mRecyclerView.setAdapter(mAdapter);
-
-        showLoading();
-        mPresenter.fromRealmLoad();
-        refresh();
+    private RecyclerView.OnScrollListener getOnBottomListener(GridLayoutManager layoutManager) {
+        return new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                bottomListener(layoutManager);
+            }
+        };
     }
 
     @Override
@@ -70,22 +62,26 @@ public class ImageActivity extends RefreshActivity implements ImageViewInterface
         firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
         if (lastItemPosition == itemCount - 1 && lastItemPosition - firstItemPosition > 0) {
             mPresenter.requestData(ImagePresenter.REQUEST_LOAD_MORE);
+//        } else if (firstItemPosition == 0) {
+//            isTransparent(true);
+//        } else {
+//            isTransparent(true);
         }
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
         hideLoading();
     }
 
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onStop();
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         mPresenter.unSubscribe();
     }
@@ -101,23 +97,50 @@ public class ImageActivity extends RefreshActivity implements ImageViewInterface
     }
 
     @Override
-    protected boolean addBack() {
-        return true;
+    protected FragmentGirlsBinding viewBinding(LayoutInflater inflater, ViewGroup container) {
+        return FragmentGirlsBinding.inflate(inflater, container, false);
     }
 
     @Override
-    protected int contentView() {
-        return R.layout.activity_image;
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
-    private RecyclerView.OnScrollListener getOnBottomListener(GridLayoutManager layoutManager) {
-        return new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                bottomListener(layoutManager);
-            }
-        };
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initData();
+    }
+
+    protected void initData() {
+        initRecyclerView();
+        showLoading();
+        mPresenter.fromRealmLoad();
+        refresh();
+    }
+
+    private void initRecyclerView() {
+        final GridLayoutManager layoutManager = new GridLayoutManager(requireActivity(), SPAN_COUNT);
+        mAdapter = new MultiTypeAdapter();
+        mAdapter.register(Content.class, new ImageItemBinder());
+        RecyclerView recyclerView = binding.refreshListLayout.recyclerView;
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.addItemDecoration(new ImageSpaceItemDecoration(12, SPAN_COUNT, true));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.addOnScrollListener(getOnBottomListener(layoutManager));
+        recyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    protected SwipeRefreshLayout swipeRefreshView() {
+        return binding.refreshListLayout.refreshView;
     }
 
     @Override
@@ -127,7 +150,7 @@ public class ImageActivity extends RefreshActivity implements ImageViewInterface
         hideLoading();
     }
 
-    class ImageSpaceItemDecoration extends RecyclerView.ItemDecoration {
+    static class ImageSpaceItemDecoration extends RecyclerView.ItemDecoration {
         int space;
         int count;
         boolean isEdge;
@@ -140,7 +163,7 @@ public class ImageActivity extends RefreshActivity implements ImageViewInterface
 
         @Override
         public void getItemOffsets(@NonNull Rect outRect, @NonNull View view
-                , @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+                , RecyclerView parent, @NonNull RecyclerView.State state) {
             int position = parent.getChildAdapterPosition(view); // item position
             int column = position % count; // item column
 

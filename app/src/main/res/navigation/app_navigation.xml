@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/app_navigation"
+    app:startDestination="@+id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.shua.likegank.ui.HomeFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/nav_android"
+        android:name="com.shua.likegank.ui.AndroidFragment"
+        android:label="Android"
+        tools:layout="@layout/fragment_android" />
+
+    <fragment
+        android:id="@+id/nav_ios"
+        android:name="com.shua.likegank.ui.IOSFragment"
+        android:label="iOS"
+        tools:layout="@layout/fragment_ios" />
+
+    <fragment
+        android:id="@+id/nav_girls"
+        android:name="com.shua.likegank.ui.GirlsFragment"
+        android:label="妹纸"
+        tools:layout="@layout/fragment_girls">
+        <action
+            android:id="@+id/action_nav_girls_to_nav_photo"
+            app:destination="@id/nav_photo" />
+        <argument
+            android:name="url_girls"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_about"
+        android:name="com.shua.likegank.ui.AboutFragment"
+        android:label="关于"
+        tools:layout="@layout/fragment_about" >
+        <action
+            android:id="@+id/action_nav_about_to_nav_license"
+            app:destination="@id/nav_license" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_photo"
+        android:name="com.shua.likegank.ui.PhotoFragment"
+        android:label="图片查看"
+        tools:layout="@layout/fragment_photo" />
+
+    <fragment
+        android:id="@+id/nav_license"
+        android:name="com.shua.likegank.ui.LicenseFragment"
+        android:label="开放源代码许可"
+        tools:layout="@layout/fragment_lincense" />
+
+</navigation>

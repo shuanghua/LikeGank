@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/ripple"
     android:clickable="true"
     android:orientation="vertical"
     android:paddingBottom="8dp"
@@ -49,6 +50,7 @@
                 android:paddingLeft="8dp"
                 android:textColor="@color/md_black_1000"
                 android:textSize="16sp"
+                tools:ignore="RtlHardcoded,RtlSymmetry"
                 tools:text="正常情况下，每个子线程完成各自的任务就可以结束了。每个子线程完成各自的任务就可以结束了。" />
         </LinearLayout>
     </LinearLayout>

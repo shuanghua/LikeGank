@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.fragment.app.Fragment;
+
 import com.shua.likegank.R;
 import com.shua.likegank.api.ApiFactory;
 import com.shua.likegank.data.Category;
@@ -14,6 +16,7 @@ import com.shua.likegank.utils.AppUtils;
 import com.shua.likegank.utils.NetWorkUtils;
 
 import java.util.List;
+import java.util.Objects;
 
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -34,8 +37,8 @@ public class IOSPresenter extends NetWorkBasePresenter<IOSViewInterface> {
     public static final int REQUEST_LOAD_MORE = 2;
     private int mPage = 1;
     private int mPageIndex = 1;
-    private Items items;
-    private Realm mRealm;
+    private final Items items;
+    private final Realm mRealm;
     private Disposable mDisposable;
     private Disposable mNetWorkDisposable;
     private String time2 = "";
@@ -99,7 +102,7 @@ public class IOSPresenter extends NetWorkBasePresenter<IOSViewInterface> {
     }
 
     private void fromNetWorkLoad() {
-        if (NetWorkUtils.isNetworkConnected((Context) mView)) {
+        if (NetWorkUtils.isNetworkConnected(((Fragment) mView).requireContext())) {
             mNetWorkDisposable = ApiFactory.getGankApi()
                     .getiOSData(mPage)
                     .map(GankData::getResults)
@@ -117,7 +120,7 @@ public class IOSPresenter extends NetWorkBasePresenter<IOSViewInterface> {
                             mView.showData(pareData(ioss));
                         }
                     }, throwable -> {
-                        Log.e("IOSPresenter:", throwable.getMessage());
+                        Log.e("IOSPresenter:", Objects.requireNonNull(throwable.getMessage()));
                         mView.hideLoading();
                     });
         } else {
@@ -127,7 +130,7 @@ public class IOSPresenter extends NetWorkBasePresenter<IOSViewInterface> {
     }
 
     public void requestData(int requestType) {
-        if (NetWorkUtils.isNetworkConnected((Context) mView)) {
+        if (NetWorkUtils.isNetworkConnected(((Fragment) mView).requireContext())) {
             switch (requestType) {
                 case REQUEST_REFRESH:
                     mPageIndex = mPage;
@@ -143,7 +146,8 @@ public class IOSPresenter extends NetWorkBasePresenter<IOSViewInterface> {
                     break;
             }
         } else {
-            Toast.makeText((Context) mView, R.string.error_net, Toast.LENGTH_SHORT).show();
+            Toast.makeText(((Fragment) mView).requireContext(), R.string.error_net,
+                    Toast.LENGTH_SHORT).show();
             mView.hideLoading();
         }
     }

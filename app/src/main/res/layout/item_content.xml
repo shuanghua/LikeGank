@@ -1,29 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
+    android:background="@drawable/ripple"
     android:clickable="true"
+    android:focusable="true"
     android:gravity="center_horizontal"
     android:orientation="horizontal"
-    android:paddingLeft="24dp"
-    android:paddingRight="12dp"
-    tools:ignore="KeyboardInaccessibleWidget,RtlHardcoded">
+    android:paddingStart="24dp"
+    android:paddingTop="8dp"
+    android:paddingEnd="12dp">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingRight="4dp"
         android:text="@string/tag"
         android:textColor="@color/md_black_1000"
-        android:textSize="14sp"
-        tools:ignore="RtlSymmetry" />
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/item_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingStart="4dp"
         android:textColor="@color/md_black_1000"
         android:textSize="16sp" />
 </LinearLayout>

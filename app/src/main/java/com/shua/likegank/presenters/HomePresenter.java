@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.fragment.app.Fragment;
+
 import com.shua.likegank.R;
 import com.shua.likegank.api.ApiFactory;
 import com.shua.likegank.data.GankData;
@@ -42,7 +44,7 @@ public class HomePresenter extends NetWorkBasePresenter<HomeViewInterface> {
     }
 
     public void requestData(int requestType) {
-        if (NetWorkUtils.isNetworkConnected((Context) mView)) {
+        if (NetWorkUtils.isNetworkConnected(((Fragment) mView).requireContext())) {
             switch (requestType) {
                 case REQUEST_REFRESH:
                     mPage = 1;

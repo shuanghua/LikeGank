@@ -4,50 +4,62 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ProgressBar;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.shua.likegank.R;
-import com.shua.likegank.ui.base.ToolbarActivity;
+import com.shua.likegank.databinding.ActivityWebViewBinding;
 import com.shua.likegank.utils.AppUtils;
-
-import butterknife.BindView;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-public class WebViewActivity extends ToolbarActivity {
+
+public class WebActivity extends AppCompatActivity {
 
     private static final String EXTRA_URL = "URL";
     private static final String EXTRA_TITLE = "TITLE";
 
-    @BindView(R.id.webView)
-    WebView mWebView;
-    @BindView(R.id.progressBar)
-    ProgressBar mProgressBar;
+    private ActivityWebViewBinding viewBinding;
 
     private String mUrl;
 
+    private WebView mWebView;
+
     public static Intent newIntent(Context context, String url, String title) {
-        Intent intent = new Intent(context, WebViewActivity.class);
+        Intent intent = new Intent(context, WebActivity.class);
         intent.putExtra(EXTRA_URL, url);
         intent.putExtra(EXTRA_TITLE, title);
         return intent;
     }
 
     @Override
-    protected int contentView() {
-        return R.layout.activity_web_view;
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ActivityWebViewBinding viewBinding = contentView();
+        setContentView(viewBinding.getRoot());
+        Toolbar toolbar = viewBinding.toolbar;
+        setSupportActionBar(toolbar);
+        initViews(viewBinding);
+    }
+
+    protected ActivityWebViewBinding contentView() {
+        return ActivityWebViewBinding.inflate(getLayoutInflater());
     }
 
     @SuppressLint("SetJavaScriptEnabled")
-    @Override
-    protected void initViews() {
+    protected void initViews(ActivityWebViewBinding viewBinding) {
+        this.viewBinding = viewBinding;
+        mWebView = viewBinding.webView;
         setTitle(getIntent().getStringExtra(EXTRA_TITLE));
 
         WebSettings settings = mWebView.getSettings();
@@ -71,20 +83,12 @@ public class WebViewActivity extends ToolbarActivity {
     }
 
     @Override
-    protected void initPresenter() {
-    }
-
-    @Override
-    protected boolean addBack() {
-        return true;
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_web, menu);
         return true;
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -93,16 +97,14 @@ public class WebViewActivity extends ToolbarActivity {
                 mWebView.reload();
                 return true;
             case R.id.action_copy_url:
-                AppUtils.copyToClipBoard
-                        (this, mWebView.getUrl());
+                AppUtils.copyToClipBoard(this, mWebView.getUrl());
                 return true;
             case R.id.action_open_url:
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_VIEW);
                 Uri uri = Uri.parse(mUrl);
                 intent.setData(uri);
-                if (intent.resolveActivity(getPackageManager()) != null)
-                    startActivity(intent);
+                if (intent.resolveActivity(getPackageManager()) != null) startActivity(intent);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -124,6 +126,7 @@ public class WebViewActivity extends ToolbarActivity {
             mWebView = null;
             finish();
         }
+
         return super.onKeyDown(keyCode, event);
     }
 
@@ -132,11 +135,12 @@ public class WebViewActivity extends ToolbarActivity {
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
             if (newProgress == 100) {
-                mProgressBar.setVisibility(GONE);
+                viewBinding.progressBar.setVisibility(GONE);
             } else {
-                if (mProgressBar.getVisibility() == GONE)
-                    mProgressBar.setVisibility(VISIBLE);
-                mProgressBar.setProgress(newProgress);
+                if (viewBinding.progressBar.getVisibility() == GONE) {
+                    viewBinding.progressBar.setVisibility(VISIBLE);
+                }
+                viewBinding.progressBar.setProgress(newProgress);
             }
             super.onProgressChanged(view, newProgress);
         }

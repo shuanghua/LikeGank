@@ -3,6 +3,8 @@ package com.shua.likegank.presenters;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.fragment.app.Fragment;
+
 import com.shua.likegank.R;
 import com.shua.likegank.api.ApiFactory;
 import com.shua.likegank.data.GankData;
@@ -14,6 +16,7 @@ import com.shua.likegank.utils.NetWorkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -33,8 +36,8 @@ public class ImagePresenter extends NetWorkBasePresenter<ImageViewInterface> {
     public static final int REQUEST_LOAD_MORE = 2;
     private int mPage = 1;
     private int mPageIndex = 1;
-    private Realm mRealm;
-    private List<Content> mList;
+    private final Realm mRealm;
+    private final List<Content> mList;
     private Disposable mDisposable;
     private Disposable mNetWorkDisposable;
 
@@ -45,7 +48,7 @@ public class ImagePresenter extends NetWorkBasePresenter<ImageViewInterface> {
     }
 
     public void requestData(int requestType) {
-        if (NetWorkUtils.isNetworkConnected((Context) mView)) {
+        if (NetWorkUtils.isNetworkConnected(((Fragment) mView).requireContext())) {
             switch (requestType) {
                 case REQUEST_REFRESH:
                     mPageIndex = mPage;
@@ -87,7 +90,7 @@ public class ImagePresenter extends NetWorkBasePresenter<ImageViewInterface> {
                         mView.showData(mList);
                     }
                 }, throwable -> {
-                    Log.e("ImagePresenter:", throwable.getMessage());
+                    Log.e("ImagePresenter:", Objects.requireNonNull(throwable.getMessage()));
                     mView.hideLoading();
                     AppUtils.toast(R.string.error_net);
                 });
@@ -127,7 +130,8 @@ public class ImagePresenter extends NetWorkBasePresenter<ImageViewInterface> {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         results -> mView.showData(results),
-                        throwable -> Log.e("ImagePresenter:", throwable.getMessage())
+                        throwable -> Log.e("ImagePresenter:",
+                                Objects.requireNonNull(throwable.getMessage()))
                 );
     }
 

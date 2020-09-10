@@ -6,22 +6,19 @@
         <item
             android:id="@+id/nav_home"
             android:icon="@mipmap/ic_menu_home"
-            android:title="@string/bar_title_home" />
+            android:title="@string/menu_home" />
         <item
             android:id="@+id/nav_android"
-            android:checkable="false"
             android:icon="@mipmap/ic_menu_android"
-            android:title="@string/bar_title_android" />
+            android:title="@string/menu_android" />
         <item
             android:id="@+id/nav_ios"
-            android:checkable="false"
             android:icon="@mipmap/ic_menu_ios"
-            android:title="@string/bar_title_ios" />
+            android:title="@string/menu_ios" />
         <item
-            android:id="@+id/nav_surprise"
-            android:checkable="false"
+            android:id="@+id/nav_girls"
             android:icon="@mipmap/ic_menu_fuli"
-            android:title="@string/bar_title_image" />
+            android:title="@string/menu_girls" />
     </group>
 
     <item

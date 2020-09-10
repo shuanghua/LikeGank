@@ -1,24 +1,23 @@
 package com.shua.likegank.ui.itembinder;
 
 import android.content.Context;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.orhanobut.logger.Logger;
 import com.shua.likegank.R;
 import com.shua.likegank.data.entity.Content;
-import com.shua.likegank.ui.PhotoViewActivity;
+import com.shua.likegank.databinding.ItemFuliBinding;
+import com.shua.likegank.ui.PhotoFragment;
 
 import me.drakeet.multitype.ItemViewBinder;
 
@@ -27,8 +26,7 @@ import me.drakeet.multitype.ItemViewBinder;
  * ImageItemBinder
  * Created by SHUA on 2017/2/28.
  */
-
-public class ImageItemBinder extends ItemViewBinder<Content, ImageItemBinder.ImageHolder> {
+public class ImageItemBinder extends ItemViewBinder<Content, ImageItemBinder.ViewHolder> {
 
     /**
      * It is recommended to request a compressed image
@@ -40,10 +38,9 @@ public class ImageItemBinder extends ItemViewBinder<Content, ImageItemBinder.Ima
 
     @NonNull
     @Override
-    protected ImageHolder onCreateViewHolder(@NonNull LayoutInflater inflater
-            , @NonNull ViewGroup parent) {
-        View root = inflater.inflate(R.layout.item_fuli, parent, false);
-        ImageHolder holder = new ImageHolder(root);
+    protected ViewHolder onCreateViewHolder(@NonNull LayoutInflater inflater,
+                                            @NonNull ViewGroup parent) {
+        ViewHolder holder = new ViewHolder(ItemFuliBinding.inflate(inflater, parent, false));
         mContext = holder.mImageView.getContext();
         options = new RequestOptions()
                 .placeholder(R.mipmap.ic_bg_fuli)
@@ -53,8 +50,7 @@ public class ImageItemBinder extends ItemViewBinder<Content, ImageItemBinder.Ima
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull ImageHolder holder, @NonNull Content data) {
-        final String networkUrl = data.url;
+    protected void onBindViewHolder(@NonNull ViewHolder holder, @NonNull Content data) {
         Glide.with(mContext)
                 .load(data.url)
                 .apply(options)
@@ -63,25 +59,21 @@ public class ImageItemBinder extends ItemViewBinder<Content, ImageItemBinder.Ima
         holder.url = data.url;
     }
 
-    static class ImageHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
         int position;
         String url;
         ImageView mImageView;
 
-        ImageHolder(View itemView) {
-            super(itemView);
-            this.mImageView = itemView.findViewById(R.id.fuli_image);
-            itemView.setOnClickListener(v -> {
-                Logger.d(url);
-                itemView.getContext().startActivity(
-                        PhotoViewActivity.newIntent(itemView.getContext(), url)
-                );
-            });
+        ViewHolder(ItemFuliBinding binding) {
+            super(binding.getRoot());
+            this.mImageView = binding.fuliImage;
+            itemView.setOnClickListener((View v) ->
+                    itemView.getContext().startActivity(
+                            PhotoFragment.newIntent(itemView.getContext(), url)
+                    )
+            );
 
-            DisplayMetrics dm = mImageView
-                    .getContext()
-                    .getResources()
-                    .getDisplayMetrics();
+            DisplayMetrics dm = mImageView.getContext().getResources().getDisplayMetrics();
             int mLikeImageW = dm.widthPixels / 2;
             int mLikeImageH = dm.heightPixels / 3;
             ViewGroup.LayoutParams params = mImageView.getLayoutParams();

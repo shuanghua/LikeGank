@@ -3,6 +3,8 @@ package com.shua.likegank.presenters;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.fragment.app.Fragment;
+
 import com.shua.likegank.R;
 import com.shua.likegank.api.ApiFactory;
 import com.shua.likegank.data.Category;
@@ -13,6 +15,7 @@ import com.shua.likegank.utils.AppUtils;
 import com.shua.likegank.utils.NetWorkUtils;
 
 import java.util.List;
+import java.util.Objects;
 
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -33,8 +36,8 @@ public class AndroidPresenter extends NetWorkBasePresenter<AndroidViewInterface>
     public static final int REQUEST_LOAD_MORE = 2;
     private int mPage = 1;
     private int mPageIndex = 1;
-    private Items items;
-    private Realm mRealm;
+    private final Items items;
+    private final Realm mRealm;
     private Disposable mDisposable;
     private Disposable mNetWorkDisposable;
     private String time2 = "";
@@ -96,7 +99,7 @@ public class AndroidPresenter extends NetWorkBasePresenter<AndroidViewInterface>
     }
 
     private void fromNetWorkLoad() {
-        if (NetWorkUtils.isNetworkConnected((Context) mView)) {
+        if (NetWorkUtils.isNetworkConnected(((Fragment) mView).requireContext())) {
             mNetWorkDisposable = ApiFactory.getGankApi()
                     .getAndroidData(mPage)
                     .map(GankData::getResults)
@@ -115,7 +118,7 @@ public class AndroidPresenter extends NetWorkBasePresenter<AndroidViewInterface>
                         }
                     }, throwable -> {
                         mView.hideLoading();
-                        Log.e("AndroidPresenter:", throwable.getMessage());
+                        Log.e("AndroidPresenter:", Objects.requireNonNull(throwable.getMessage()));
                         AppUtils.toast(R.string.not_data);
                     });
         } else {
@@ -125,7 +128,7 @@ public class AndroidPresenter extends NetWorkBasePresenter<AndroidViewInterface>
     }
 
     public void requestData(int requestType) {
-        if (NetWorkUtils.isNetworkConnected((Context) mView)) {
+        if (NetWorkUtils.isNetworkConnected(((Fragment) mView).requireContext())) {
             switch (requestType) {
                 case REQUEST_REFRESH:
                     mPageIndex = mPage;

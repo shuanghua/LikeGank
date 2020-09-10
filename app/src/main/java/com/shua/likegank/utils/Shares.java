@@ -48,9 +48,9 @@ public class Shares {
     private static void share(Context context, String extraText) {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.share));
+        intent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.menu_share));
         intent.putExtra(Intent.EXTRA_TEXT, extraText);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(Intent.createChooser(intent, context.getString(R.string.share)));
+        context.startActivity(Intent.createChooser(intent, context.getString(R.string.menu_share)));
     }
 }

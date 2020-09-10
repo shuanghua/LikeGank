@@ -1,21 +1,22 @@
 package com.shua.likegank.ui.itembinder;
 
 import android.graphics.Color;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.shua.likegank.R;
 import com.shua.likegank.data.entity.Home;
-import com.shua.likegank.ui.PhotoViewActivity;
-import com.shua.likegank.ui.WebViewActivity;
+import com.shua.likegank.databinding.ItemHomeBinding;
+import com.shua.likegank.ui.PhotoFragment;
+import com.shua.likegank.ui.WebActivity;
 import com.shua.likegank.utils.AppUtils;
 
 import me.drakeet.multitype.ItemViewBinder;
@@ -24,15 +25,13 @@ import me.drakeet.multitype.ItemViewBinder;
  * FuLiViewProvider
  * Created by SHUA on 2017/4/17.
  */
-
 public class HomeItemBinder extends ItemViewBinder<Home, HomeItemBinder.HomeHolder> {
 
     @NonNull
     @Override
     protected HomeHolder onCreateViewHolder(@NonNull LayoutInflater inflater
-            , @NonNull ViewGroup parent) {
-        View root = inflater.inflate(R.layout.item_home, parent, false);
-        return new HomeHolder(root);
+            , @NonNull ViewGroup viewGroup) {
+        return new HomeHolder(ItemHomeBinding.inflate(inflater, viewGroup, false));
     }
 
     @Override
@@ -89,29 +88,26 @@ public class HomeItemBinder extends ItemViewBinder<Home, HomeItemBinder.HomeHold
     }
 
     static class HomeHolder extends RecyclerView.ViewHolder {
-        private ImageView mImageView;
-        private TextView mTextTitle;
-        private TextView mTextTime;
+        private final ImageView mImageView;
+        private final TextView mTextTitle;
+        private final TextView mTextTime;
         private String url;
         private String title;
         private String type;
 
-        HomeHolder(View itemView) {
-            super(itemView);
-            this.mImageView = itemView.findViewById(R.id.home_image);
-            this.mTextTitle = itemView.findViewById(R.id.home_title);
-            this.mTextTime = itemView.findViewById(R.id.home_time);
+        HomeHolder(ItemHomeBinding binding) {
+            super(binding.getRoot());
+            this.mImageView = binding.homeImage;
+            this.mTextTitle = binding.homeTitle;
+            this.mTextTime = binding.homeTime;
 
             itemView.setOnClickListener(v -> {
-                switch (type) {
-                    case "福利":
-                        itemView.getContext().startActivity(PhotoViewActivity
-                                .newIntent(itemView.getContext(), url));
-                        break;
-                    default:
-                        itemView.getContext().startActivity(WebViewActivity
-                                .newIntent(itemView.getContext(), url, title));
-                        break;
+                if ("福利".equals(type)) {
+                    itemView.getContext().startActivity(PhotoFragment
+                            .newIntent(itemView.getContext(), url));
+                } else {
+                    itemView.getContext().startActivity(WebActivity
+                            .newIntent(itemView.getContext(), url, title));
                 }
             });
         }

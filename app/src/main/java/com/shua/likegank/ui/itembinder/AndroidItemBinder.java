@@ -1,6 +1,7 @@
 package com.shua.likegank.ui.itembinder;
 
 import android.graphics.Color;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -8,13 +9,12 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.shua.likegank.R;
 import com.shua.likegank.data.entity.Android;
-import com.shua.likegank.ui.WebViewActivity;
+import com.shua.likegank.databinding.ItemContentBinding;
+import com.shua.likegank.ui.WebActivity;
 
 import me.drakeet.multitype.ItemViewBinder;
 
@@ -29,13 +29,11 @@ public class AndroidItemBinder extends ItemViewBinder<Android, AndroidItemBinder
     @Override
     protected ViewHolder onCreateViewHolder(@NonNull LayoutInflater layoutInflater,
                                             @NonNull ViewGroup viewGroup) {
-        View view = layoutInflater.inflate(R.layout.item_content, viewGroup, false);
-        return new ViewHolder(view);
+        return new ViewHolder(ItemContentBinding.inflate(layoutInflater, viewGroup, false));
     }
 
     @Override
     protected void onBindViewHolder(@NonNull ViewHolder viewHolder, @NonNull Android android) {
-
         SpannableString span = new SpannableString(new StringBuilder()
                 .append(android.content)
                 .append("(via-")
@@ -55,11 +53,11 @@ public class AndroidItemBinder extends ItemViewBinder<Android, AndroidItemBinder
         String url, title;
         TextView content;
 
-        ViewHolder(View itemView) {
-            super(itemView);
-            this.content = itemView.findViewById(R.id.item_content);
+        ViewHolder(ItemContentBinding binding) {
+            super(binding.getRoot());
+            this.content = binding.itemContent;
             itemView.setOnClickListener(v -> v.getContext()
-                    .startActivity(WebViewActivity.newIntent(v.getContext(), url, title)));
+                    .startActivity(WebActivity.newIntent(v.getContext(), url, title)));
         }
     }
 }

@@ -26,16 +26,15 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import androidx.core.content.FileProvider;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
-import com.shua.likegank.R;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import androidx.core.content.FileProvider;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableOnSubscribe;
@@ -66,12 +65,7 @@ public class RxSave {
         }, BackpressureStrategy.BUFFER)
                 .flatMap(bitmap -> {
                     File appDir = new File(Environment.getExternalStorageDirectory(), "LikeGank");
-                    if (!appDir.exists()) {
-                        final  boolean b = appDir.mkdir();
-                        if (!b){
-                           AppUtils.toast(R.string.directory_create_erroe);
-                        }
-                    }
+                    if (!appDir.exists()) appDir.mkdir();
                     String fileName = title.replace('/', '-') + ".jpg";
                     File file = new File(appDir, fileName);
                     try {

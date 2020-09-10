@@ -12,10 +12,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 class ServiceFcactory {
 
     private final GankApi gankApiService;
+    // https://gank.io/api/v2/data/category/Girl/type/Girl/page/1/count/10
+    private final static String URL_GANK = "https://gank.io/api/v2/";
 
     ServiceFcactory() {
         Retrofit.Builder builder = new Retrofit.Builder();
-        Retrofit gank = builder.baseUrl("http://gank.io/api/")
+        Retrofit gank = builder.baseUrl(URL_GANK)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
