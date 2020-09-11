@@ -17,9 +17,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.shua.likegank.data.entity.Content;
 import com.shua.likegank.databinding.FragmentGirlsBinding;
 import com.shua.likegank.interfaces.ImageViewInterface;
-import com.shua.likegank.presenters.ImagePresenter;
+import com.shua.likegank.presenters.GirlsPresenter;
 import com.shua.likegank.ui.base.RefreshFragment;
-import com.shua.likegank.ui.itembinder.ImageItemBinder;
+import com.shua.likegank.ui.itembinder.GirlsItemBinder;
 
 import java.util.List;
 
@@ -33,7 +33,7 @@ public class GirlsFragment extends RefreshFragment<FragmentGirlsBinding> impleme
 
     private final static int SPAN_COUNT = 3;
     private MultiTypeAdapter mAdapter;
-    private ImagePresenter mPresenter;
+    private GirlsPresenter mPresenter;
 
     private RecyclerView.OnScrollListener getOnBottomListener(GridLayoutManager layoutManager) {
         return new RecyclerView.OnScrollListener() {
@@ -47,12 +47,12 @@ public class GirlsFragment extends RefreshFragment<FragmentGirlsBinding> impleme
 
     @Override
     protected void initPresenter() {
-        mPresenter = new ImagePresenter(this);
+        mPresenter = new GirlsPresenter(this);
     }
 
     @Override
     protected void refresh() {
-        mPresenter.requestData(ImagePresenter.REQUEST_REFRESH);
+        mPresenter.requestData(GirlsPresenter.REQUEST_REFRESH);
     }
 
     private void bottomListener(LinearLayoutManager layoutManager) {
@@ -61,7 +61,7 @@ public class GirlsFragment extends RefreshFragment<FragmentGirlsBinding> impleme
         lastItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
         firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
         if (lastItemPosition == itemCount - 1 && lastItemPosition - firstItemPosition > 0) {
-            mPresenter.requestData(ImagePresenter.REQUEST_LOAD_MORE);
+            mPresenter.requestData(GirlsPresenter.REQUEST_LOAD_MORE);
 //        } else if (firstItemPosition == 0) {
 //            isTransparent(true);
 //        } else {
@@ -129,7 +129,7 @@ public class GirlsFragment extends RefreshFragment<FragmentGirlsBinding> impleme
     private void initRecyclerView() {
         final GridLayoutManager layoutManager = new GridLayoutManager(requireActivity(), SPAN_COUNT);
         mAdapter = new MultiTypeAdapter();
-        mAdapter.register(Content.class, new ImageItemBinder());
+        mAdapter.register(Content.class, new GirlsItemBinder());
         RecyclerView recyclerView = binding.refreshListLayout.recyclerView;
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.addItemDecoration(new ImageSpaceItemDecoration(12, SPAN_COUNT, true));

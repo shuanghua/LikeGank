@@ -7,7 +7,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.shua.likegank.data.Category;
+import com.shua.likegank.data.uimodel.Category;
 import com.shua.likegank.databinding.ItemCategoryBinding;
 
 import me.drakeet.multitype.ItemViewBinder;

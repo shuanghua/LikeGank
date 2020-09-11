@@ -1,4 +1,4 @@
-package com.shua.likegank.data;
+package com.shua.likegank.data.uimodel;
 
 import androidx.annotation.NonNull;
 

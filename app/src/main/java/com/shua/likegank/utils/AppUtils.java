@@ -43,4 +43,14 @@ public class AppUtils {
         }
         toast.show();
     }
+
+    @SuppressLint("ShowToast")
+    public static void toast(String msg) {
+        if (toast == null) {
+            toast = Toast.makeText(mAppContext, msg, Toast.LENGTH_SHORT);
+        } else {
+            toast.setText(msg);
+        }
+        toast.show();
+    }
 }

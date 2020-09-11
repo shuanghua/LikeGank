@@ -5,16 +5,20 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.shua.likegank.R;
 import com.shua.likegank.data.entity.Home;
 import com.shua.likegank.databinding.ItemHomeBinding;
+import com.shua.likegank.ui.GirlsFragmentDirections;
+import com.shua.likegank.ui.HomeFragmentDirections;
 import com.shua.likegank.ui.PhotoFragment;
 import com.shua.likegank.ui.WebActivity;
 import com.shua.likegank.utils.AppUtils;
@@ -56,7 +60,7 @@ public class HomeItemBinder extends ItemViewBinder<Home, HomeItemBinder.HomeHold
                 holder.mImageView.setImageResource(R.mipmap.ic_video);
                 break;
             default:
-                holder.mImageView.setImageResource(R.mipmap.ic_launcher);
+                holder.mImageView.setImageResource(R.mipmap.likegank_launcher_round);
                 break;
         }
         holder.mTextTime.setText(AppUtils.timeString(home.createdAt));
@@ -102,9 +106,10 @@ public class HomeItemBinder extends ItemViewBinder<Home, HomeItemBinder.HomeHold
             this.mTextTime = binding.homeTime;
 
             itemView.setOnClickListener(v -> {
-                if ("福利".equals(type)) {
-                    itemView.getContext().startActivity(PhotoFragment
-                            .newIntent(itemView.getContext(), url));
+                if ("Girl".equals(type)) {
+                        HomeFragmentDirections.ActionNavHomeToNavPhoto action
+                                = HomeFragmentDirections.actionNavHomeToNavPhoto(url);
+                        Navigation.findNavController(v).navigate(action);
                 } else {
                     itemView.getContext().startActivity(WebActivity
                             .newIntent(itemView.getContext(), url, title));

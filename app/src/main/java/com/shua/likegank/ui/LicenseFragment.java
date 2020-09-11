@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.shua.likegank.data.Category;
+import com.shua.likegank.data.uimodel.Category;
 import com.shua.likegank.data.entity.Content;
 import com.shua.likegank.databinding.FragmentLincenseBinding;
 import com.shua.likegank.interfaces.LicenseViewInterface;

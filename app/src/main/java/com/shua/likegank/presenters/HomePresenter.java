@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 
 import com.shua.likegank.R;
 import com.shua.likegank.api.ApiFactory;
+import com.shua.likegank.data.GankBean;
 import com.shua.likegank.data.GankData;
 import com.shua.likegank.data.entity.Home;
 import com.shua.likegank.interfaces.HomeViewInterface;
@@ -15,6 +16,7 @@ import com.shua.likegank.utils.NetWorkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -48,12 +50,12 @@ public class HomePresenter extends NetWorkBasePresenter<HomeViewInterface> {
             switch (requestType) {
                 case REQUEST_REFRESH:
                     mPage = 1;
-                    fromNetWorkLoad();
+                    fromNetWorkLoadV2();
                     break;
                 case REQUEST_LOAD_MORE:
                     mView.showLoading();
                     mPage++;
-                    fromNetWorkLoad();
+                    fromNetWorkLoadV2();
                     break;
                 default:
                     break;
@@ -77,7 +79,7 @@ public class HomePresenter extends NetWorkBasePresenter<HomeViewInterface> {
                         gankEntity.getType(),
                         gankEntity.getUrl(),
                         gankEntity.getWho()))
-                .buffer(60)
+                .buffer(50)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(homes -> {
@@ -92,6 +94,35 @@ public class HomePresenter extends NetWorkBasePresenter<HomeViewInterface> {
                 }, throwable -> {
                     mView.hideLoading();
                     Log.e("HomePresenter:", throwable.getMessage());
+                });
+    }
+
+    private void fromNetWorkLoadV2() {
+        mNetWorkDisposable = ApiFactory.getGankApi()
+                .getHomeDataV2(mPage)
+                .map(GankBean::getData)
+                .flatMap(Flowable::fromIterable)
+                .map(gankEntity -> new Home(gankEntity.get_id(),
+                        gankEntity.getDesc(),
+                        gankEntity.getPublishedAt(),
+                        gankEntity.getType(),
+                        gankEntity.getUrl(),
+                        gankEntity.getAuthor()))
+                .buffer(60)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(homes -> {
+                    if (mPage == 1) {
+                        mList.clear();
+                        mList.addAll(homes);
+                        saveData(homes);
+                    } else {
+                        mList.addAll(homes);
+                        mView.showData(mList);
+                    }
+                }, throwable -> {
+                    mView.hideLoading();
+                    Log.e("HomePresenter:", Objects.requireNonNull(throwable.getMessage()));
                 });
     }
 

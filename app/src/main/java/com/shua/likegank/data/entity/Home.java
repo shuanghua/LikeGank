@@ -16,12 +16,12 @@ public class Home extends RealmObject {
     public Home() {
     }
 
-    public Home(String _id
-            , String title
-            , String createdAt
-            , String type
-            , String url
-            , String who) {
+    public Home(String _id,
+                String title,
+                String createdAt,
+                String type,
+                String url,
+                String who) {
         this._id = _id;
         this.title = title;
         this.createdAt = createdAt;

@@ -1,6 +1,5 @@
 package com.shua.likegank.presenters;
 
-import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -8,9 +7,10 @@ import androidx.fragment.app.Fragment;
 
 import com.shua.likegank.R;
 import com.shua.likegank.api.ApiFactory;
-import com.shua.likegank.data.Category;
+import com.shua.likegank.data.GankBean;
 import com.shua.likegank.data.GankData;
 import com.shua.likegank.data.entity.IOS;
+import com.shua.likegank.data.uimodel.Category;
 import com.shua.likegank.interfaces.IOSViewInterface;
 import com.shua.likegank.utils.AppUtils;
 import com.shua.likegank.utils.NetWorkUtils;
@@ -104,7 +104,7 @@ public class IOSPresenter extends NetWorkBasePresenter<IOSViewInterface> {
     private void fromNetWorkLoad() {
         if (NetWorkUtils.isNetworkConnected(((Fragment) mView).requireContext())) {
             mNetWorkDisposable = ApiFactory.getGankApi()
-                    .getiOSData(mPage)
+                    .getIOSData(mPage)
                     .map(GankData::getResults)
                     .flatMap(Flowable::fromIterable)
                     .map(gankEntity -> new IOS(gankEntity.getPublishedAt(),
@@ -129,18 +129,46 @@ public class IOSPresenter extends NetWorkBasePresenter<IOSViewInterface> {
         }
     }
 
+    private void fromNetWorkLoadV2() {
+        if (NetWorkUtils.isNetworkConnected(((Fragment) mView).requireContext())) {
+            mNetWorkDisposable = ApiFactory.getGankApi()
+                    .getIOSDataV2(mPage)
+                    .map(GankBean::getData)
+                    .flatMap(Flowable::fromIterable)
+                    .map(gankBean -> new IOS(gankBean.getPublishedAt(),
+                            gankBean.getDesc(), gankBean.getAuthor(),
+                            gankBean.get_id(), gankBean.getUrl()))
+                    .buffer(50)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(ioss -> {
+                        if (mPage == 1) {
+                            saveData(ioss);
+                        } else {
+                            mView.showData(pareData(ioss));
+                        }
+                    }, throwable -> {
+                        Log.e("IOSPresenter:", Objects.requireNonNull(throwable.getMessage()));
+                        mView.hideLoading();
+                    });
+        } else {
+            AppUtils.toast(R.string.error_net);
+            mView.hideLoading();
+        }
+    }
+
     public void requestData(int requestType) {
         if (NetWorkUtils.isNetworkConnected(((Fragment) mView).requireContext())) {
             switch (requestType) {
                 case REQUEST_REFRESH:
                     mPageIndex = mPage;
                     mPage = 1;
-                    fromNetWorkLoad();
+                    fromNetWorkLoadV2();
                     break;
                 case REQUEST_LOAD_MORE:
                     mView.showLoading();
                     mPage++;
-                    fromNetWorkLoad();
+                    fromNetWorkLoadV2();
                     break;
                 default:
                     break;

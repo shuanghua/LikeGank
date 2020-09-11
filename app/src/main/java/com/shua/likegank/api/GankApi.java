@@ -1,5 +1,6 @@
 package com.shua.likegank.api;
 
+import com.shua.likegank.data.GankBean;
 import com.shua.likegank.data.GankData;
 
 import io.reactivex.Flowable;
@@ -13,7 +14,7 @@ import retrofit2.http.Path;
 public interface GankApi {
 
     @GET("data/福利/39/{page}")
-    Flowable<GankData> getFuLiData(@Path("page") int page);
+    Flowable<GankData> getGirlsData(@Path("page") int page);
 
     @GET("data/all/60/{page}")
     Flowable<GankData> getHomeData(@Path("page") int page);
@@ -22,5 +23,18 @@ public interface GankApi {
     Flowable<GankData> getAndroidData(@Path("page") int page);
 
     @GET("data/iOS/60/{page}")
-    Flowable<GankData> getiOSData(@Path("page") int page);
+    Flowable<GankData> getIOSData(@Path("page") int page);
+
+    // V2
+    @GET("data/category/Girl/type/Girl/page/{page}/count/39")
+    Flowable<GankBean> getGirlsDataV2(@Path("page") int page);
+
+    @GET("data/category/All/type/All/page/{page}/count/50")
+    Flowable<GankBean> getHomeDataV2(@Path("page") int page);
+
+    @GET("data/category/GanHuo/type/Android/page/{page}/count/50")
+    Flowable<GankBean> getAndroidDataV2(@Path("page") int page);
+
+    @GET("data/category/GanHuo/type/iOS/page/{page}/count/50")
+    Flowable<GankBean> getIOSDataV2(@Path("page") int page);
 }

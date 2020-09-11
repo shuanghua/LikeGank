@@ -7,10 +7,13 @@
     <string name="menu_girls">妹纸</string>
     <string name="menu_share">分享</string>
 
+    <string name="meizi_transition_name">name</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">gank 官网</string>
+    <string name="action_settings">Gank 官网</string>
+    <string name="title_activity_a">a</string>
 
     <string name="prompt">提示</string>
     <string name="prompt_information">是否确认退出？</string>
@@ -21,9 +24,9 @@
     <string name="not_data">没有数据了！</string>
     <string name="error_delete">Delete error!</string>
     <string name="share_to">分享到：</string>
-    <string name="action_refresh">刷新此页面</string>
-    <string name="action_copy_url">复制此链接</string>
-    <string name="action_open_url">浏览器打开</string>
+    <string name="action_refresh">刷新此页</string>
+    <string name="action_copy_url">复制链接</string>
+    <string name="action_open_url">打开链接</string>
     <string name="tip_no_new_data">服务器暂时没有新数据！</string>
 
     <string-array name="photo_dialog_list">
@@ -31,21 +34,23 @@
         <item name="save">保存图片</item>
     </string-array>
 
+    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_web_view">WebViewActivity</string>
     <string name="gank_link">http://gank.io</string>
     <string name="via">(via-</string>
-    <string name="directory_create_erroe">Directory create error</string>
+    <string name="fd">发生的</string>
 
-    <string name="apache_2_0">Apache 2.0 license</string>
-    <string name="license_realm_java">Apache 2.0 license</string>
-    <string name="license_RxPermissions">Apache License 2.0 </string>
+
+    <string name="license_apache_2_0"> Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)</string>
+
     <string name="about">关于</string>
     <string name="tag">*</string>
     <string name="about_like_github">项目GitHub地址</string>
     <string name="about_gankapi_url">Gank 官网</string>
+    <string name="about_meizi_github">妹纸Gank.io</string>
     <string name="open_license">开放源代码许可</string>
-    <string name="about_Introduction">LikeGank 个人练手学习的一款 APP，涵盖了 [Material-Design] [Realm] [RxJava] [Retrofit] [MultiType] [PhotoView] [Glide] [ButterKnife] 等一些热门的开源库。LikeGank 应用中的数据来自 GankApi</string>
+    <string name="about_Introduction">LikeGank 是我抽空学习@drakeet 妹纸Gank.io 写的一个练手应用，学习涵盖了 Relm Rxjava Retrofit Multitype Photoview 等等一些热门的开源框架。LikeGank 中所有的网络数据均来自@代码家 GankApi</string>
     <string name="likegank_github">https://github.com/Shuanghua/LikeGank</string>
+    <string name="meizi_github">https://github.com/drakeet/Meizhi</string>
     <string name="asset_statements" translatable="false">[{\n  \"relation\": [\"delegate_permission/common.handle_all_urls\"],\n  \"target\": {\n    \"namespace\": \"web\",\n    \"site\": \"https://fabric.io\",\n  }\n}]</string>
-    <string name="gankapi_data_support">数据支持 @GankApi </string>
 </resources>

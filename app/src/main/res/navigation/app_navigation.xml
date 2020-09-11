@@ -9,7 +9,11 @@
         android:id="@+id/nav_home"
         android:name="com.shua.likegank.ui.HomeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_nav_home_to_nav_photo"
+            app:destination="@id/nav_photo" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_android"
@@ -31,9 +35,6 @@
         <action
             android:id="@+id/action_nav_girls_to_nav_photo"
             app:destination="@id/nav_photo" />
-        <argument
-            android:name="url_girls"
-            app:argType="string" />
     </fragment>
 
     <fragment
@@ -50,7 +51,11 @@
         android:id="@+id/nav_photo"
         android:name="com.shua.likegank.ui.PhotoFragment"
         android:label="图片查看"
-        tools:layout="@layout/fragment_photo" />
+        tools:layout="@layout/fragment_photo" >
+        <argument
+            android:name="url_girl"
+            app:argType="string" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_license"

@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
         DrawerLayout drawer = viewBinding.drawerLayout;
         NavigationView navigationView = viewBinding.navView;
-
+        navigationView.setItemIconTintList(null);
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_android,
                 R.id.nav_ios, R.id.nav_girls,

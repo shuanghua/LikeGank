@@ -38,6 +38,8 @@ import io.reactivex.disposables.CompositeDisposable;
 import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
+import static android.os.Environment.DIRECTORY_PICTURES;
+
 
 /**
  * Display image
@@ -46,20 +48,11 @@ import uk.co.senab.photoview.PhotoViewAttacher;
 
 public class PhotoFragment extends BaseFragment<FragmentPhotoBinding> {
 
-    public static final String EXTRA_URL_MEIZI = "MEIZI_URL";
-
-    //private ActivityPhotoBinding viewBinding;
     private PhotoView mPhotoView;
     private CompositeDisposable mDisposable;
     private String url;
     private RxPermissions rxPermissions;
     private PhotoViewAttacher mAttacher;
-
-    public static Intent newIntent(Context context, String url) {
-        Intent intent = new Intent(context, PhotoFragment.class);
-        intent.putExtra(EXTRA_URL_MEIZI, url);
-        return intent;
-    }
 
     @Override
     protected FragmentPhotoBinding viewBinding(LayoutInflater inflater, ViewGroup container) {
@@ -87,11 +80,10 @@ public class PhotoFragment extends BaseFragment<FragmentPhotoBinding> {
         mDisposable = new CompositeDisposable();
         mPhotoView = binding.photoView;
         mAttacher = new PhotoViewAttacher(mPhotoView);
-        mPhotoView.setImageResource(R.mipmap.ic_launcher);
+        mPhotoView.setImageResource(R.mipmap.likegank_launcher_round);
         rxPermissions = new RxPermissions(requireActivity());
-        //TODO("传值并导航到 PhotoFragment")
-
-        // url = getIntent().getStringExtra(EXTRA_URL_MEIZI);
+        assert getArguments() != null;
+        url = PhotoFragmentArgs.fromBundle(getArguments()).getUrlGirl();
         disPlayImage(url);
         setPhotoListener();
     }
@@ -171,47 +163,51 @@ public class PhotoFragment extends BaseFragment<FragmentPhotoBinding> {
     }
 
     private void saveImage() {
-        mDisposable.add(rxPermissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .subscribe(granted -> {
-                    if (granted) {
-                        mDisposable.add(RxSave.saveImageAndGetPathObservable(
-                                requireActivity(), url, url)
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(uri -> {
-                                    File appDir = new File(Environment.getExternalStorageDirectory(), "LikeGank");
-                                    String msg = String.format(getString(
-                                            R.string.picture_has_save_to), appDir.getAbsolutePath());
-                                    Toast.makeText(requireActivity()
-                                            , msg, Toast.LENGTH_SHORT).show();
-                                }));
-                    } else {
-                        Toast.makeText(requireActivity()
-                                , "权限已被拒绝！", Toast.LENGTH_SHORT).show();
-                    }
+//        mDisposable.add(rxPermissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+//                .subscribe(granted -> {
+//                    if (granted) {
+//
+//                    } else {
+//                        Toast.makeText(requireActivity()
+//                                , "权限已被拒绝！", Toast.LENGTH_SHORT).show();
+//                    }
+//                }));
+
+        mDisposable.add(RxSave.saveImageAndGetPathObservable(
+                requireActivity(), url, url)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(uri -> {
+                    File appDir = requireContext().getExternalFilesDir(DIRECTORY_PICTURES);
+                    String msg = String.format(getString(R.string.picture_has_save_to),
+                                    appDir.getAbsolutePath());
+                    Toast.makeText(requireActivity()
+                            , msg, Toast.LENGTH_SHORT).show();
                 }));
     }
 
     @SuppressLint("CheckResult")
     private void shareImage() {
-        mDisposable.add(rxPermissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .subscribe(granted -> {
-                    if (granted) {
-                        RxSave.saveImageAndGetPathObservable(requireActivity(), url, url)
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(uri -> Shares.shareImage(
-                                        requireActivity(), uri, getString(R.string.share_to)),
-                                        throwable -> {
-                                            Logger.e(throwable.getMessage());
-                                            Toast.makeText(requireActivity(),
-                                                    throwable.getMessage(),
-                                                    Toast.LENGTH_SHORT).show();
-                                        });
-                    } else {
-                        Toast.makeText(requireActivity(),
-                                "权限已被拒绝！", Toast.LENGTH_SHORT).show();
-                    }
-                })
-        );
+        RxSave.saveImageAndGetPathObservable(requireActivity(), url, url)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(uri -> Shares.shareImage(
+                        requireActivity(), uri, getString(R.string.share_to)),
+                        throwable -> {
+                            Logger.e(throwable.getMessage());
+                            Toast.makeText(requireActivity(),
+                                    throwable.getMessage(),
+                                    Toast.LENGTH_SHORT).show();
+                        });
+
+//        mDisposable.add(rxPermissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+//                .subscribe(granted -> {
+//                    if (granted) {
+//
+//                    } else {
+//                        Toast.makeText(requireActivity(),
+//                                "权限已被拒绝！", Toast.LENGTH_SHORT).show();
+//                    }
+//                })
+//        );
     }
 
     @Override

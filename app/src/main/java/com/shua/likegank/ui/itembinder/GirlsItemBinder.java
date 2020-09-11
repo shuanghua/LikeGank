@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -17,7 +18,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.shua.likegank.R;
 import com.shua.likegank.data.entity.Content;
 import com.shua.likegank.databinding.ItemFuliBinding;
-import com.shua.likegank.ui.PhotoFragment;
+import com.shua.likegank.ui.GirlsFragmentDirections;
 
 import me.drakeet.multitype.ItemViewBinder;
 
@@ -26,7 +27,7 @@ import me.drakeet.multitype.ItemViewBinder;
  * ImageItemBinder
  * Created by SHUA on 2017/2/28.
  */
-public class ImageItemBinder extends ItemViewBinder<Content, ImageItemBinder.ViewHolder> {
+public class GirlsItemBinder extends ItemViewBinder<Content, GirlsItemBinder.ViewHolder> {
 
     /**
      * It is recommended to request a compressed image
@@ -67,11 +68,11 @@ public class ImageItemBinder extends ItemViewBinder<Content, ImageItemBinder.Vie
         ViewHolder(ItemFuliBinding binding) {
             super(binding.getRoot());
             this.mImageView = binding.fuliImage;
-            itemView.setOnClickListener((View v) ->
-                    itemView.getContext().startActivity(
-                            PhotoFragment.newIntent(itemView.getContext(), url)
-                    )
-            );
+            itemView.setOnClickListener((View v) -> {
+                GirlsFragmentDirections.ActionNavGirlsToNavPhoto action
+                        = GirlsFragmentDirections.actionNavGirlsToNavPhoto(url);
+                Navigation.findNavController(v).navigate(action);
+            });
 
             DisplayMetrics dm = mImageView.getContext().getResources().getDisplayMetrics();
             int mLikeImageW = dm.widthPixels / 2;

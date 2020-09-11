@@ -25,7 +25,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
-                app:srcCompat="@mipmap/ic_launcher" />
+                app:srcCompat="@mipmap/likegank_launcher_round" />
 
             <TextView
                 android:id="@+id/about_version"

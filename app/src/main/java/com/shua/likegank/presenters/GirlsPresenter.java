@@ -1,6 +1,5 @@
 package com.shua.likegank.presenters;
 
-import android.content.Context;
 import android.util.Log;
 
 import androidx.fragment.app.Fragment;
@@ -30,7 +29,7 @@ import io.realm.RealmResults;
  * Created by moshu on 2017/5/13.
  */
 
-public class ImagePresenter extends NetWorkBasePresenter<ImageViewInterface> {
+public class GirlsPresenter extends NetWorkBasePresenter<ImageViewInterface> {
 
     public static final int REQUEST_REFRESH = 1;
     public static final int REQUEST_LOAD_MORE = 2;
@@ -41,7 +40,7 @@ public class ImagePresenter extends NetWorkBasePresenter<ImageViewInterface> {
     private Disposable mDisposable;
     private Disposable mNetWorkDisposable;
 
-    public ImagePresenter(ImageViewInterface viewInterface) {
+    public GirlsPresenter(ImageViewInterface viewInterface) {
         mView = viewInterface;
         mRealm = Realm.getDefaultInstance();
         mList = new ArrayList<>();
@@ -53,12 +52,14 @@ public class ImagePresenter extends NetWorkBasePresenter<ImageViewInterface> {
                 case REQUEST_REFRESH:
                     mPageIndex = mPage;
                     mPage = 1;
-                    fromNetWorkLoad();
+//                    fromNetWorkLoad();
+                    fromNetWorkLoadV2();
                     break;
                 case REQUEST_LOAD_MORE:
                     mView.showLoading();
                     mPage++;
-                    fromNetWorkLoad();
+//                    fromNetWorkLoad();
+                    fromNetWorkLoadV2();
                     break;
                 default:
                     break;
@@ -73,7 +74,7 @@ public class ImagePresenter extends NetWorkBasePresenter<ImageViewInterface> {
 
     private void fromNetWorkLoad() {
         mNetWorkDisposable = ApiFactory.getGankApi()
-                .getFuLiData(mPage)
+                .getGirlsData(mPage)
                 .filter(gankData -> !gankData.isError())
                 .map(GankData::getResults)
                 .flatMap(Flowable::fromIterable)
@@ -96,12 +97,34 @@ public class ImagePresenter extends NetWorkBasePresenter<ImageViewInterface> {
                 });
     }
 
+    private void fromNetWorkLoadV2() {
+        mNetWorkDisposable = ApiFactory.getGankApi().getGirlsDataV2(1)
+                .map(gankBean -> gankBean.getData())
+                .concatMap(Flowable::fromIterable)
+                .map(dataBean -> new Content(dataBean.get_id(), dataBean.getImages().get(0)))
+                .buffer(39)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+                    if (mPage == 1) {
+                        saveData(result);
+                    } else {
+                        mList.addAll(result);
+                        mView.showData(mList);
+                    }
+                }, throwable -> {
+                    Log.e("GirlsPresenter:", Objects.requireNonNull(throwable.getMessage()));
+                    mView.hideLoading();
+                    AppUtils.toast(R.string.error_net);
+                });
+    }
+
     private void saveData(List<Content> data) {
         RealmResults<Content> all = mRealm.where(Content.class).findAll();
         if (all.size() > 0) {
             Content content = all.get(0);
             if (content != null) {
-                if (!(content.content).equals(data.get(0).content)) {
+                if (!(content.content).equals(data.get(0).content)) {//新数据和数据库数据不一样
                     mRealm.executeTransaction(realm -> {
                         realm.delete(Android.class);
                         mList.clear();

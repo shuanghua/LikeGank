@@ -87,7 +87,6 @@ public class AboutFragment extends BaseFragment<FragmentAboutBinding> {
         });
 
 
-        //TODO("导航到 LicenseFragment")
         binding.aboutLicense.setOnClickListener(v -> {
             NavDirections action = AboutFragmentDirections.actionNavAboutToNavLicense();
             Navigation.findNavController(v).navigate(action);
