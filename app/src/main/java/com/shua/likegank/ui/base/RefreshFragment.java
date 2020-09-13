@@ -14,38 +14,36 @@ import com.shua.likegank.R;
 
 /**
  * RefreshBaseActivity
- * Created by SHUA on 2017/3/16.
+ * Created by shuanghua on 2017/3/16.
  */
-
 public abstract class RefreshFragment<T extends ViewBinding> extends BaseFragment<T> {
 
     protected abstract void refresh();
+
     protected abstract SwipeRefreshLayout swipeRefreshView();
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
+    private SwipeRefreshLayout refreshView;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (swipeRefreshView() != null) {
-            swipeRefreshView().setOnRefreshListener(this::refresh);
-            swipeRefreshView().setColorSchemeColors(getResources().getColor(R.color.colorApp));
+        this.refreshView = swipeRefreshView();
+        if (refreshView == null) {
+            throw new IllegalStateException("No found SwipeRefreshView in Layout");
         }
+        refreshView.setOnRefreshListener(this::refresh);
+        refreshView.setColorSchemeColors(getResources().getColor(R.color.colorApp));
     }
 
     public void setRefreshStatus(boolean isRefresh) {
-        if (swipeRefreshView() == null) {
+        if (refreshView == null) {
             return;
         }
         if (!isRefresh) {
-            swipeRefreshView().postDelayed(() ->
-                    swipeRefreshView().setRefreshing(false), 300);
+            refreshView.postDelayed(() ->
+                    refreshView.setRefreshing(false), 300);
         } else {
-            swipeRefreshView().setRefreshing(true);
+            refreshView.setRefreshing(true);
         }
     }
 }

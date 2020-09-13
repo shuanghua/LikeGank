@@ -2,5 +2,5 @@
 <paths>
     <external-path
         name="gank_images"
-        path="Android/data/com.shua.likegank/files/Pictures" />
+        path="." />
 </paths>

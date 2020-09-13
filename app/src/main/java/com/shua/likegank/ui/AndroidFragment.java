@@ -1,7 +1,5 @@
 package com.shua.likegank.ui;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +11,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.shua.likegank.data.uimodel.Category;
 import com.shua.likegank.data.entity.Android;
+import com.shua.likegank.data.uimodel.Category;
 import com.shua.likegank.databinding.FragmentAndroidBinding;
 import com.shua.likegank.interfaces.AndroidViewInterface;
 import com.shua.likegank.presenters.AndroidPresenter;
@@ -25,13 +23,21 @@ import com.shua.likegank.ui.itembinder.CategoryItemBinder;
 import me.drakeet.multitype.Items;
 import me.drakeet.multitype.MultiTypeAdapter;
 
-public class AndroidFragment extends RefreshFragment<FragmentAndroidBinding> implements AndroidViewInterface {
+public class AndroidFragment
+        extends RefreshFragment<FragmentAndroidBinding>
+        implements AndroidViewInterface {
 
     private MultiTypeAdapter mAdapter;
     private AndroidPresenter mPresenter;
 
-    public static Intent newIntent(Context context) {
-        return new Intent(context, AndroidFragment.class);
+    @Nullable
+    @Override
+    public View onCreateView(
+            @NonNull LayoutInflater inflater,
+            @Nullable ViewGroup container,
+            @Nullable Bundle savedInstanceState
+    ) {
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     @Override
@@ -77,10 +83,9 @@ public class AndroidFragment extends RefreshFragment<FragmentAndroidBinding> imp
         itemCount = mAdapter.getItemCount();
         lastItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
         firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
-        if (lastItemPosition == itemCount - 1 && lastItemPosition - firstItemPosition > 0 && lastItemPosition != 0) {
+        if (lastItemPosition == itemCount - 1 && lastItemPosition - firstItemPosition > 0
+                && lastItemPosition != 0) {
             mPresenter.requestData(AndroidPresenter.REQUEST_LOAD_MORE);
-        } else {
-            //isTransparent(firstItemPosition == 0);
         }
     }
 
@@ -94,6 +99,7 @@ public class AndroidFragment extends RefreshFragment<FragmentAndroidBinding> imp
     public void onDestroy() {
         super.onDestroy();
         mPresenter.unSubscribe();
+        mPresenter = null;
     }
 
     @Override
@@ -108,7 +114,6 @@ public class AndroidFragment extends RefreshFragment<FragmentAndroidBinding> imp
 
     @Override
     protected SwipeRefreshLayout swipeRefreshView() {
-
         return binding.refreshListLayout.refreshView;
     }
 

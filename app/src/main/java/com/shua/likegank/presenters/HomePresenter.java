@@ -1,7 +1,6 @@
 package com.shua.likegank.presenters;
 
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -9,20 +8,19 @@ import androidx.fragment.app.Fragment;
 import com.shua.likegank.R;
 import com.shua.likegank.api.ApiFactory;
 import com.shua.likegank.data.GankBean;
-import com.shua.likegank.data.GankData;
 import com.shua.likegank.data.entity.Home;
 import com.shua.likegank.interfaces.HomeViewInterface;
 import com.shua.likegank.utils.NetWorkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
+import io.realm.RealmAsyncTask;
 
 /**
  * ArticlePresenter
@@ -36,8 +34,8 @@ public class HomePresenter extends NetWorkBasePresenter<HomeViewInterface> {
     private int mPage = 1;
     private Realm mRealm;
     private List<Home> mList;
-    private Disposable mDisposable;
-    private Disposable mNetWorkDisposable;
+    private RealmAsyncTask realmAsyncTask;
+    private CompositeDisposable mDisposable = new CompositeDisposable();
 
     public HomePresenter(HomeViewInterface viewInterface) {
         mView = viewInterface;
@@ -47,18 +45,13 @@ public class HomePresenter extends NetWorkBasePresenter<HomeViewInterface> {
 
     public void requestData(int requestType) {
         if (NetWorkUtils.isNetworkConnected(((Fragment) mView).requireContext())) {
-            switch (requestType) {
-                case REQUEST_REFRESH:
-                    mPage = 1;
-                    fromNetWorkLoadV2();
-                    break;
-                case REQUEST_LOAD_MORE:
-                    mView.showLoading();
-                    mPage++;
-                    fromNetWorkLoadV2();
-                    break;
-                default:
-                    break;
+            if (requestType == REQUEST_REFRESH) {
+                mPage = 1;
+                fromNetWorkLoadV2();
+            } else if (requestType == REQUEST_LOAD_MORE) {
+                mView.showLoading();
+                mPage++;
+                fromNetWorkLoadV2();
             }
         } else {
             Toast.makeText((Context) mView, R.string.error_net,
@@ -67,18 +60,18 @@ public class HomePresenter extends NetWorkBasePresenter<HomeViewInterface> {
         }
     }
 
-    private void fromNetWorkLoad() {
-        mNetWorkDisposable = ApiFactory.getGankApi()
-                .getHomeData(mPage)
-                .filter(gankData -> !gankData.isError())
-                .map(GankData::getResults)
+    private void fromNetWorkLoadV2() {
+        mDisposable.add(ApiFactory.getGankApi()
+                .getHomeDataV2(mPage)
+                .filter(gankBean -> gankBean.getTotal_counts() > 0)
+                .map(GankBean::getData)
                 .flatMap(Flowable::fromIterable)
                 .map(gankEntity -> new Home(gankEntity.get_id(),
                         gankEntity.getDesc(),
                         gankEntity.getPublishedAt(),
                         gankEntity.getType(),
                         gankEntity.getUrl(),
-                        gankEntity.getWho()))
+                        gankEntity.getAuthor()))
                 .buffer(50)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -89,64 +82,39 @@ public class HomePresenter extends NetWorkBasePresenter<HomeViewInterface> {
                         saveData(homes);
                     } else {
                         mList.addAll(homes);
-                        mView.showData(mList);
+                        saveData(mList);
                     }
                 }, throwable -> {
                     mView.hideLoading();
-                    Log.e("HomePresenter:", throwable.getMessage());
-                });
-    }
-
-    private void fromNetWorkLoadV2() {
-        mNetWorkDisposable = ApiFactory.getGankApi()
-                .getHomeDataV2(mPage)
-                .map(GankBean::getData)
-                .flatMap(Flowable::fromIterable)
-                .map(gankEntity -> new Home(gankEntity.get_id(),
-                        gankEntity.getDesc(),
-                        gankEntity.getPublishedAt(),
-                        gankEntity.getType(),
-                        gankEntity.getUrl(),
-                        gankEntity.getAuthor()))
-                .buffer(60)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(homes -> {
-                    if (mPage == 1) {
-                        mList.clear();
-                        mList.addAll(homes);
-                        saveData(homes);
-                    } else {
-                        mList.addAll(homes);
-                        mView.showData(mList);
-                    }
-                }, throwable -> {
-                    mView.hideLoading();
-                    Log.e("HomePresenter:", Objects.requireNonNull(throwable.getMessage()));
-                });
+                    Toast.makeText((Context) mView, "服务器数据获取出错",
+                            Toast.LENGTH_SHORT).show();
+                }));
     }
 
     private void saveData(List<Home> data) {
-        deleteData();
-        mRealm.executeTransaction(realm -> realm.copyToRealmOrUpdate(data));
+        realmAsyncTask = mRealm.executeTransactionAsync(realm -> {
+            realm.delete(Home.class);
+            realm.copyToRealmOrUpdate(data);
+        });
     }
 
-    private void deleteData() {
-        mRealm.executeTransaction(realm -> realm.delete(Home.class));
-    }
-
-    public void fromRealmLoad() {
-        mDisposable = mRealm.where(Home.class)
-                .findAll()
+    public void subscribeDBData() {
+        mDisposable.add(mRealm.where(Home.class).findAll()
                 .asFlowable()
                 .filter(homes -> homes.size() > 0)
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(homes -> mView.showData(homes));
+                .subscribe(homes -> {
+                            mView.showData(homes);
+                            mView.hideLoading();
+                        }
+                ));
     }
 
     public void unSubscribe() {
-        if (mDisposable != null) mDisposable.dispose();
-        if (mNetWorkDisposable != null) mNetWorkDisposable.dispose();
+        mDisposable.dispose();
+        if (!realmAsyncTask.isCancelled()) realmAsyncTask.cancel();
         if (mRealm != null) mRealm.close();
+        mView = null;
     }
 }

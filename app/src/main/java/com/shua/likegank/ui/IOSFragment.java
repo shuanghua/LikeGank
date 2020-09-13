@@ -109,6 +109,7 @@ public class IOSFragment extends RefreshFragment<FragmentIosBinding> implements 
     public void onDestroy() {
         super.onDestroy();
         mPresenter.unSubscribe();
+        mPresenter = null;
     }
 
     @Override

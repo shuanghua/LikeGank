@@ -34,27 +34,18 @@ public class HomeFragment extends
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         initRecyclerView();
-        mPresenter.fromRealmLoad();
+        mPresenter.subscribeDBData();
+        mPresenter.requestData(HomePresenter.REQUEST_REFRESH);
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        refresh();
+    public void onDestroy() {
+        super.onDestroy();
+        mPresenter.unSubscribe();
+        mPresenter = null;
     }
 
     private void initRecyclerView() {
@@ -82,29 +73,7 @@ public class HomeFragment extends
     public void showData(List<Home> result) {
         mAdapter.setItems(result);
         mAdapter.notifyDataSetChanged();
-        hideLoading();
     }
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        return true;
-//    }
-
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        int id = item.getItemId();
-//        if (id == R.id.action_gank_link) {
-//            Intent intent = new Intent();
-//            intent.setAction(Intent.ACTION_VIEW);
-//            Uri uri = Uri.parse(getString(R.string.gank_link));
-//            intent.setData(uri);
-//            if (intent.resolveActivity(getPackageManager()) != null) startActivity(intent);
-//            return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
-
 
     @Override
     public void showLoading() {
@@ -131,10 +100,28 @@ public class HomeFragment extends
                 firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
                 if (lastItemPosition == itemCount - 1 && lastItemPosition - firstItemPosition > 0) {
                     mPresenter.requestData(HomePresenter.REQUEST_LOAD_MORE);//到底部时，加载下一页数据
-                } else {
-                    //isTransparent(firstItemPosition == 0); // 到顶部
                 }
             }
         };
     }
+
+    //    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.main, menu);
+//        return true;
+//    }
+
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        int id = item.getItemId();
+//        if (id == R.id.action_gank_link) {
+//            Intent intent = new Intent();
+//            intent.setAction(Intent.ACTION_VIEW);
+//            Uri uri = Uri.parse(getString(R.string.gank_link));
+//            intent.setData(uri);
+//            if (intent.resolveActivity(getPackageManager()) != null) startActivity(intent);
+//            return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 }

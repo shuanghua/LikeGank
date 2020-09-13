@@ -37,15 +37,13 @@ public abstract class BaseFragment<T extends ViewBinding> extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (binding == null) {
-            binding = viewBinding(inflater, container);
-        }
+        binding = viewBinding(inflater, container);
         return binding.getRoot();
     }
 
     @Override
-    public void onDestroy() {
-        // binding = null;
-        super.onDestroy();
+    public void onDestroyView() {
+        binding = null;
+        super.onDestroyView();
     }
 }

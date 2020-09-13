@@ -12,7 +12,7 @@ keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
 
-    compileSdkVersion 29
+    compileSdkVersion 30
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -31,7 +31,7 @@ android {
     defaultConfig {
         applicationId "com.shua.likegank"
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 11
         versionName "4.2"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
@@ -95,8 +95,8 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
-    //    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
-    //    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.4'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:2.4'
 
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.9'
@@ -104,9 +104,9 @@ dependencies {
     implementation 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.5@aar'
     implementation 'me.drakeet.multitype:multitype:3.4.2'
 
-    implementation 'com.github.bumptech.glide:glide:4.7.1'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
-    
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+
     implementation 'com.orhanobut:logger:1.15'
     implementation 'com.github.chrisbanes.photoview:library:1.2.4'
 }

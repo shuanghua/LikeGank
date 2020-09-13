@@ -1,7 +1,5 @@
 package com.shua.likegank.ui;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,8 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.shua.likegank.data.uimodel.Category;
 import com.shua.likegank.data.entity.Content;
+import com.shua.likegank.data.uimodel.Category;
 import com.shua.likegank.databinding.FragmentLincenseBinding;
 import com.shua.likegank.interfaces.LicenseViewInterface;
 import com.shua.likegank.presenters.LicensePresenter;
@@ -27,10 +25,6 @@ public class LicenseFragment extends BaseFragment<FragmentLincenseBinding> imple
 
     private LicensePresenter mPresenter;
     private MultiTypeAdapter mAdapter;
-
-    public static Intent newIntent(Context context) {
-        return new Intent(context, LicenseFragment.class);
-    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {

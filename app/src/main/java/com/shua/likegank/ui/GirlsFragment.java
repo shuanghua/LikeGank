@@ -62,10 +62,6 @@ public class GirlsFragment extends RefreshFragment<FragmentGirlsBinding> impleme
         firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
         if (lastItemPosition == itemCount - 1 && lastItemPosition - firstItemPosition > 0) {
             mPresenter.requestData(GirlsPresenter.REQUEST_LOAD_MORE);
-//        } else if (firstItemPosition == 0) {
-//            isTransparent(true);
-//        } else {
-//            isTransparent(true);
         }
     }
 
@@ -81,9 +77,20 @@ public class GirlsFragment extends RefreshFragment<FragmentGirlsBinding> impleme
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
+    /**
+     * 必须清理 Presenter 和 RxJava 否则会造成内存泄露
+     */
+    @Override
     public void onDestroy() {
         super.onDestroy();
         mPresenter.unSubscribe();
+        mPresenter = null;
+        binding = null;
     }
 
     @Override
@@ -99,11 +106,6 @@ public class GirlsFragment extends RefreshFragment<FragmentGirlsBinding> impleme
     @Override
     protected FragmentGirlsBinding viewBinding(LayoutInflater inflater, ViewGroup container) {
         return FragmentGirlsBinding.inflate(inflater, container, false);
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     @Nullable

@@ -94,6 +94,7 @@ public class AndroidPresenter extends NetWorkBasePresenter<AndroidViewInterface>
                 .asFlowable()
                 .filter(androids -> androids.size() > 0)
                 .map(this::pareData)
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(result -> mView.showData(result));
     }

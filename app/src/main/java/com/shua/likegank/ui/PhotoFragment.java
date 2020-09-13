@@ -3,9 +3,8 @@ package com.shua.likegank.ui;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.GestureDetector;
@@ -38,7 +37,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
-import static android.os.Environment.DIRECTORY_PICTURES;
+import static android.os.Environment.DIRECTORY_DCIM;
 
 
 /**
@@ -51,23 +50,12 @@ public class PhotoFragment extends BaseFragment<FragmentPhotoBinding> {
     private PhotoView mPhotoView;
     private CompositeDisposable mDisposable;
     private String url;
-    private RxPermissions rxPermissions;
     private PhotoViewAttacher mAttacher;
+    private RxPermissions rxPermissions;
 
     @Override
     protected FragmentPhotoBinding viewBinding(LayoutInflater inflater, ViewGroup container) {
         return FragmentPhotoBinding.inflate(inflater, container, false);
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     @Override
@@ -133,9 +121,9 @@ public class PhotoFragment extends BaseFragment<FragmentPhotoBinding> {
             new AlertDialog.Builder(requireActivity())
                     .setItems(R.array.photo_dialog_list, (dialog, position) -> {
                         if (position == 0) {
-                            shareImage();
+                            share();
                         } else if (position == 1) {
-                            saveImage();
+                            save();//检查权限，然后保存
                         }
                     }).create().show();
             return true;
@@ -163,51 +151,61 @@ public class PhotoFragment extends BaseFragment<FragmentPhotoBinding> {
     }
 
     private void saveImage() {
-//        mDisposable.add(rxPermissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-//                .subscribe(granted -> {
-//                    if (granted) {
-//
-//                    } else {
-//                        Toast.makeText(requireActivity()
-//                                , "权限已被拒绝！", Toast.LENGTH_SHORT).show();
-//                    }
-//                }));
-
         mDisposable.add(RxSave.saveImageAndGetPathObservable(
                 requireActivity(), url, url)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(uri -> {
-                    File appDir = requireContext().getExternalFilesDir(DIRECTORY_PICTURES);
+                    File appDir = Environment.getExternalStoragePublicDirectory(DIRECTORY_DCIM);
                     String msg = String.format(getString(R.string.picture_has_save_to),
-                                    appDir.getAbsolutePath());
-                    Toast.makeText(requireActivity()
-                            , msg, Toast.LENGTH_SHORT).show();
+                            appDir.getAbsolutePath());
+                    Toast.makeText(requireActivity(), msg, Toast.LENGTH_SHORT).show();
                 }));
     }
 
+    private void save() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {//Android Q + 后不需要读写权限
+            mDisposable.add(rxPermissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    .subscribe(granted -> {
+                        if (granted) {
+                            saveImage();
+                        } else {
+                            Toast.makeText(requireActivity()
+                                    , "权限已被拒绝！", Toast.LENGTH_SHORT).show();
+                        }
+                    }));
+        } else { //Android Q+
+            saveImage();
+        }
+    }
+
     @SuppressLint("CheckResult")
+    private void share() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            mDisposable.add(rxPermissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    .subscribe(granted -> {
+                        if (granted) {
+                            shareImage();
+                        } else {
+                            Toast.makeText(requireActivity(),
+                                    "权限已被拒绝！", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+            );
+        } else {
+            shareImage();
+        }
+    }
+
     private void shareImage() {
-        RxSave.saveImageAndGetPathObservable(requireActivity(), url, url)
+        mDisposable.add(RxSave.saveImageAndGetPathObservable(requireActivity(), url, url)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(uri -> Shares.shareImage(
                         requireActivity(), uri, getString(R.string.share_to)),
                         throwable -> {
                             Logger.e(throwable.getMessage());
                             Toast.makeText(requireActivity(),
-                                    throwable.getMessage(),
-                                    Toast.LENGTH_SHORT).show();
-                        });
-
-//        mDisposable.add(rxPermissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-//                .subscribe(granted -> {
-//                    if (granted) {
-//
-//                    } else {
-//                        Toast.makeText(requireActivity(),
-//                                "权限已被拒绝！", Toast.LENGTH_SHORT).show();
-//                    }
-//                })
-//        );
+                                    throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                        }));
     }
 
     @Override
