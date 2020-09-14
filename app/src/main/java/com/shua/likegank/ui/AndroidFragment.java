@@ -19,6 +19,7 @@ import com.shua.likegank.presenters.AndroidPresenter;
 import com.shua.likegank.ui.base.RefreshFragment;
 import com.shua.likegank.ui.itembinder.AndroidItemBinder;
 import com.shua.likegank.ui.itembinder.CategoryItemBinder;
+import com.shua.likegank.utils.AppUtils;
 
 import me.drakeet.multitype.Items;
 import me.drakeet.multitype.MultiTypeAdapter;
@@ -29,21 +30,35 @@ public class AndroidFragment
 
     private MultiTypeAdapter mAdapter;
     private AndroidPresenter mPresenter;
+    private RecyclerView.OnScrollListener bottomListener;
 
-    @Nullable
     @Override
-    public View onCreateView(
-            @NonNull LayoutInflater inflater,
-            @Nullable ViewGroup container,
-            @Nullable Bundle savedInstanceState
-    ) {
-        return super.onCreateView(inflater, container, savedInstanceState);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mPresenter.requestNetWorkData(AndroidPresenter.REQUEST_REFRESH);
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view
+            , @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initRecyclerView();
+        setRefreshStatus(true);
+        mPresenter.subscribeDBData();
+    }
+
+    @Override
+    public void onDestroyView() {
+        binding.refreshListLayout.recyclerView.removeOnScrollListener(bottomListener);
+        bottomListener = null;
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        mPresenter.unSubscribe();
+        mPresenter = null;
+        super.onDestroy();
     }
 
     private void initRecyclerView() {
@@ -54,11 +69,9 @@ public class AndroidFragment
         RecyclerView recyclerView = binding.refreshListLayout.recyclerView;
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
-        recyclerView.addOnScrollListener(getOnBottomListener(layoutManager));
+        bottomListener = getOnBottomListener(layoutManager);
+        recyclerView.addOnScrollListener(bottomListener);
         recyclerView.setAdapter(mAdapter);
-        showLoading();
-        mPresenter.fromRealmLoad();
-        refresh();
     }
 
     @Override
@@ -68,48 +81,32 @@ public class AndroidFragment
 
     @Override
     public void showData(Items result) {
-        hideLoading();
         mAdapter.setItems(result);
         mAdapter.notifyDataSetChanged();
+        setRefreshStatus(false);
+    }
+
+    @Override
+    public void onError(String errorInfo) {
+        setRefreshStatus(false);
+        AppUtils.toast(errorInfo);
     }
 
     @Override
     protected void refresh() {
-        mPresenter.requestData(AndroidPresenter.REQUEST_REFRESH);
+        mPresenter.requestNetWorkData(AndroidPresenter.REQUEST_REFRESH);
     }
 
-    private void bottomListener(LinearLayoutManager layoutManager) {
+    private void getBottomListener(LinearLayoutManager layoutManager) {
         int lastItemPosition, firstItemPosition, itemCount;
         itemCount = mAdapter.getItemCount();
         lastItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
         firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
         if (lastItemPosition == itemCount - 1 && lastItemPosition - firstItemPosition > 0
                 && lastItemPosition != 0) {
-            mPresenter.requestData(AndroidPresenter.REQUEST_LOAD_MORE);
+            setRefreshStatus(true);
+            mPresenter.requestNetWorkData(AndroidPresenter.REQUEST_LOAD_MORE);
         }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        hideLoading();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mPresenter.unSubscribe();
-        mPresenter = null;
-    }
-
-    @Override
-    public void showLoading() {
-        setRefreshStatus(true);
-    }
-
-    @Override
-    public void hideLoading() {
-        setRefreshStatus(false);
     }
 
     @Override
@@ -126,7 +123,7 @@ public class AndroidFragment
         return new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView rv, int dx, int dy) {
-                bottomListener(layoutManager);
+                getBottomListener(layoutManager);
             }
         };
     }

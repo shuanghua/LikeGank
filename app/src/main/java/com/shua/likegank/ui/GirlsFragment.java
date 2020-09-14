@@ -15,11 +15,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.shua.likegank.data.entity.Content;
+import com.shua.likegank.data.entity.Girl;
 import com.shua.likegank.databinding.FragmentGirlsBinding;
 import com.shua.likegank.interfaces.ImageViewInterface;
 import com.shua.likegank.presenters.GirlsPresenter;
 import com.shua.likegank.ui.base.RefreshFragment;
 import com.shua.likegank.ui.itembinder.GirlsItemBinder;
+import com.shua.likegank.utils.AppUtils;
 
 import java.util.List;
 
@@ -29,11 +31,14 @@ import me.drakeet.multitype.MultiTypeAdapter;
  * NetWork to Realm to View
  * Created by SHUA on 2017/3/27.
  */
-public class GirlsFragment extends RefreshFragment<FragmentGirlsBinding> implements ImageViewInterface {
+public class GirlsFragment
+        extends RefreshFragment<FragmentGirlsBinding>
+        implements ImageViewInterface {
 
     private final static int SPAN_COUNT = 3;
     private MultiTypeAdapter mAdapter;
     private GirlsPresenter mPresenter;
+    private RecyclerView.OnScrollListener bottomListener;
 
     private RecyclerView.OnScrollListener getOnBottomListener(GridLayoutManager layoutManager) {
         return new RecyclerView.OnScrollListener() {
@@ -51,35 +56,25 @@ public class GirlsFragment extends RefreshFragment<FragmentGirlsBinding> impleme
     }
 
     @Override
-    protected void refresh() {
-        mPresenter.requestData(GirlsPresenter.REQUEST_REFRESH);
-    }
-
-    private void bottomListener(LinearLayoutManager layoutManager) {
-        int lastItemPosition, firstItemPosition, itemCount;
-        itemCount = mAdapter.getItemCount();
-        lastItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
-        firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
-        if (lastItemPosition == itemCount - 1 && lastItemPosition - firstItemPosition > 0) {
-            mPresenter.requestData(GirlsPresenter.REQUEST_LOAD_MORE);
-        }
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);//父类先实例化 presenter
+        mPresenter.requestNetWorkData(GirlsPresenter.REQUEST_REFRESH);
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        hideLoading();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initRecyclerView();
+        setRefreshStatus(true);
+        mPresenter.subscribeDBData();
     }
 
     @Override
     public void onDestroyView() {
+        binding.refreshListLayout.
+                recyclerView.removeOnScrollListener(bottomListener);
+        bottomListener = null;
         super.onDestroyView();
-        binding = null;
     }
 
     /**
@@ -93,51 +88,46 @@ public class GirlsFragment extends RefreshFragment<FragmentGirlsBinding> impleme
         binding = null;
     }
 
-    @Override
-    public void showLoading() {
-        setRefreshStatus(true);
-    }
-
-    @Override
-    public void hideLoading() {
-        setRefreshStatus(false);
-    }
-
-    @Override
-    protected FragmentGirlsBinding viewBinding(LayoutInflater inflater, ViewGroup container) {
-        return FragmentGirlsBinding.inflate(inflater, container, false);
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        initData();
-    }
-
-    protected void initData() {
-        initRecyclerView();
-        showLoading();
-        mPresenter.fromRealmLoad();
-        refresh();
-    }
-
     private void initRecyclerView() {
-        final GridLayoutManager layoutManager = new GridLayoutManager(requireActivity(), SPAN_COUNT);
+        GridLayoutManager layoutManager = new GridLayoutManager(requireActivity(), SPAN_COUNT);
         mAdapter = new MultiTypeAdapter();
-        mAdapter.register(Content.class, new GirlsItemBinder());
+        mAdapter.register(Girl.class, new GirlsItemBinder());
         RecyclerView recyclerView = binding.refreshListLayout.recyclerView;
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.addItemDecoration(new ImageSpaceItemDecoration(12, SPAN_COUNT, true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.addOnScrollListener(getOnBottomListener(layoutManager));
+        bottomListener = getOnBottomListener(layoutManager);
+        recyclerView.addOnScrollListener(bottomListener);
         recyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    protected void refresh() {
+        mPresenter.requestNetWorkData(GirlsPresenter.REQUEST_REFRESH);
+    }
+
+    @Override
+    public void showData(List<Girl> result) {
+        mAdapter.setItems(result);
+        mAdapter.notifyDataSetChanged();
+        setRefreshStatus(false);
+    }
+
+    @Override
+    public void onError(String errorInfo) {
+        setRefreshStatus(false);
+        AppUtils.toast(errorInfo);
+    }
+
+    private void bottomListener(LinearLayoutManager layoutManager) {
+        int lastItemPosition, firstItemPosition, itemCount;
+        itemCount = mAdapter.getItemCount();
+        lastItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
+        firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
+        if (lastItemPosition == itemCount - 1 && lastItemPosition - firstItemPosition > 0) {
+            setRefreshStatus(true);
+            mPresenter.requestNetWorkData(GirlsPresenter.REQUEST_LOAD_MORE);
+        }
     }
 
     @Override
@@ -146,10 +136,9 @@ public class GirlsFragment extends RefreshFragment<FragmentGirlsBinding> impleme
     }
 
     @Override
-    public void showData(List<Content> result) {
-        mAdapter.setItems(result);
-        mAdapter.notifyDataSetChanged();
-        hideLoading();
+    protected FragmentGirlsBinding viewBinding(LayoutInflater inflater
+            , ViewGroup container) {
+        return FragmentGirlsBinding.inflate(inflater, container, false);
     }
 
     static class ImageSpaceItemDecoration extends RecyclerView.ItemDecoration {

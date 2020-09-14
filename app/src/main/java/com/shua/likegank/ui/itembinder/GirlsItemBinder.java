@@ -16,7 +16,7 @@ import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.shua.likegank.R;
-import com.shua.likegank.data.entity.Content;
+import com.shua.likegank.data.entity.Girl;
 import com.shua.likegank.databinding.ItemFuliBinding;
 import com.shua.likegank.ui.GirlsFragmentDirections;
 
@@ -27,15 +27,10 @@ import me.drakeet.multitype.ItemViewBinder;
  * ImageItemBinder
  * Created by SHUA on 2017/2/28.
  */
-public class GirlsItemBinder extends ItemViewBinder<Content, GirlsItemBinder.ViewHolder> {
+public class GirlsItemBinder extends ItemViewBinder<Girl, GirlsItemBinder.ViewHolder> {
 
-    /**
-     * It is recommended to request a compressed image
-     */
-    //private static final String URL_MEIZI_DIMENSION = "?imageView2/0/w/100";
     private Context mContext;
     private RequestOptions options;
-
 
     @NonNull
     @Override
@@ -51,7 +46,7 @@ public class GirlsItemBinder extends ItemViewBinder<Content, GirlsItemBinder.Vie
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull ViewHolder holder, @NonNull Content data) {
+    protected void onBindViewHolder(@NonNull ViewHolder holder, @NonNull Girl data) {
         Glide.with(mContext)
                 .load(data.url)
                 .apply(options)

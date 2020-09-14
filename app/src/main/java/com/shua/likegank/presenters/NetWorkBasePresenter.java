@@ -1,10 +1,12 @@
 package com.shua.likegank.presenters;
 
-import com.shua.likegank.interfaces.RefreshViewInterface;
+import com.shua.likegank.interfaces.BaseViewInterface;
 
-abstract class NetWorkBasePresenter<T extends RefreshViewInterface<?>> {
+abstract class NetWorkBasePresenter<T extends BaseViewInterface<?>> {
 
-    T mView;
+    T mFragment;
+
+    public abstract void requestNetWorkData(int requestType);
 
     //can post network error
 }

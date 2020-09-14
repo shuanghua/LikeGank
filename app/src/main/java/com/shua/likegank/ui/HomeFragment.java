@@ -17,6 +17,7 @@ import com.shua.likegank.interfaces.HomeViewInterface;
 import com.shua.likegank.presenters.HomePresenter;
 import com.shua.likegank.ui.base.RefreshFragment;
 import com.shua.likegank.ui.itembinder.HomeItemBinder;
+import com.shua.likegank.utils.AppUtils;
 
 import java.util.List;
 
@@ -27,18 +28,34 @@ public class HomeFragment extends
 
     private MultiTypeAdapter mAdapter;
     private HomePresenter mPresenter;
+    private RecyclerView.OnScrollListener bottomListener;
 
     @Override
-    protected FragmentHomeBinding viewBinding(LayoutInflater inflater, ViewGroup container) {
+    protected FragmentHomeBinding viewBinding(LayoutInflater inflater
+            , ViewGroup container) {
         return FragmentHomeBinding.inflate(inflater, container, false);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mPresenter.requestNetWorkData(HomePresenter.REQUEST_REFRESH);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initRecyclerView();
-        mPresenter.subscribeDBData();
-        mPresenter.requestData(HomePresenter.REQUEST_REFRESH);
+        setRefreshStatus(true);
+        mPresenter.subscribeDBData();//单一数据源：数据库
+    }
+
+    @Override
+    public void onDestroyView() {
+        binding.refreshListLayout.
+                recyclerView.removeOnScrollListener(bottomListener);
+        bottomListener = null;
+        super.onDestroyView();
     }
 
     @Override
@@ -49,19 +66,20 @@ public class HomeFragment extends
     }
 
     private void initRecyclerView() {
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(requireActivity());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(requireActivity());
+        bottomListener = getOnBottomListener(layoutManager);
         mAdapter = new MultiTypeAdapter();
         mAdapter.register(Home.class, new HomeItemBinder());
         RecyclerView recyclerView = binding.refreshListLayout.recyclerView;
-        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
-        recyclerView.addOnScrollListener(getOnBottomListener(linearLayoutManager));
+        recyclerView.addOnScrollListener(getOnBottomListener(layoutManager));
         recyclerView.setAdapter(mAdapter);
     }
 
     @Override
     protected void refresh() {
-        mPresenter.requestData(HomePresenter.REQUEST_REFRESH);
+        mPresenter.requestNetWorkData(HomePresenter.REQUEST_REFRESH);
     }
 
     @Override
@@ -73,15 +91,12 @@ public class HomeFragment extends
     public void showData(List<Home> result) {
         mAdapter.setItems(result);
         mAdapter.notifyDataSetChanged();
+        setRefreshStatus(false);
     }
 
     @Override
-    public void showLoading() {
-        setRefreshStatus(true);
-    }
-
-    @Override
-    public void hideLoading() {
+    public void onError(String errorInfo) {
+        AppUtils.toast(errorInfo);
         setRefreshStatus(false);
     }
 
@@ -90,7 +105,7 @@ public class HomeFragment extends
         return binding.refreshListLayout.refreshView;
     }
 
-    RecyclerView.OnScrollListener getOnBottomListener(LinearLayoutManager layoutManager) {
+    private RecyclerView.OnScrollListener getOnBottomListener(LinearLayoutManager layoutManager) {
         return new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView rv, int dx, int dy) {
@@ -99,7 +114,8 @@ public class HomeFragment extends
                 lastItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
                 firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
                 if (lastItemPosition == itemCount - 1 && lastItemPosition - firstItemPosition > 0) {
-                    mPresenter.requestData(HomePresenter.REQUEST_LOAD_MORE);//到底部时，加载下一页数据
+                    setRefreshStatus(true);
+                    mPresenter.requestNetWorkData(HomePresenter.REQUEST_LOAD_MORE);//到底部时，加载下一页数据
                 }
             }
         };

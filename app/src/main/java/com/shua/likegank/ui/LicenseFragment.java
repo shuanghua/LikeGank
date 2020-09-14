@@ -17,6 +17,7 @@ import com.shua.likegank.presenters.LicensePresenter;
 import com.shua.likegank.ui.base.BaseFragment;
 import com.shua.likegank.ui.itembinder.CategoryItemBinder;
 import com.shua.likegank.ui.itembinder.ContentItemBinder;
+import com.shua.likegank.utils.AppUtils;
 
 import me.drakeet.multitype.Items;
 import me.drakeet.multitype.MultiTypeAdapter;
@@ -55,5 +56,10 @@ public class LicenseFragment extends BaseFragment<FragmentLincenseBinding> imple
     @Override
     public void showData(Items result) {
         mAdapter.setItems(result);
+    }
+
+    @Override
+    public void onError(String errorInfo) {
+        AppUtils.toast(errorInfo);
     }
 }

@@ -26,7 +26,7 @@ public interface GankApi {
     Flowable<GankData> getIOSData(@Path("page") int page);
 
     // V2
-    @GET("data/category/Girl/type/Girl/page/{page}/count/39")
+    @GET("data/category/Girl/type/Girl/page/{page}/count/30")
     Flowable<GankBean> getGirlsDataV2(@Path("page") int page);
 
     @GET("data/category/All/type/All/page/{page}/count/50")

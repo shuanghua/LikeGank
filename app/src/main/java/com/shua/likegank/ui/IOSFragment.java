@@ -1,7 +1,5 @@
 package com.shua.likegank.ui;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,14 +11,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.shua.likegank.data.uimodel.Category;
 import com.shua.likegank.data.entity.IOS;
+import com.shua.likegank.data.uimodel.Category;
 import com.shua.likegank.databinding.FragmentIosBinding;
 import com.shua.likegank.interfaces.IOSViewInterface;
 import com.shua.likegank.presenters.IOSPresenter;
 import com.shua.likegank.ui.base.RefreshFragment;
 import com.shua.likegank.ui.itembinder.CategoryItemBinder;
 import com.shua.likegank.ui.itembinder.IOSItemBinder;
+import com.shua.likegank.utils.AppUtils;
 
 import me.drakeet.multitype.Items;
 import me.drakeet.multitype.MultiTypeAdapter;
@@ -29,26 +28,34 @@ public class IOSFragment extends RefreshFragment<FragmentIosBinding> implements 
 
     private MultiTypeAdapter mAdapter;
     private IOSPresenter mPresenter;
-
-    public static Intent newIntent(Context context) {
-        return new Intent(context, IOSFragment.class);
-    }
+    private RecyclerView.OnScrollListener bottomListener;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
+        mPresenter.requestNetWorkData(IOSPresenter.REQUEST_REFRESH);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initRecyclerView();
+        setRefreshStatus(true);
+        mPresenter.subscribeDBData();
+    }
+
+    @Override
+    public void onDestroyView() {
+        binding.refreshListLayout.recyclerView.removeOnScrollListener(bottomListener);
+        bottomListener = null;
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mPresenter.unSubscribe();
+        mPresenter = null;
     }
 
     protected void initRecyclerView() {
@@ -58,11 +65,9 @@ public class IOSFragment extends RefreshFragment<FragmentIosBinding> implements 
         mAdapter.register(IOS.class, new IOSItemBinder());
         RecyclerView recyclerView = binding.refreshListLayout.recyclerView;
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.addOnScrollListener(getOnBottomListener(layoutManager));
+        bottomListener = getOnBottomListener(layoutManager);
+        recyclerView.addOnScrollListener(bottomListener);
         recyclerView.setAdapter(mAdapter);
-        showLoading();
-        mPresenter.fromRealmLoad();
-        refresh();
     }
 
     @Override
@@ -79,12 +84,18 @@ public class IOSFragment extends RefreshFragment<FragmentIosBinding> implements 
     public void showData(Items result) {
         mAdapter.setItems(result);
         mAdapter.notifyDataSetChanged();
-        hideLoading();
+        setRefreshStatus(false);
+    }
+
+    @Override
+    public void onError(String errorInfo) {
+        setRefreshStatus(false);
+        AppUtils.toast(errorInfo);
     }
 
     @Override
     protected void refresh() {
-        mPresenter.requestData(IOSPresenter.REQUEST_REFRESH);
+        mPresenter.requestNetWorkData(IOSPresenter.REQUEST_REFRESH);
     }
 
     private void bottomListener(LinearLayoutManager layoutManager) {
@@ -93,33 +104,9 @@ public class IOSFragment extends RefreshFragment<FragmentIosBinding> implements 
         lastItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
         firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
         if (lastItemPosition == itemCount - 1 && lastItemPosition - firstItemPosition > 0) {
-            mPresenter.requestData(IOSPresenter.REQUEST_LOAD_MORE);
-//        } else {
-//            isTransparent(firstItemPosition == 0);
+            setRefreshStatus(true);
+            mPresenter.requestNetWorkData(IOSPresenter.REQUEST_LOAD_MORE);
         }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        hideLoading();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mPresenter.unSubscribe();
-        mPresenter = null;
-    }
-
-    @Override
-    public void showLoading() {
-        setRefreshStatus(true);
-    }
-
-    @Override
-    public void hideLoading() {
-        setRefreshStatus(false);
     }
 
     @Override

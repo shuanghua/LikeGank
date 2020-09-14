@@ -1,11 +1,7 @@
 package com.shua.likegank.presenters;
 
-import android.content.Context;
-import android.widget.Toast;
-
 import androidx.fragment.app.Fragment;
 
-import com.shua.likegank.R;
 import com.shua.likegank.api.ApiFactory;
 import com.shua.likegank.data.GankBean;
 import com.shua.likegank.data.entity.Home;
@@ -20,13 +16,14 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
-import io.realm.RealmAsyncTask;
 
 /**
- * ArticlePresenter
- * Created by ShuangHua on 2017/5/13.
+ * HomePresenter
+ * loadingView显示： 准备获取数据时显示，
+ * loadingView隐藏： 显示数据后隐藏，请求过程出现错误时隐藏，窗口页面暂停时隐藏
+ * 所以 loadingView 更适合在 Fragment / Activity 中使用，而不是在 Presenter 中使用
+ * Created by shuanghua on 2017/5/13.
  */
-
 public class HomePresenter extends NetWorkBasePresenter<HomeViewInterface> {
 
     public static final int REQUEST_REFRESH = 1;
@@ -34,29 +31,26 @@ public class HomePresenter extends NetWorkBasePresenter<HomeViewInterface> {
     private int mPage = 1;
     private Realm mRealm;
     private List<Home> mList;
-    private RealmAsyncTask realmAsyncTask;
     private CompositeDisposable mDisposable = new CompositeDisposable();
 
     public HomePresenter(HomeViewInterface viewInterface) {
-        mView = viewInterface;
+        mFragment = viewInterface;
         mRealm = Realm.getDefaultInstance();
         mList = new ArrayList<>();
     }
 
-    public void requestData(int requestType) {
-        if (NetWorkUtils.isNetworkConnected(((Fragment) mView).requireContext())) {
-            if (requestType == REQUEST_REFRESH) {
-                mPage = 1;
-                fromNetWorkLoadV2();
-            } else if (requestType == REQUEST_LOAD_MORE) {
-                mView.showLoading();
-                mPage++;
-                fromNetWorkLoadV2();
-            }
-        } else {
-            Toast.makeText((Context) mView, R.string.error_net,
-                    Toast.LENGTH_SHORT).show();
-            mView.hideLoading();
+    @Override
+    public void requestNetWorkData(int requestType) {
+        if (!NetWorkUtils.isNetworkConnected(((Fragment) mFragment).requireContext())) {
+            mFragment.onError("网络错误！");
+            return;
+        }
+        if (requestType == REQUEST_REFRESH) {
+            mPage = 1;
+            fromNetWorkLoadV2();
+        } else if (requestType == REQUEST_LOAD_MORE) {
+            mPage++;
+            fromNetWorkLoadV2();
         }
     }
 
@@ -84,15 +78,12 @@ public class HomePresenter extends NetWorkBasePresenter<HomeViewInterface> {
                         mList.addAll(homes);
                         saveData(mList);
                     }
-                }, throwable -> {
-                    mView.hideLoading();
-                    Toast.makeText((Context) mView, "服务器数据获取出错",
-                            Toast.LENGTH_SHORT).show();
-                }));
+                }, throwable -> mFragment.onError("服务器数据异常："
+                        + throwable.getMessage())));
     }
 
     private void saveData(List<Home> data) {
-        realmAsyncTask = mRealm.executeTransactionAsync(realm -> {
+        mRealm.executeTransaction(realm -> {
             realm.delete(Home.class);
             realm.copyToRealmOrUpdate(data);
         });
@@ -101,20 +92,13 @@ public class HomePresenter extends NetWorkBasePresenter<HomeViewInterface> {
     public void subscribeDBData() {
         mDisposable.add(mRealm.where(Home.class).findAll()
                 .asFlowable()
-                .filter(homes -> homes.size() > 0)
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(homes -> {
-                            mView.showData(homes);
-                            mView.hideLoading();
-                        }
-                ));
+                .subscribe(homes -> mFragment.showData(homes)));
     }
 
     public void unSubscribe() {
         mDisposable.dispose();
-        if (!realmAsyncTask.isCancelled()) realmAsyncTask.cancel();
         if (mRealm != null) mRealm.close();
-        mView = null;
+        mFragment = null;
     }
 }

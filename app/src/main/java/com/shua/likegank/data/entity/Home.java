@@ -3,6 +3,10 @@ package com.shua.likegank.data.entity;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
+/**
+ * Home
+ * Realm 要求必须有一个无参的构造函数
+ */
 public class Home extends RealmObject {
 
     public String title;

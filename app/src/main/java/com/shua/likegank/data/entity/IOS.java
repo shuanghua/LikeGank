@@ -10,7 +10,7 @@ import io.realm.annotations.PrimaryKey;
 
 public class IOS extends RealmObject {
     @PrimaryKey
-    private String _id;
+    public String _id;
     public String time;
     public String content;
     public String author;

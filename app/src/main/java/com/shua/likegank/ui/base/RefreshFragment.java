@@ -22,11 +22,10 @@ public abstract class RefreshFragment<T extends ViewBinding> extends BaseFragmen
 
     protected abstract SwipeRefreshLayout swipeRefreshView();
 
-    private SwipeRefreshLayout refreshView;
+    public SwipeRefreshLayout refreshView;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
         this.refreshView = swipeRefreshView();
         if (refreshView == null) {
             throw new IllegalStateException("No found SwipeRefreshView in Layout");
@@ -35,13 +34,23 @@ public abstract class RefreshFragment<T extends ViewBinding> extends BaseFragmen
         refreshView.setColorSchemeColors(getResources().getColor(R.color.colorApp));
     }
 
+    @Override
+    public void onDestroyView() {
+        refreshView.setOnRefreshListener(null);
+        refreshView = null;
+        super.onDestroyView();
+    }
+
     public void setRefreshStatus(boolean isRefresh) {
         if (refreshView == null) {
             return;
         }
         if (!isRefresh) {
-            refreshView.postDelayed(() ->
-                    refreshView.setRefreshing(false), 300);
+            refreshView.postDelayed(() -> {
+                if (refreshView != null) {
+                    refreshView.setRefreshing(false);
+                }
+            }, 400);
         } else {
             refreshView.setRefreshing(true);
         }

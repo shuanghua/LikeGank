@@ -26,10 +26,6 @@ public class AboutFragment extends BaseFragment<FragmentAboutBinding> {
     private Uri uri;
     private Intent intent = new Intent();
 
-    public static Intent newIntent(Context context) {
-        return new Intent(context, AboutFragment.class);
-    }
-
     @Override
     protected FragmentAboutBinding viewBinding(LayoutInflater inflater, ViewGroup container) {
         return FragmentAboutBinding.inflate(inflater, container, false);
@@ -85,7 +81,6 @@ public class AboutFragment extends BaseFragment<FragmentAboutBinding> {
                 startActivity(intent);
             }
         });
-
 
         binding.aboutLicense.setOnClickListener(v -> {
             NavDirections action = AboutFragmentDirections.actionNavAboutToNavLicense();

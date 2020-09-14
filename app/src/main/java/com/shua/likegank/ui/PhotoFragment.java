@@ -49,9 +49,9 @@ public class PhotoFragment extends BaseFragment<FragmentPhotoBinding> {
 
     private PhotoView mPhotoView;
     private CompositeDisposable mDisposable;
-    private String url;
     private PhotoViewAttacher mAttacher;
     private RxPermissions rxPermissions;
+    private String imageUrl;
 
     @Override
     protected FragmentPhotoBinding viewBinding(LayoutInflater inflater, ViewGroup container) {
@@ -59,21 +59,34 @@ public class PhotoFragment extends BaseFragment<FragmentPhotoBinding> {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        initData();
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            imageUrl = PhotoFragmentArgs.fromBundle(arguments).getUrlGirl();
+        }
     }
 
-    protected void initData() {
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         mDisposable = new CompositeDisposable();
         mPhotoView = binding.photoView;
         mAttacher = new PhotoViewAttacher(mPhotoView);
         mPhotoView.setImageResource(R.mipmap.likegank_launcher_round);
         rxPermissions = new RxPermissions(requireActivity());
         assert getArguments() != null;
-        url = PhotoFragmentArgs.fromBundle(getArguments()).getUrlGirl();
-        disPlayImage(url);
+        disPlayImage(imageUrl);
         setPhotoListener();
+    }
+
+    @Override
+    public void onDestroyView() {
+        mAttacher.setOnDoubleTapListener(null);
+        mAttacher.setOnLongClickListener(null);
+        mPhotoView = null;
+        mAttacher = null;
+        super.onDestroyView();
     }
 
     @Override
@@ -152,7 +165,7 @@ public class PhotoFragment extends BaseFragment<FragmentPhotoBinding> {
 
     private void saveImage() {
         mDisposable.add(RxSave.saveImageAndGetPathObservable(
-                requireActivity(), url, url)
+                requireActivity(), imageUrl, imageUrl)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(uri -> {
                     File appDir = Environment.getExternalStoragePublicDirectory(DIRECTORY_DCIM);
@@ -197,7 +210,7 @@ public class PhotoFragment extends BaseFragment<FragmentPhotoBinding> {
     }
 
     private void shareImage() {
-        mDisposable.add(RxSave.saveImageAndGetPathObservable(requireActivity(), url, url)
+        mDisposable.add(RxSave.saveImageAndGetPathObservable(requireActivity(), imageUrl, imageUrl)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(uri -> Shares.shareImage(
                         requireActivity(), uri, getString(R.string.share_to)),
