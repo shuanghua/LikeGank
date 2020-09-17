@@ -17,7 +17,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.shua.likegank.R;
 import com.shua.likegank.data.entity.Girl;
-import com.shua.likegank.databinding.ItemFuliBinding;
+import com.shua.likegank.databinding.ItemGirlBinding;
 import com.shua.likegank.ui.GirlsFragmentDirections;
 
 import me.drakeet.multitype.ItemViewBinder;
@@ -36,7 +36,7 @@ public class GirlsItemBinder extends ItemViewBinder<Girl, GirlsItemBinder.ViewHo
     @Override
     protected ViewHolder onCreateViewHolder(@NonNull LayoutInflater inflater,
                                             @NonNull ViewGroup parent) {
-        ViewHolder holder = new ViewHolder(ItemFuliBinding.inflate(inflater, parent, false));
+        ViewHolder holder = new ViewHolder(ItemGirlBinding.inflate(inflater, parent, false));
         mContext = holder.mImageView.getContext();
         options = new RequestOptions()
                 .placeholder(R.mipmap.ic_bg_fuli)
@@ -60,7 +60,7 @@ public class GirlsItemBinder extends ItemViewBinder<Girl, GirlsItemBinder.ViewHo
         String url;
         ImageView mImageView;
 
-        ViewHolder(ItemFuliBinding binding) {
+        ViewHolder(ItemGirlBinding binding) {
             super(binding.getRoot());
             this.mImageView = binding.fuliImage;
             itemView.setOnClickListener((View v) -> {
