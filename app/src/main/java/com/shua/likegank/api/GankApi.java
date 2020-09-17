@@ -1,7 +1,6 @@
 package com.shua.likegank.api;
 
 import com.shua.likegank.data.GankBean;
-import com.shua.likegank.data.GankData;
 
 import io.reactivex.Flowable;
 import retrofit2.http.GET;
