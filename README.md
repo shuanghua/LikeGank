@@ -1,21 +1,20 @@
 # LikeGank [MVP]
 
-#### 网络数据来自： [Gank]( http://gank.io/ "Gank")
+#### 数据源： [Gank]( http://gank.io/ "Gank")
 #### 参考应用：[MeiZhi](https://github.com/drakeet/Meizhi "Meizhi")
 
 #### 使用的开源库：
-- 数据库：[Realm](https://github.com/realm/realm-java "Realm") 
-- 异步处理：[Rxjava](https://github.com/ReactiveX/RxJava "Rxjava")
-- 网络请求: [Retrofit2](https://github.com/square/retrofit "Retrofit2") 
-- 布局数据适配：[Multiype](https://github.com/drakeet/MultiType "Multiype") 
-- 图片显示：[Photoview](https://github.com/chrisbanes/PhotoView "Photoview")
-- 图片下载：[Glide](https://github.com/bumptech/glide "Glide")
-- View 绑定：[ViewBinding](https://developer.android.com/topic/libraries/view-binding)
-- Log: [Logger](https://github.com/orhanobut/logger)
-- 运行时权限：[RxPermissions](https://github.com/tbruyelle/RxPermissions)
+- database：[Realm](https://github.com/realm/realm-java "Realm")
+- Async：[Rxjava](https://github.com/ReactiveX/RxJava "Rxjava")
+- network: [Retrofit2](https://github.com/square/retrofit "Retrofit2")
+- recyclerview multi type：[Multiype](https://github.com/drakeet/MultiType "Multiype")
+- photo view：[Photoview](https://github.com/chrisbanes/PhotoView "Photoview")
+- image download：[Glide](https://github.com/bumptech/glide "Glide")
+- view bind：[ViewBinding](https://developer.android.com/topic/libraries/view-binding)
+- log: [Timber](https://github.com/JakeWharton/timber)
+- permissions：[RxPermissions](https://github.com/tbruyelle/RxPermissions)
 
 [GooglePlay下载](https://play.google.com/store/apps/details?id=com.shua.likegank "GooglePlay") 
-
 
 
 # 开源协议

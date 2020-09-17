@@ -66,9 +66,9 @@ public class LicensePresenter {
         items.add(new Content("Copyright 2017 Chris Banes. \n" + mContext.getResources().getString(R.string.license_apache_2_0),
                 "https://github.com/chrisbanes/PhotoView"));
 
-        items.add(new Category("Logger"));
-        items.add(new Content("Copyright 2015 Orhan Obut. \n" + mContext.getResources().getString(R.string.license_apache_2_0),
-                "https://github.com/orhanobut/logger"));
+        items.add(new Category("Timber"));
+        items.add(new Content("Copyright 2013 Jake Wharton. \n" + mContext.getResources().getString(R.string.license_apache_2_0),
+                "https://github.com/JakeWharton/timber"));
 
         mView.showData(items);
     }
