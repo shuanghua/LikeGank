@@ -1,11 +1,15 @@
 package com.shua.likegank;
 
 import android.app.Application;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import com.shua.likegank.utils.AppUtils;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import timber.log.Timber;
 
 /**
  * LikeGank application
@@ -18,6 +22,11 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         AppUtils.setAppContext(getApplicationContext());
+
+        if (BuildConfig.DEBUG) {
+            Timber.plant(new Timber.DebugTree());
+        }
+
         initRealm();
     }
 

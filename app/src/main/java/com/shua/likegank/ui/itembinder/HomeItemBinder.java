@@ -5,7 +5,6 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,9 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.shua.likegank.R;
 import com.shua.likegank.data.entity.Home;
 import com.shua.likegank.databinding.ItemHomeBinding;
-import com.shua.likegank.ui.GirlsFragmentDirections;
 import com.shua.likegank.ui.HomeFragmentDirections;
-import com.shua.likegank.ui.PhotoFragment;
 import com.shua.likegank.ui.WebActivity;
 import com.shua.likegank.utils.AppUtils;
 
@@ -63,7 +60,7 @@ public class HomeItemBinder extends ItemViewBinder<Home, HomeItemBinder.HomeHold
                 holder.mImageView.setImageResource(R.mipmap.likegank_launcher_round);
                 break;
         }
-        holder.mTextTime.setText(AppUtils.timeString(home.createdAt));
+        holder.mTextTime.setText(AppUtils.gankSubTimeString(home.createdAt));
 
         SpannableString span = new SpannableString(new StringBuilder()
                 .append(home.title)

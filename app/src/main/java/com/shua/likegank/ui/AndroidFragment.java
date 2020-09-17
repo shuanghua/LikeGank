@@ -43,7 +43,6 @@ public class AndroidFragment
             , @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initRecyclerView();
-        setRefreshStatus(true);
         mPresenter.subscribeDBData();
     }
 
@@ -81,19 +80,25 @@ public class AndroidFragment
 
     @Override
     public void showData(Items result) {
-        mAdapter.setItems(result);
-        mAdapter.notifyDataSetChanged();
-        setRefreshStatus(false);
+        if (result != null) {
+            mAdapter.setItems(result);
+            mAdapter.notifyDataSetChanged();
+        }
+        hideRefreshView();
+        hideLoadingView();
     }
+
 
     @Override
     public void onError(String errorInfo) {
-        setRefreshStatus(false);
+        hideRefreshView();
+        hideLoadingView();
         AppUtils.toast(errorInfo);
     }
 
     @Override
-    protected void refresh() {
+    public void onRefresh() {
+        super.onRefresh();
         mPresenter.requestNetWorkData(AndroidPresenter.REQUEST_REFRESH);
     }
 
@@ -104,7 +109,7 @@ public class AndroidFragment
         firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
         if (lastItemPosition == itemCount - 1 && lastItemPosition - firstItemPosition > 0
                 && lastItemPosition != 0) {
-            setRefreshStatus(true);
+            showLoadingView();
             mPresenter.requestNetWorkData(AndroidPresenter.REQUEST_LOAD_MORE);
         }
     }

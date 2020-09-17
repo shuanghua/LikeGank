@@ -6,6 +6,8 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.widget.Toast;
 
+import timber.log.Timber;
+
 /**
  * LikeGankUtils
  * Created by SHUA on 2017/4/29.
@@ -20,9 +22,11 @@ public class AppUtils {
         mAppContext = context;
     }
 
-    public static String timeString(String string) {
-        String[] strings = string.split("T");
-        return strings[0];
+    public static String gankSubTimeString(String string) {
+        if (string.length() <= 9) {
+            return string;
+        }
+        return string.substring(0, 10);
     }
 
     @SuppressLint("WrongConstant")

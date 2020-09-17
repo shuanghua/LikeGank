@@ -22,7 +22,6 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.orhanobut.logger.Logger;
 import com.shua.likegank.R;
 import com.shua.likegank.databinding.FragmentPhotoBinding;
 import com.shua.likegank.ui.base.BaseFragment;
@@ -34,6 +33,7 @@ import java.io.File;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import timber.log.Timber;
 import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
@@ -93,6 +93,7 @@ public class PhotoFragment extends BaseFragment<FragmentPhotoBinding> {
     protected void initPresenter() {
     }
 
+    @SuppressLint("TimberExceptionLogging")
     private void setPhotoViewScaleScheme(MotionEvent e) {
         try {
             float scale = mAttacher.getScale();
@@ -106,7 +107,7 @@ public class PhotoFragment extends BaseFragment<FragmentPhotoBinding> {
                 mAttacher.setScale(1.0f, x, y, true);
             }
         } catch (ArrayIndexOutOfBoundsException vr) {
-            Logger.e(vr.getMessage());
+            Timber.e(vr.getMessage());
         }
     }
 
@@ -155,9 +156,12 @@ public class PhotoFragment extends BaseFragment<FragmentPhotoBinding> {
 
             @Override
             public boolean onResourceReady(
-                    Drawable resource, Object model,
-                    Target<Drawable> target, DataSource dataSource,
-                    boolean isFirstResource) {
+                    Drawable resource,
+                    Object model,
+                    Target<Drawable> target,
+                    DataSource dataSource,
+                    boolean isFirstResource
+            ) {
                 return false;
             }
         }).into(mPhotoView);
@@ -209,13 +213,14 @@ public class PhotoFragment extends BaseFragment<FragmentPhotoBinding> {
         }
     }
 
+    @SuppressLint("TimberExceptionLogging")
     private void shareImage() {
         mDisposable.add(RxSave.saveImageAndGetPathObservable(requireActivity(), imageUrl, imageUrl)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(uri -> Shares.shareImage(
                         requireActivity(), uri, getString(R.string.share_to)),
                         throwable -> {
-                            Logger.e(throwable.getMessage());
+                            Timber.e(throwable.getMessage());
                             Toast.makeText(requireActivity(),
                                     throwable.getMessage(), Toast.LENGTH_SHORT).show();
                         }));

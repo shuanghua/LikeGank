@@ -22,12 +22,6 @@
         tools:layout="@layout/fragment_android" />
 
     <fragment
-        android:id="@+id/nav_ios"
-        android:name="com.shua.likegank.ui.IOSFragment"
-        android:label="iOS"
-        tools:layout="@layout/fragment_ios" />
-
-    <fragment
         android:id="@+id/nav_girls"
         android:name="com.shua.likegank.ui.GirlsFragment"
         android:label="妹纸"

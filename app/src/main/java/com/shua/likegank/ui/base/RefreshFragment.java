@@ -1,9 +1,7 @@
 package com.shua.likegank.ui.base;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,27 +9,49 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewbinding.ViewBinding;
 
 import com.shua.likegank.R;
+import com.shua.likegank.ui.MainActivity;
+
+import timber.log.Timber;
 
 /**
  * RefreshBaseActivity
  * Created by shuanghua on 2017/3/16.
  */
-public abstract class RefreshFragment<T extends ViewBinding> extends BaseFragment<T> {
+public abstract class RefreshFragment<T extends ViewBinding>
+        extends BaseFragment<T>
+        implements SwipeRefreshLayout.OnRefreshListener {
 
-    protected abstract void refresh();
-
-    protected abstract SwipeRefreshLayout swipeRefreshView();
+    private boolean isRefreshShowing;
+    private OnLoadingVisibilityListener loadingListener;
 
     public SwipeRefreshLayout refreshView;
 
+    protected abstract SwipeRefreshLayout swipeRefreshView();
+
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onRefresh() {
+        isRefreshShowing = true;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (loadingListener == null) {
+            loadingListener = ((MainActivity) requireActivity());
+            loadingListener.showLoadingView(true);
+        }
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view
+            , @Nullable Bundle savedInstanceState) {
         this.refreshView = swipeRefreshView();
         if (refreshView == null) {
             throw new IllegalStateException("No found SwipeRefreshView in Layout");
         }
-        refreshView.setOnRefreshListener(this::refresh);
-        refreshView.setColorSchemeColors(getResources().getColor(R.color.colorApp));
+        refreshView.setOnRefreshListener(this);
+        refreshView.setColorSchemeColors(
+                getResources().getColor(R.color.colorApp));
     }
 
     @Override
@@ -41,18 +61,39 @@ public abstract class RefreshFragment<T extends ViewBinding> extends BaseFragmen
         super.onDestroyView();
     }
 
-    public void setRefreshStatus(boolean isRefresh) {
-        if (refreshView == null) {
+    @Override
+    public void onPause() {
+        super.onPause();
+        hideRefreshView();
+        hideRefreshView();
+    }
+
+    public void showLoadingView() {
+        if (loadingListener != null) {
+            loadingListener.showLoadingView(true);
+        }
+    }
+
+    public void hideLoadingView() {
+        if (loadingListener != null) {
+            loadingListener.showLoadingView(false);
+        }
+    }
+
+    public void hideRefreshView() {
+        if (refreshView == null || !isRefreshShowing) {
             return;
         }
-        if (!isRefresh) {
-            refreshView.postDelayed(() -> {
-                if (refreshView != null) {
-                    refreshView.setRefreshing(false);
-                }
-            }, 400);
-        } else {
-            refreshView.setRefreshing(true);
-        }
+        refreshView.postDelayed(() -> {
+            if (refreshView != null) {
+                isRefreshShowing = false;
+                refreshView.setRefreshing(false);
+            }
+        }, 400);
+    }
+
+    public void showRefreshView() {
+        isRefreshShowing = true;
+        refreshView.setRefreshing(true);
     }
 }

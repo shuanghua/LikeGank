@@ -57,7 +57,7 @@ public class GirlsFragment
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);//父类先实例化 presenter
+        super.onCreate(savedInstanceState);//父类已经实例化 presenter
         mPresenter.requestNetWorkData(GirlsPresenter.REQUEST_REFRESH);
     }
 
@@ -65,7 +65,6 @@ public class GirlsFragment
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initRecyclerView();
-        setRefreshStatus(true);
         mPresenter.subscribeDBData();
     }
 
@@ -102,7 +101,8 @@ public class GirlsFragment
     }
 
     @Override
-    protected void refresh() {
+    public void onRefresh() {
+        super.onRefresh();
         mPresenter.requestNetWorkData(GirlsPresenter.REQUEST_REFRESH);
     }
 
@@ -110,12 +110,14 @@ public class GirlsFragment
     public void showData(List<Girl> result) {
         mAdapter.setItems(result);
         mAdapter.notifyDataSetChanged();
-        setRefreshStatus(false);
+        hideRefreshView();
+        hideLoadingView();
     }
 
     @Override
     public void onError(String errorInfo) {
-        setRefreshStatus(false);
+        hideRefreshView();
+        hideLoadingView();
         AppUtils.toast(errorInfo);
     }
 
@@ -125,7 +127,7 @@ public class GirlsFragment
         lastItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
         firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
         if (lastItemPosition == itemCount - 1 && lastItemPosition - firstItemPosition > 0) {
-            setRefreshStatus(true);
+            showLoadingView();
             mPresenter.requestNetWorkData(GirlsPresenter.REQUEST_LOAD_MORE);
         }
     }

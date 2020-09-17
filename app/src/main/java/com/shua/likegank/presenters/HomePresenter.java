@@ -6,9 +6,9 @@ import com.shua.likegank.api.ApiFactory;
 import com.shua.likegank.data.GankBean;
 import com.shua.likegank.data.entity.Home;
 import com.shua.likegank.interfaces.HomeViewInterface;
+import com.shua.likegank.utils.AppUtils;
 import com.shua.likegank.utils.NetWorkUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Flowable;
@@ -16,6 +16,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
+import timber.log.Timber;
 
 /**
  * HomePresenter
@@ -26,22 +27,30 @@ import io.realm.Realm;
  */
 public class HomePresenter extends NetWorkBasePresenter<HomeViewInterface> {
 
+    /**
+     * 后续优化： 把一些全局变量 和 部分方法抽取到父类一减少重复代码
+     */
+
     public static final int REQUEST_REFRESH = 1;
     public static final int REQUEST_LOAD_MORE = 2;
-    private int mPage = 1;
+
+    private int mPage = 1; //请求页
+    private int mCurrentPage = 1;// 用于临时保存当前加载了多少页
+    private int mPageCount = 0; // 服务器总页数
+
     private Realm mRealm;
-    private List<Home> mList;
     private CompositeDisposable mDisposable = new CompositeDisposable();
 
     public HomePresenter(HomeViewInterface viewInterface) {
         mFragment = viewInterface;
         mRealm = Realm.getDefaultInstance();
-        mList = new ArrayList<>();
+        int dbSize = mRealm.where(Home.class).findAll().size();
+        if (dbSize > 0) mCurrentPage = (int) Math.ceil(dbSize / 50.0);// 获取当前数据库已经存了多少页
     }
 
     @Override
     public void requestNetWorkData(int requestType) {
-        if (!NetWorkUtils.isNetworkConnected(((Fragment) mFragment).requireContext())) {
+        if (NetWorkUtils.hasNetwork(((Fragment) mFragment).requireContext())) {
             mFragment.onError("网络错误！");
             return;
         }
@@ -49,44 +58,67 @@ public class HomePresenter extends NetWorkBasePresenter<HomeViewInterface> {
             mPage = 1;
             fromNetWorkLoadV2();
         } else if (requestType == REQUEST_LOAD_MORE) {
-            mPage++;
-            fromNetWorkLoadV2();
+            if (mCurrentPage == mPageCount) {// 1==4
+                mFragment.onError("到底啦~");
+            } else {
+                mPage++;
+                fromNetWorkLoadV2();
+            }
         }
     }
 
     private void fromNetWorkLoadV2() {
         mDisposable.add(ApiFactory.getGankApi()
                 .getHomeDataV2(mPage)
-                .filter(gankBean -> gankBean.getTotal_counts() > 0)
+                .map(bean -> {
+                    mPageCount = bean.getPage_count();
+                    return bean;
+                })
                 .map(GankBean::getData)
                 .flatMap(Flowable::fromIterable)
+                .map(gankBean -> {
+                    gankBean.setPublishedAt(AppUtils
+                            .gankSubTimeString(gankBean.getPublishedAt()));
+                    return gankBean;
+                })
                 .map(gankEntity -> new Home(gankEntity.get_id(),
                         gankEntity.getDesc(),
                         gankEntity.getPublishedAt(),
                         gankEntity.getType(),
                         gankEntity.getUrl(),
                         gankEntity.getAuthor()))
-                .buffer(50)
+                .toList()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(homes -> {
-                    if (mPage == 1) {
-                        mList.clear();
-                        mList.addAll(homes);
-                        saveData(homes);
-                    } else {
-                        mList.addAll(homes);
-                        saveData(mList);
-                    }
-                }, throwable -> mFragment.onError("服务器数据异常："
-                        + throwable.getMessage())));
+                .subscribe(this::saveDataToDB,
+                        throwable -> mFragment.onError("服务器数据异常："
+                                + throwable.getMessage())));
     }
 
-    private void saveData(List<Home> data) {
-        mRealm.executeTransaction(realm -> {
-            realm.delete(Home.class);
-            realm.copyToRealmOrUpdate(data);
-        });
+    private void saveDataToDB(List<Home> data) {
+        if (data.size() == 0) {
+            return;
+        }
+        if (mPage == 1) {
+            final Home home = mRealm
+                    .where(Home.class)
+                    .equalTo("_id", data.get(0)._id)
+                    .findFirst();
+            if (home == null) {
+                mRealm.executeTransaction(realm -> {
+                    realm.delete(Home.class);
+                    realm.copyToRealmOrUpdate(data);
+                    mCurrentPage = mPage;
+                });
+            } else {
+                mPage = mCurrentPage;//用户先前在当前窗口可能已经加载了很多页数据，以让用户可以继续加载更多的操作
+                mFragment.onError("已经是最新数据！");
+            }
+        } else {
+            mCurrentPage = mPage;
+            Timber.d("mCurrentPage:" + mCurrentPage + " pageCount:" + mPageCount + " mPage:" + mPage);
+            mRealm.executeTransaction(realm -> realm.insertOrUpdate(data));
+        }
     }
 
     public void subscribeDBData() {
@@ -98,7 +130,6 @@ public class HomePresenter extends NetWorkBasePresenter<HomeViewInterface> {
 
     public void unSubscribe() {
         mDisposable.dispose();
-        if (mRealm != null) mRealm.close();
-        mFragment = null;
+        mRealm.close();
     }
 }

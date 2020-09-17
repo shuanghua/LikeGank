@@ -11,7 +11,7 @@ import io.realm.annotations.PrimaryKey;
 public class Android extends RealmObject {
 
     @PrimaryKey
-    private String _id;
+    public String _id;
     public String time;
     public String content;
     public String author;
@@ -20,11 +20,11 @@ public class Android extends RealmObject {
     public Android() {
     }
 
-    public Android(String time, String content, String author, String _id, String url) {
+    public Android(String _id, String time, String content, String author, String url) {
+        this._id = _id;
         this.time = time;
         this.content = content;
         this.author = author;
-        this._id = _id;
         this.url = url;
     }
 }
