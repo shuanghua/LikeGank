@@ -1,41 +1,68 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorApp</item>
+        <item name="colorPrimary">@color/md_white_1000</item>
         <item name="colorOnPrimary">@color/md_black_1000</item>
-        <item name="colorPrimaryDark">@color/md_grey_300</item>
+
+        <item name="colorSecondary">@color/colorApp</item>
+        <item name="colorOnSecondary">@color/md_white_1000</item>
+
+        <item name="backgroundColor">@color/md_white_1000</item>
+        <item name="colorOnBackground">@color/md_black_1000</item>
+
+        <item name="colorSurface">@color/md_white_1000</item>
+        <item name="colorOnSurface">@color/md_black_1000</item>
+
+        <item name="colorError">@color/md_red_800</item>
+        <item name="colorOnError">@color/md_white_1000</item>
+
         <item name="colorAccent">@color/colorApp</item>
+
+        <item name="colorPrimaryDark">@color/md_white_1000_alpha_95</item> <!-- status下层 -->
     </style>
 
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
+    <!-- 未实现 -->
+    <style name="AppTheme.Dart">
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+
     </style>
 
-    <!--requestWindowFeature-->
+    <style name="AppTheme.Light">
+        <item name="android:statusBarColor">@android:color/transparent</item><!-- status上层 -->
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+    </style>
+
     <style name="AppTheme.PhotoView">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">false</item>
         <item name="android:windowFullscreen">true</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
-    <style name="ToolbarAppThem" parent="AppTheme">
-        <item name="android:textColorSecondary">@android:color/black</item>
-        <item name="android:textColorPrimary">@android:color/black</item>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorPrimary">@android:color/transparent</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.ActionBar">
+        <item name="android:windowActionBarOverlay">false</item>
+        <!-- Support library compatibility -->
+        <item name="windowActionBarOverlay">false</item>
+        <item name="colorSurface">@android:color/transparent</item>
+    </style>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <!--    <style name="AppTheme.ToolbarTheme" parent="Theme.Mat.D"/>-->
 
-    <!-- LayoutStyle -->
+    <!-- ViewStyle -->
     <style name="About_Button">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textAllCaps">false</item>
+    </style>
+
+    <!--    <style name="ThemeOverlay.MaterialComponents.NavTheme">-->
+    <!--        <item name="colorPrimary">@color/colorApp</item>-->
+    <!--    </style>-->
+
+    <style name="ThemeOverlay.MaterialComponents.NavigationViewTheme">
+        <item name="colorPrimary">@color/colorApp</item>
     </style>
 </resources>

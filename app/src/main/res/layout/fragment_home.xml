@@ -4,9 +4,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.HomeFragment">
 
-    <include
-        android:id="@+id/refresh_list_layout"
-        layout="@layout/list_refresh" />
+    <include layout="@layout/list_refresh"
+        android:id="@+id/refresh_list_layout"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-

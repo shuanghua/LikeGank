@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.shua.likegank.data.entity.Content;
 import com.shua.likegank.data.entity.Girl;
 import com.shua.likegank.databinding.FragmentGirlsBinding;
 import com.shua.likegank.interfaces.ImageViewInterface;

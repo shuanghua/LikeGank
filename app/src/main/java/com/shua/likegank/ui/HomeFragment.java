@@ -127,11 +127,15 @@ public class HomeFragment extends
                 itemCount = mAdapter.getItemCount();
                 lastItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
                 firstItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
-                if (lastItemPosition == itemCount - 1
-                        && lastItemPosition - firstItemPosition > 0) {
+                if (lastItemPosition == itemCount - 1 && lastItemPosition - firstItemPosition > 0) {
                     showLoadingView();
                     mPresenter.requestNetWorkData(HomePresenter.REQUEST_LOAD_MORE);//到底部时，加载下一页数据
                 }
+//                else if (firstItemPosition == 0) {
+//                    isTransparent(true);
+//                } else {
+//                    isTransparent(false);
+//                }
             }
         };
     }

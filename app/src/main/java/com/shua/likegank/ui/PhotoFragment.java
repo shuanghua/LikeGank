@@ -37,14 +37,13 @@ import timber.log.Timber;
 import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
-import static android.os.Environment.DIRECTORY_DCIM;
+import static android.os.Environment.DIRECTORY_PICTURES;
 
 
 /**
  * Display image
  * Created by ShuangHua on 2017/4/23.
  */
-
 public class PhotoFragment extends BaseFragment<FragmentPhotoBinding> {
 
     private PhotoView mPhotoView;
@@ -172,9 +171,8 @@ public class PhotoFragment extends BaseFragment<FragmentPhotoBinding> {
                 requireActivity(), imageUrl, imageUrl)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(uri -> {
-                    File appDir = Environment.getExternalStoragePublicDirectory(DIRECTORY_DCIM);
                     String msg = String.format(getString(R.string.picture_has_save_to),
-                            appDir.getAbsolutePath());
+                            "/Pictures/LikeGank");
                     Toast.makeText(requireActivity(), msg, Toast.LENGTH_SHORT).show();
                 }));
     }

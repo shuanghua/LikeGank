@@ -8,6 +8,20 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
+    <!-- 如果你要 View 能显示在状态栏下面：
+    1. 必须使用具有 onApplyWindowInsets 方法的父 ViewGroup 来包裹。
+       比如 DrawerLayout ，CoordinatorLayout，CoordinatorLayout
+       你也可以自定义一个 ViewGroup ，然后实现 onApplyWindowInsets。
+
+    2. 父 ViewGroup 设置 fitsSystemWindows="true"
+    -->
+
+    <!-- 如果你要让 ViewGroup 能显示在状态栏下面:
+        直接设置 fitsSystemWindows="true" 就好，因为不涉及传递性。
+        通常 ViewGroup 是先通过设置 paddingTop = statusBarHeight ,然后位置上移.
+        View 则直接上移，不设置 paddingTop
+    -->
+
     <include
         android:id="@+id/app_bar_main"
         layout="@layout/app_toolbar"
@@ -19,7 +33,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:fitsSystemWindows="true"
+        android:theme="@style/ThemeOverlay.MaterialComponents.NavigationViewTheme"
         app:headerLayout="@layout/nav_header_main"
         app:menu="@menu/activity_main_drawer" />
 </androidx.drawerlayout.widget.DrawerLayout>

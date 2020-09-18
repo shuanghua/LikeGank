@@ -1,9 +1,6 @@
 package com.shua.likegank;
 
 import android.app.Application;
-import android.util.Log;
-
-import androidx.annotation.NonNull;
 
 import com.shua.likegank.utils.AppUtils;
 
@@ -32,8 +29,18 @@ public class App extends Application {
 
     private void initRealm() {
         Realm.init(this);
-        RealmConfiguration config = new RealmConfiguration.Builder().build();
+        RealmConfiguration config = new RealmConfiguration.Builder()
+                .deleteRealmIfMigrationNeeded()
+                .build();
         //Realm.deleteRealm(config);
         Realm.setDefaultConfiguration(config);
     }
+
+//    private class LikeGankMigration implements RealmMigration{
+//
+//        @Override
+//        public void migrate(DynamicRealm realm, long oldVersion, long newVersion) {
+//            RealmSchema schema = realm.getSchema();
+//        }
+//    }
 }

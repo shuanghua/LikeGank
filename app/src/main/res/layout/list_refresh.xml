@@ -1,14 +1,18 @@
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/refresh_view"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    android:layout_height="wrap_content">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingTop="88dp"
         android:scrollbars="vertical" />
+    <!-- clipToPadding = false:
+        recyclerView 运动的时候，无视 padding,也就是 padding = 0dp
+        recyclerView 到顶部的时候，把 padding 添加回来
+    -->
 
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

@@ -10,6 +10,7 @@ import androidx.viewbinding.ViewBinding;
 
 import com.shua.likegank.R;
 import com.shua.likegank.ui.MainActivity;
+import com.shua.likegank.utils.AppUtils;
 
 import timber.log.Timber;
 
@@ -49,6 +50,7 @@ public abstract class RefreshFragment<T extends ViewBinding>
         if (refreshView == null) {
             throw new IllegalStateException("No found SwipeRefreshView in Layout");
         }
+        refreshView.setProgressViewOffset(false, AppUtils.dpToPx(60f), AppUtils.dpToPx(124f));
         refreshView.setOnRefreshListener(this);
         refreshView.setColorSchemeColors(
                 getResources().getColor(R.color.colorApp));

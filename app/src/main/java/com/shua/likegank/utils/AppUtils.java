@@ -4,9 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.util.TypedValue;
 import android.widget.Toast;
-
-import timber.log.Timber;
 
 /**
  * LikeGankUtils
@@ -56,5 +55,12 @@ public class AppUtils {
             toast.setText(msg);
         }
         toast.show();
+    }
+
+    public static int dpToPx(float dp) {
+        return (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, dp,
+                mAppContext.getResources().getDisplayMetrics()
+        );
     }
 }

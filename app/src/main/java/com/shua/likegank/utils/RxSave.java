@@ -44,6 +44,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
@@ -99,25 +101,28 @@ public class RxSave {
      * @param bitmap    bitmap 资源
      * @return 保存成功后的图片路径 File
      */
-    public static Uri saveImage(Activity context, String imageName,
-                                String suffix, String directory,
-                                String mimeType, Bitmap bitmap) throws IOException {
+    public static Uri saveImage(
+            Activity context, String imageName,
+            String suffix, String directory,
+            String mimeType, Bitmap bitmap
+    ) throws IOException {
 
         final String imageDir = DIRECTORY_PICTURES + File.separator + directory;
+
         ContentResolver resolver = context.getApplicationContext().getContentResolver();
         ContentValues values = new ContentValues();
+
         values.put(MediaStore.MediaColumns.MIME_TYPE, mimeType);
         values.put(MediaStore.MediaColumns.DISPLAY_NAME, imageName);
 
-        //MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             values.put(MediaStore.MediaColumns.RELATIVE_PATH, imageDir);
-        } else {
-            File dirFile = new File(Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES), directory);
+        } else {// Q 之前的需要申请读和写的权限
+            File dirFile = new File(
+                    Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES), directory
+            );
             if (!dirFile.exists()) dirFile.mkdirs();// 必须先创建第一层目录
             final File imageFile = File.createTempFile(imageName, suffix, dirFile);//然后创建全目录
-            //File imageFile = new File(Environment.getExternalStoragePublicDirectory())
             values.put(MediaStore.Images.Media.DATA, imageFile.getAbsolutePath());
         }
 
@@ -132,20 +137,70 @@ public class RxSave {
         return uri;
     }
 
-    public void getImage(Activity activity, String imageName) throws IOException {
+    /**
+     * 根据图片名字获取图片
+     * 同时建议申请读取权限（Q+ 也建议，因为 Q+ 在应用卸载重装的情况下会把上次的图片识别为非自己目录的文件）
+     * 建议在 io 线程调用
+     *
+     * @param imageName 图片名字，[ 一定要包含后缀格式 ]
+     * @return 图片的 Bitmap 形式
+     */
+    public static Bitmap getImage(Activity activity, String imageName) throws IOException {
         Uri uri = null;
+
         String[] projection = {// 需要的信息，例如图片的所在数据库表对应的 ID，图片在数据库中的名字
                 MediaStore.Images.Media._ID,
                 MediaStore.Images.Media.DISPLAY_NAME
         };
         String selection = MediaStore.Images.Media.DISPLAY_NAME + " == ?";
         String[] selectionArgs = new String[]{imageName};
+
+        Context context = activity.getApplicationContext();
+        ContentResolver resolver = context.getContentResolver();
+        //resolver.loadThumbnail()//获取略缩图
+
+        try (Cursor cursor = resolver.query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                projection,
+                selection,
+                selectionArgs,
+                null
+        )) {
+            assert cursor != null;
+            int idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID);
+            while (cursor.moveToNext()) {
+                long id = cursor.getLong(idColumn);
+                uri = ContentUris.withAppendedId(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
+            }
+        }
+        if (uri != null) {
+            InputStream inputStream = resolver.openInputStream(uri);
+            return BitmapFactory.decodeStream(inputStream);
+        }
+        return null;
+    }
+
+    /**
+     * 根据图片名字获取图片
+     *
+     * @param imageName 图片名字，包含后缀格式
+     * @return 返回对应图片的 Uri 形式
+     */
+    public static Uri getImageUri(Activity activity, String imageName) {
+        Uri uri = null;
+
+        String[] projection = {// 需要的信息，例如图片的所在数据库表对应的 ID，图片在数据库中的名字
+                MediaStore.Images.Media._ID,
+                MediaStore.Images.Media.DISPLAY_NAME
+        };
+        String selection = MediaStore.Images.Media.DISPLAY_NAME + " == ?";
+        String[] selectionArgs = new String[]{imageName};
+
         Context context = activity.getApplicationContext();
         ContentResolver resolver = context.getContentResolver();
         ContentValues values = new ContentValues();
         values.put(MediaStore.MediaColumns.DISPLAY_NAME, imageName);
-
-        //resolver.loadThumbnail()
 
         try (Cursor cursor = resolver.query(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
@@ -164,12 +219,81 @@ public class RxSave {
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
             }
         }
-        if (uri != null) {
-            InputStream inputStream = resolver.openInputStream(uri);
-            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+        return uri;
+    }
 
-            //return bitmap;
+    /**
+     * 获取共享目录下所有图片的id和名字
+     * 之后可以根据图片名字从 map 获取你需要图片的 id
+     * 最后根据 id 转换成 uri 获取图片
+     *
+     * @return 返回共享目录下所有图片的 id 和 name 的 map 集合
+     */
+    public static HashMap<Long, String> getAllImageInfoMap(Activity activity) {
+        HashMap<Long, String> map = new HashMap<>();
+
+        String[] projection = {// 需要的信息，例如图片的所在数据库表对应的 ID，图片在数据库中的名字
+                MediaStore.Images.Media._ID,
+                MediaStore.Images.Media.DISPLAY_NAME
+        };
+
+        Context context = activity.getApplicationContext();
+        ContentResolver resolver = context.getContentResolver();
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.MediaColumns.DISPLAY_NAME, "");
+
+        try (Cursor cursor = resolver.query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                projection,
+                null,
+                null,
+                null
+        )) {
+            assert cursor != null;
+            int idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID);
+            int nameColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME);
+            while (cursor.moveToNext()) {
+                long id = cursor.getLong(idColumn);
+                String name = cursor.getString(nameColumn);
+                map.put(id, name);
+            }
         }
+        return map;
+    }
+
+    /**
+     * 获取本应用共享目录下所有的图片对应的 uri 集合
+     *
+     * @return 本应用共享目录中所有图片 uri 集合
+     */
+    public static ArrayList<Uri> getImageUris(Activity activity) {
+        ArrayList<Uri> uris = new ArrayList<>();
+
+        String[] projection = {// 需要的信息，例如图片的所在数据库表对应的 ID，图片在数据库中的名字
+                MediaStore.Images.Media._ID, MediaStore.Images.Media.DISPLAY_NAME
+        };
+
+        Context context = activity.getApplicationContext();
+        ContentResolver resolver = context.getContentResolver();
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.MediaColumns.DISPLAY_NAME, "");
+
+        try (Cursor cursor = resolver.query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, null
+        )) {
+            assert cursor != null;
+            int idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID);
+            int nameColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME);
+            Uri uri;
+            while (cursor.moveToNext()) {
+                long id = cursor.getLong(idColumn);
+                String name = cursor.getString(nameColumn);
+                uri = ContentUris.withAppendedId(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
+                uris.add(uri);
+            }
+        }
+        return uris;
     }
 
     /**

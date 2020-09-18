@@ -18,6 +18,9 @@ import com.shua.likegank.R;
 import com.shua.likegank.databinding.ActivityMainBinding;
 import com.shua.likegank.ui.base.OnLoadingVisibilityListener;
 
+import static android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+import static android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+
 public class MainActivity extends AppCompatActivity implements OnLoadingVisibilityListener {
 
     private AppBarConfiguration mAppBarConfiguration;
@@ -28,6 +31,9 @@ public class MainActivity extends AppCompatActivity implements OnLoadingVisibili
         super.onCreate(savedInstanceState);
         mViewBinding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(mViewBinding.getRoot());
+//        getWindow().getDecorView().setSystemUiVisibility(
+//                SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+//                        | SYSTEM_UI_FLAG_LAYOUT_STABLE);
         Toolbar toolbar = mViewBinding.appBarMain.toolbar;
         setSupportActionBar(toolbar);
 
@@ -36,13 +42,12 @@ public class MainActivity extends AppCompatActivity implements OnLoadingVisibili
         navigationView.setItemIconTintList(null);
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_android, R.id.nav_girls,
-                R.id.nav_about, R.id.nav_photo, R.id.nav_license)
-                .setOpenableLayout(drawer)
-                .build();
+                R.id.nav_about, R.id.nav_photo, R.id.nav_license
+        ).setOpenableLayout(drawer).build();
 
 //        NavController navController = Navigation.findNavController(this, R.id.fragment_container);
-        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.fragment_container);
+        NavHostFragment navHostFragment = (NavHostFragment)
+                getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         assert navHostFragment != null;
         NavController navController = navHostFragment.getNavController();
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);

@@ -17,7 +17,7 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/likegank_launcher_round"
         android:screenOrientation="portrait"
-        android:theme="@style/AppTheme"
+        android:theme="@style/AppTheme.Light"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning"
         tools:targetApi="n">
 
@@ -37,17 +37,14 @@
 
         <activity
             android:name=".ui.MainActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.WebActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".ui.WebActivity" />
     </application>
 
 </manifest>

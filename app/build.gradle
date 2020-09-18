@@ -28,19 +28,27 @@ android {
         applicationId "com.shua.likegank"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 11
-        versionName "4.2"
+        versionCode 12
+        versionName "5.0"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
 
     buildTypes {
         debug {
             minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            zipAlignEnabled true
             signingConfig signingConfigs.release
+
+
+//            minifyEnabled false
+//            signingConfig signingConfigs.release
+
+
         }
 
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             zipAlignEnabled true
             signingConfig signingConfigs.release
@@ -50,8 +58,10 @@ android {
                 variant.outputs.all { output ->
                     def outputFile = output.outputFile
                     if (outputFile != null && outputFile.name.endsWith('release.apk')) {
-                        def fileName = "release_likegank_${defaultConfig.versionName}_${defaultConfig.versionCode}" +
-                                "_${variant.productFlavors[0].name}.apk"
+                        def fileName =
+                                "release_likegank_${defaultConfig.versionName}" +
+                                        "_${defaultConfig.versionCode}" +
+                                        "_${variant.productFlavors[0].name}" + ".apk"
                         outputFileName = fileName
                     }
                 }
@@ -93,7 +103,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.4'
-    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:2.4'
+    //releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:2.4'
 
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.8'
