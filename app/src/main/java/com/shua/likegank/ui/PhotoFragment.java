@@ -178,7 +178,7 @@ public class PhotoFragment extends BaseFragment<FragmentPhotoBinding> {
     }
 
     private void save() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {//Android Q + 后不需要读写权限
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {//Android Q + 后不需要写权限
             mDisposable.add(rxPermissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     .subscribe(granted -> {
                         if (granted) {
