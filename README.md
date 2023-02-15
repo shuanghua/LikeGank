@@ -16,10 +16,7 @@
 
 [GooglePlay下载](https://play.google.com/store/apps/details?id=com.shua.likegank "GooglePlay") 
 
-<img src="https://github.com/shuanghua/LikeGank/blob/master/art/1.png" alt="Cover" width="25%"/> 
-<img src="https://github.com/shuanghua/LikeGank/blob/master/art/2.png" alt="Cover" width="25%"/> 
-<img src="https://github.com/shuanghua/LikeGank/blob/master/art/3.png" alt="Cover" width="25%"/> 
-<img src="https://github.com/shuanghua/LikeGank/blob/master/art/4.png" alt="Cover" width="25%"/> 
+<img src="https://github.com/shuanghua/LikeGank/blob/master/art/1.png" alt="Cover" width="25%"/> <img src="https://github.com/shuanghua/LikeGank/blob/master/art/2.png" alt="Cover" width="25%"/> <img src="https://github.com/shuanghua/LikeGank/blob/master/art/3.png" alt="Cover" width="25%"/> <img src="https://github.com/shuanghua/LikeGank/blob/master/art/4.png" alt="Cover" width="25%"/> 
 
 
 # 开源协议
