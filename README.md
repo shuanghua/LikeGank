@@ -16,6 +16,11 @@
 
 [GooglePlay下载](https://play.google.com/store/apps/details?id=com.shua.likegank "GooglePlay") 
 
+<img src="https://github.com/shuanghua/LikeGank/blob/master/art/1.png" alt="Cover" width="25%"/> 
+<img src="https://github.com/shuanghua/LikeGank/blob/master/art/2.png" alt="Cover" width="25%"/> 
+<img src="https://github.com/shuanghua/LikeGank/blob/master/art/3.png" alt="Cover" width="25%"/> 
+<img src="https://github.com/shuanghua/LikeGank/blob/master/art/4.png" alt="Cover" width="25%"/> 
+
 
 # 开源协议
 LikeGnk 基于 GPL-3.0 开源协议，在使用本项目代码的之前请确保你了解这个协议。 协议详细内容参见 [GPL-3.0 LICENSE](https://github.com/Shuanghua/LikeGank/blob/master/LICENSE "GPL-3.0 LICENSE")
