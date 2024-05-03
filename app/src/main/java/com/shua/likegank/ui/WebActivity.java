@@ -1,5 +1,8 @@
 package com.shua.likegank.ui;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +11,7 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -19,9 +23,6 @@ import androidx.appcompat.widget.Toolbar;
 import com.shua.likegank.R;
 import com.shua.likegank.databinding.ActivityWebViewBinding;
 import com.shua.likegank.utils.AppUtils;
-
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
 
 
 public class WebActivity extends AppCompatActivity {
@@ -65,7 +66,6 @@ public class WebActivity extends AppCompatActivity {
         WebSettings settings = mWebView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setLoadWithOverviewMode(true);
-        settings.setAppCacheEnabled(true);
         settings.setSupportZoom(true);
         settings.setUseWideViewPort(true);
         settings.setLoadWithOverviewMode(true);
@@ -76,7 +76,7 @@ public class WebActivity extends AppCompatActivity {
         mWebView.setWebChromeClient(new WebChromeClient());
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 return false;
             }
         });
@@ -92,22 +92,22 @@ public class WebActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        switch (id) {
-            case R.id.action_refresh:
-                mWebView.reload();
-                return true;
-            case R.id.action_copy_url:
-                AppUtils.copyToClipBoard(this, mWebView.getUrl());
-                return true;
-            case R.id.action_open_url:
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_VIEW);
-                Uri uri = Uri.parse(mUrl);
-                intent.setData(uri);
-                if (intent.resolveActivity(getPackageManager()) != null) startActivity(intent);
-                return true;
+        if (id == R.id.action_refresh) {
+            mWebView.reload();
+            return true;
+        } else if (id == R.id.action_copy_url) {
+            AppUtils.copyToClipBoard(this, mWebView.getUrl());
+            return true;
+        } else if (id == R.id.action_open_url) {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_VIEW);
+            Uri uri = Uri.parse(mUrl);
+            intent.setData(uri);
+            if (intent.resolveActivity(getPackageManager()) != null) startActivity(intent);
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

@@ -18,8 +18,7 @@ import timber.log.Timber;
  * RefreshBaseActivity
  * Created by shuanghua on 2017/3/16.
  */
-public abstract class RefreshFragment<T extends ViewBinding>
-        extends BaseFragment<T>
+public abstract class RefreshFragment<T extends ViewBinding> extends BaseFragment<T>
         implements SwipeRefreshLayout.OnRefreshListener {
 
     private boolean isRefreshShowing;

@@ -23,6 +23,7 @@ import java.util.List;
 
 import me.drakeet.multitype.MultiTypeAdapter;
 
+
 public class HomeFragment extends
         RefreshFragment<FragmentHomeBinding> implements HomeViewInterface {
 

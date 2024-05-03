@@ -47,12 +47,13 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.Flowable;
-import io.reactivex.FlowableOnSubscribe;
-import io.reactivex.schedulers.Schedulers;
 
 import static android.os.Environment.DIRECTORY_PICTURES;
+
+import io.reactivex.rxjava3.core.BackpressureStrategy;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.FlowableOnSubscribe;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 /**
  * 私密： getExternalFilesDir() 可把图片分享给别的应用，但相册识别不了这个目录里面的图片
@@ -83,7 +84,7 @@ public class RxSave {
                     final String imageName = title.replace("http://gank.io/images/", "");//去掉特殊字符，避免在某些系统上出错
                     System.out.println("imageName:" + imageName);
                     final Uri imageUri = saveImage(context, imageName, ".jpg", "LikeGank", "image/jpeg", bitmap);
-                    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {// Android Q 之前需要手挡通知相册更新
+                    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {// Android Q 之前需要手动通知相册更新
                         notifyGallery(context, imageUri);
                     }
                     return Flowable.just(imageUri);
@@ -130,7 +131,7 @@ public class RxSave {
         Uri uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
         assert uri != null;
         OutputStream outputStream = resolver.openOutputStream(uri);//获取写出流
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);//写入
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);// 写入 bitmap
         assert outputStream != null;
         outputStream.flush();
         outputStream.close();

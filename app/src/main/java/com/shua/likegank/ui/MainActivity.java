@@ -18,9 +18,6 @@ import com.shua.likegank.R;
 import com.shua.likegank.databinding.ActivityMainBinding;
 import com.shua.likegank.ui.base.OnLoadingVisibilityListener;
 
-import static android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-import static android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
-
 public class MainActivity extends AppCompatActivity implements OnLoadingVisibilityListener {
 
     private AppBarConfiguration mAppBarConfiguration;

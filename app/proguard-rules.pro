@@ -37,17 +37,6 @@
 -keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
 
 
-# Butterknife
--keep class butterknife.** { *; }
--dontwarn butterknife.internal.**
--keep class **$$ViewBinder { *; }
--keepclasseswithmembernames class * {
-    @butterknife.* <fields>;
-}
--keepclasseswithmembernames class * {
-    @butterknife.* <methods>;
-}
-
 #---------------------------------------------------------------------------
 -optimizationpasses 5
 -dontusemixedcaseclassnames
@@ -61,15 +50,6 @@
 -keepattributes Signature
 -keepattributes SourceFile,LineNumberTable
 
--keep public class * extends android.app.Activity
--keep public class * extends android.app.Application
--keep public class * extends android.app.Service
--keep public class * extends android.content.BroadcastReceiver
--keep public class * extends android.content.ContentProvider
--keep public class * extends android.app.backup.BackupAgentHelper
--keep public class * extends android.preference.Preference
--keep public class * extends android.view.View
--keep class android.support.** {*;}
 
 -keepclasseswithmembernames class * {
     native <methods>;

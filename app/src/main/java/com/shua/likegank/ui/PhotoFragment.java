@@ -6,7 +6,6 @@ import android.app.AlertDialog;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -27,17 +26,13 @@ import com.shua.likegank.databinding.FragmentPhotoBinding;
 import com.shua.likegank.ui.base.BaseFragment;
 import com.shua.likegank.utils.RxSave;
 import com.shua.likegank.utils.Shares;
-import com.tbruyelle.rxpermissions2.RxPermissions;
+import com.tbruyelle.rxpermissions3.RxPermissions;
 
-import java.io.File;
-
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import timber.log.Timber;
 import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher;
-
-import static android.os.Environment.DIRECTORY_PICTURES;
 
 
 /**
@@ -168,7 +163,7 @@ public class PhotoFragment extends BaseFragment<FragmentPhotoBinding> {
 
     private void saveImage() {
         mDisposable.add(RxSave.saveImageAndGetPathObservable(
-                requireActivity(), imageUrl, imageUrl)
+                        requireActivity(), imageUrl, imageUrl)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(uri -> {
                     String msg = String.format(getString(R.string.picture_has_save_to),
@@ -178,19 +173,8 @@ public class PhotoFragment extends BaseFragment<FragmentPhotoBinding> {
     }
 
     private void save() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {//Android Q + 后不需要写权限
-            mDisposable.add(rxPermissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    .subscribe(granted -> {
-                        if (granted) {
-                            saveImage();
-                        } else {
-                            Toast.makeText(requireActivity()
-                                    , "权限已被拒绝！", Toast.LENGTH_SHORT).show();
-                        }
-                    }));
-        } else { //Android Q+
-            saveImage();
-        }
+        // Android Q+
+        saveImage();
     }
 
     @SuppressLint("CheckResult")
@@ -216,7 +200,7 @@ public class PhotoFragment extends BaseFragment<FragmentPhotoBinding> {
         mDisposable.add(RxSave.saveImageAndGetPathObservable(requireActivity(), imageUrl, imageUrl)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(uri -> Shares.shareImage(
-                        requireActivity(), uri, getString(R.string.share_to)),
+                                requireActivity(), uri, getString(R.string.share_to)),
                         throwable -> {
                             Timber.e(throwable.getMessage());
                             Toast.makeText(requireActivity(),

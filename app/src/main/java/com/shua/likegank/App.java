@@ -20,9 +20,9 @@ public class App extends Application {
         super.onCreate();
         AppUtils.setAppContext(getApplicationContext());
 
-        if (BuildConfig.DEBUG) {
-            Timber.plant(new Timber.DebugTree());
-        }
+//        if (BuildConfig.DEBUG) {
+//            Timber.plant(new Timber.DebugTree());
+//        }
 
         initRealm();
     }
