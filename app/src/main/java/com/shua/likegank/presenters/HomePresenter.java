@@ -38,8 +38,8 @@ public class HomePresenter extends NetWorkBasePresenter<HomeViewInterface> {
     private int mCurrentPage = 1;// 用于临时保存当前加载了多少页
     private int mPageCount = 0; // 服务器总页数
 
-    private Realm mRealm;
-    private CompositeDisposable mDisposable = new CompositeDisposable();
+    private final Realm mRealm;
+    private final CompositeDisposable mDisposable = new CompositeDisposable();
 
     public HomePresenter(HomeViewInterface viewInterface) {
         mFragment = viewInterface;

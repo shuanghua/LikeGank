@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment;
 import com.shua.likegank.api.ApiFactory;
 import com.shua.likegank.data.GankBean;
 import com.shua.likegank.data.entity.Android;
-import com.shua.likegank.data.entity.Home;
 import com.shua.likegank.data.uimodel.Category;
 import com.shua.likegank.interfaces.AndroidViewInterface;
 import com.shua.likegank.utils.AppUtils;

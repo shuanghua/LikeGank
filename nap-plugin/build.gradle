@@ -13,6 +13,7 @@ dependencies {
 
     implementation localGroovy()
 
+    implementation "com.android.tools.build:gradle:8.2.2"
     implementation "commons-io:commons-io:2.16.1"
     implementation "org.ow2.asm:asm:9.7"
     implementation "org.ow2.asm:asm-tree:9.7"
