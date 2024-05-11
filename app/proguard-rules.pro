@@ -20,7 +20,7 @@
 -keepclassmembers,allowshrinking,allowobfuscation interface * {
     @retrofit2.http.* <methods>;
 }
--dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+
 -dontwarn javax.annotation.**
 -dontwarn kotlin.Unit
 -dontwarn retrofit2.KotlinExtensions
@@ -28,7 +28,6 @@
 -if interface * { @retrofit2.http.* <methods>; }
 -keep,allowobfuscation interface <1>
 
--dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
 -dontwarn javax.annotation.**
 -dontwarn okhttp3.**
 -dontwarn okio.**
@@ -90,13 +89,11 @@
     void *(**On*Event);
 }
 
--keepclassmembers class fqcn.of.javascript.interface.for.Webview {
-   public *;
-}
+
 -keepclassmembers class * extends android.webkit.WebViewClient {
     public void *(android.webkit.WebView, java.lang.String, android.graphics.Bitmap);
     public boolean *(android.webkit.WebView, java.lang.String);
 }
 -keepclassmembers class * extends android.webkit.WebViewClient {
-    public void *(android.webkit.WebView, jav.lang.String);
+    public void *(android.webkit.WebView, java.lang.String);
 }

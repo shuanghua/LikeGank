@@ -1,9 +1,9 @@
 pluginManagement {
     repositories {
+        includeBuild("nav-plugin")
         google()
         mavenCentral()
         gradlePluginPortal()
-        maven { url 'https://jitpack.io' }
     }
 }
 dependencyResolutionManagement {
@@ -15,4 +15,3 @@ dependencyResolutionManagement {
     }
 }
 include ':app'
-include ':nap-plugin'
