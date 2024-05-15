@@ -21,9 +21,11 @@ import com.shua.likegank.utils.AppUtils;
 
 import java.util.List;
 
+import dev.shuanghua.annotations.NavDestination;
 import me.drakeet.multitype.MultiTypeAdapter;
 
 
+@NavDestination(type = NavDestination.NavType.Fragment, route = "home_fragment")
 public class HomeFragment extends
         RefreshFragment<FragmentHomeBinding> implements HomeViewInterface {
 

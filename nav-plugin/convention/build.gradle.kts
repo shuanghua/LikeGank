@@ -31,6 +31,7 @@ dependencies {
     implementation("org.ow2.asm:asm:9.7")
     implementation("org.ow2.asm:asm-tree:9.7")
     implementation("com.squareup:kotlinpoet:1.16.0")
+    implementation("dev.shuanghua.library:android-annotation:1.0.0")
 }
 
 
