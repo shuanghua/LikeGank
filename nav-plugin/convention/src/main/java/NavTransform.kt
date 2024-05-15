@@ -1,3 +1,4 @@
+import dev.shuanghua.annotations.NavData
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
@@ -26,6 +27,8 @@ class NavTransform(
     private val output: RegularFileProperty
 ) {
 
+    private val navDataList: MutableList<NavData> = mutableListOf()
+
     /**
      * Transform 方法是 Gradle 执行的入口方法，
      * 在这里我们需要做的就是遍历所有的 jar 包和 class 文件，
@@ -33,11 +36,24 @@ class NavTransform(
      */
     internal fun transform() {
         val jarOutput = JarOutputStream(
-            BufferedOutputStream(FileOutputStream(output.get().asFile))
-        )
+                        BufferedOutputStream(
+                        FileOutputStream(output.get().asFile)))
+
+        // 遍历所有的 class 文件 并解析注解信息
         handleClass(jarOutput)
         handleJar(jarOutput)
         jarOutput.close()
+
+        // 生成 NavRegistry 类
+        val ge = GenerateNavRegistry(project, navDataList)
+        ge.generateNavRegistryClass()
+    }
+
+    // 解析注解信息
+    private fun visitClass(inputStream: InputStream) {
+        val classReader = ClassReader(inputStream)
+        val classVisitor = NavAnnotationVisitor(classReader, navDataList) // 解析注解信息
+        classReader.accept(classVisitor, 0)
     }
 
 
@@ -45,12 +61,10 @@ class NavTransform(
     private fun handleClass(jarOutput: JarOutputStream) {
         allDirectories.get().forEach { directory ->
             directory.asFile.walk().forEach { classFile: File ->
-                if (classFile.isFile) {
-                    if (classFile.name.endsWith("Fragment.class")) {
-                        val inputStream = classFile.inputStream()
-                        visitClass(inputStream)
-                        inputStream.close()
-                    }
+                if (classFile.isFile && classFile.name.endsWith("Fragment.class")) {
+                    val inputStream = classFile.inputStream()
+                    visitClass(inputStream)
+                    inputStream.close()
                     val relativePath = directory.asFile.toURI().relativize(classFile.toURI()).path
                     jarOutput.writeClass(
                         relativePath.replace(File.separatorChar, '/'),
@@ -93,13 +107,6 @@ class NavTransform(
         putNextEntry(JarEntry(relativePath))
         write(byteArray)
         closeEntry()
-    }
-
-
-    private fun visitClass(inputStream: InputStream) {
-        val classReader = ClassReader(inputStream)
-        val classVisitor = ClassAnnotationVisitor(classReader, project)
-        classReader.accept(classVisitor, 0)
     }
 }
 

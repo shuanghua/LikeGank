@@ -21,6 +21,7 @@ import com.shua.likegank.ui.itembinder.AndroidItemBinder;
 import com.shua.likegank.ui.itembinder.CategoryItemBinder;
 import com.shua.likegank.utils.AppUtils;
 
+import dev.shuanghua.annotations.NavDestination;
 import me.drakeet.multitype.Items;
 import me.drakeet.multitype.MultiTypeAdapter;
 

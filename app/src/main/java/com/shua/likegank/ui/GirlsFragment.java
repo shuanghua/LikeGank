@@ -24,12 +24,14 @@ import com.shua.likegank.utils.AppUtils;
 
 import java.util.List;
 
+import dev.shuanghua.annotations.NavDestination;
 import me.drakeet.multitype.MultiTypeAdapter;
 
 /**
  * NetWork to Realm to View
  * Created by SHUA on 2017/3/27.
  */
+@NavDestination(type = NavDestination.NavType.Fragment, route = "girls_fragment")
 public class GirlsFragment
         extends RefreshFragment<FragmentGirlsBinding>
         implements ImageViewInterface {

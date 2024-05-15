@@ -7,7 +7,7 @@ import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 
-abstract class ModifyClassesTask : DefaultTask() {
+abstract class ReadClassesTask : DefaultTask() {
 
     @get:InputFiles
     abstract val allJars: ListProperty<RegularFile>

@@ -13,7 +13,8 @@ public object NavRegistry {
 
 
   init {
-    navList.add(NavData("home_fragment", "com.shua.likegank.ui.HomeFragment", Fragment))
+    navList.add(NavData("girls_fragment", "com.shua.likegank.ui.GirlsFragment", Fragment))
+        navList.add(NavData("home_fragment", "com.shua.likegank.ui.HomeFragment", Fragment))
 
   }
 
