@@ -1,7 +1,7 @@
 plugins {
     id("java-library")
-    id("org.jetbrains.kotlin.jvm")
     id ("maven-publish") // 发布   发布库到 Maven 仓库
+    id("org.jetbrains.kotlin.jvm") apply true
 }
 
 java {
@@ -9,10 +9,13 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
+/**
+ * 发布本地 Maven 仓库
+ */
 publishing {
-    publications { // 本地 aven 仓库
+    publications {
         create<MavenPublication>("LikeGankAnnotation") {
-            artifactId = "android-annotation"
+            artifactId = "lib-annotation"
             from(components["java"])
             groupId = "dev.shuanghua.library"
             version = "1.0.0"

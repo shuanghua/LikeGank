@@ -1,10 +1,23 @@
+/**
+ *  navigation.safeargs 该插件内部使用了 kotlinpoet 生成代码库，
+ *  根项目引入的插件会覆盖子模块的插件，导致冲突。
+ *  所以在子模块引入该插件, 避免与我们的 build-logic -> plugins 插件中的 kotlinpoet 产生冲突
+ */
+
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    id 'org.jetbrains.kotlin.kapt'
+    id "org.jetbrains.kotlin.kapt" apply true
     id 'androidx.navigation.safeargs' version '2.7.7' apply true
     id 'nav-plugin'
 }
+
+
+//afterEvaluate {
+//    tasks.named("assembleDebug").configure {
+//        dependsOn("processNavDataDebug")
+//    }
+//}
 
 apply plugin: "realm-android"
 
@@ -18,7 +31,6 @@ android {
     lint {
         baseline = file("lint-baseline.xml")
     }
-
 
     namespace 'com.shua.likegank'
 
@@ -56,7 +68,7 @@ android {
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+//            signingConfig signingConfigs.release
         }
 
         release {
@@ -72,20 +84,11 @@ android {
                         def fileName =
                                 "release_likegank_${defaultConfig.versionName}" +
                                         "_${defaultConfig.versionCode}" +
-                                        "_${variant.productFlavors[0].name}" + ".apk"
+                                        "_${variant.buildType.name}" + ".apk"
                         outputFileName = fileName
                     }
                 }
             }
-        }
-    }
-
-    flavorDimensions += "version"
-    productFlavors {//产品特点
-        create("google") {
-            dimension = "version"
-            applicationIdSuffix = ".google"
-            versionNameSuffix = "-google"
         }
     }
 
@@ -120,7 +123,7 @@ dependencies {
     implementation 'me.drakeet.multitype:multitype:3.5.0'
 
     implementation 'com.github.bumptech.glide:glide:4.11.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+    kapt 'com.github.bumptech.glide:compiler:4.11.0'
 
     implementation 'com.jakewharton.timber:timber:5.0.1'
     implementation 'com.github.chrisbanes.photoview:library:1.2.4'

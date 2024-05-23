@@ -33,14 +33,11 @@ class GenerateNavRegistry(
      internal fun generateNavRegistryClass() {
         println("------------------------------------------------------------")
         println("1.注解个数: ${navDataList.size} 个")
-
         println("2.开始生成 NavRegistry.kt 文件...")
 
         val navDataClass = ClassName(package_name_annotation, class_name_nav_data) // NavData
-
         val arrayListClass = ClassName("kotlin.collections", "ArrayList") // ArrayList<>
         val arrayListNavData = arrayListClass.parameterizedBy(navDataClass) // ArrayList<NavData>
-
         val listClass = ClassName("kotlin.collections", "List") // ArrayList<>
         val listNavData = listClass.parameterizedBy(navDataClass) // ArrayList<NavData>
 

@@ -1,7 +1,7 @@
 pluginManagement {
     repositories {
         mavenLocal()
-        includeBuild("nav-plugin")
+        includeBuild("build-logic")
         google()
         mavenCentral()
         gradlePluginPortal()
