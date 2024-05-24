@@ -18,7 +18,7 @@ class AsmModifyClassesVisitor (
         interfaces: Array<out String>?
     ) {
         className = name
-        println("开始处理类：$name")
+        println("处理字节码的类：$name")
         super.visit(version, access, name, signature, superName, interfaces)
     }
 
@@ -29,7 +29,6 @@ class AsmModifyClassesVisitor (
         signature: String?,
         exceptions: Array<out String>?
     ): MethodVisitor {
-        println("准备插桩!!")
         val mv: MethodVisitor = cv.visitMethod(access, name, descriptor, signature, exceptions)
         if (className == "com/shua/likegank/ui/base/BaseFragment" && (name == "onCreate" || name == "onDestroyView")) {
             // 在 onCreate() 方法和 onDestroyView() 方法中插入打印函数名的日志
@@ -44,7 +43,6 @@ class AsmModifyClassesVisitor (
     ) : MethodVisitor(api, methodVisitor) {
         override fun visitCode() {
             super.visitCode()
-            println("开始插桩")
             mv.visitFieldInsn(
                 Opcodes.GETSTATIC,
                 "java/lang/System",

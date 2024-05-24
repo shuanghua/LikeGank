@@ -1,7 +1,7 @@
 plugins {
     id("java-library")
     id ("maven-publish") // 发布   发布库到 Maven 仓库
-    id("org.jetbrains.kotlin.jvm") apply true
+    id("org.jetbrains.kotlin.jvm")
 }
 
 java {
@@ -15,9 +15,9 @@ java {
 publishing {
     publications {
         create<MavenPublication>("LikeGankAnnotation") {
-            artifactId = "lib-annotation"
             from(components["java"])
             groupId = "dev.shuanghua.library"
+            artifactId = "annotation-nav"
             version = "1.0.0"
         }
     }

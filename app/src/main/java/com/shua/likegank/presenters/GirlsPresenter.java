@@ -9,6 +9,7 @@ import com.shua.likegank.data.entity.Girl;
 import com.shua.likegank.interfaces.ImageViewInterface;
 import com.shua.likegank.utils.NetWorkUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Flowable;
@@ -31,7 +32,8 @@ public class GirlsPresenter extends NetWorkBasePresenter<ImageViewInterface> {
     private int mPageCount = 0; // 服务器总页数
 
     private final Realm mRealm;
-    private CompositeDisposable mDisposable = new CompositeDisposable();
+    private final CompositeDisposable mDisposable = new CompositeDisposable();
+    List<Girl> fakeData = new ArrayList<>();
 
 
     /**
@@ -41,10 +43,20 @@ public class GirlsPresenter extends NetWorkBasePresenter<ImageViewInterface> {
      * @param viewInterface 实现了 ImageViewInterface 的 fragment
      */
     public GirlsPresenter(ImageViewInterface viewInterface) {
+        girlsFakeData();
         mFragment = viewInterface;
         mRealm = Realm.getDefaultInstance();
         int dbSize = mRealm.where(Girl.class).findAll().size();
         if (dbSize > 0) mCurrentPage = (int) Math.ceil(dbSize / 30.0);// 获取当前数据库已经存了多少页
+    }
+
+    private void girlsFakeData() {
+        for (int i = 0; i < 30; i++) {
+            fakeData.add(new Girl(
+                i + "",
+                "服务器已关闭,当前使用临时图片展示",
+                "https://img1.baidu.com/it/u=479423680,135458553&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500"));
+        }
     }
 
     @Override
@@ -60,13 +72,14 @@ public class GirlsPresenter extends NetWorkBasePresenter<ImageViewInterface> {
                 fromNetWorkLoadV2();
                 break;
             case REQUEST_LOAD_MORE:
-                if (mCurrentPage == mPageCount) {// 1==4
-                    mFragment.onError("到底啦~");
-                    return;
-                } else {
-                    mPage++;
-                    fromNetWorkLoadV2();
-                }
+                mFragment.showData(fakeData);
+//                if (mCurrentPage == mPageCount) {// 1==4
+//                    mFragment.onError("到底啦~");
+//                    return;
+//                } else {
+//                    mPage++;
+//                    fromNetWorkLoadV2();
+//                }
                 break;
             default:
                 break;
@@ -74,12 +87,6 @@ public class GirlsPresenter extends NetWorkBasePresenter<ImageViewInterface> {
     }
 
     private void fromNetWorkLoadV2() {
-//        Flowable.create((FlowableOnSubscribe<List<GankBean>>) subscribe -> {
-//
-//        }, BackpressureStrategy.BUFFER)
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread());
-
         mDisposable.add(ApiFactory.getGankApi().getGirlsDataV2(mPage)
                 .map(bean -> {
                     mPageCount = bean.getPage_count();
@@ -96,8 +103,10 @@ public class GirlsPresenter extends NetWorkBasePresenter<ImageViewInterface> {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         this::saveDataToDB,
-                        throwable -> mFragment.onError("服务器数据异常："
-                                + throwable.getMessage())
+//                        throwable -> mFragment.onError("服务器数据异常："
+//                                + throwable.getMessage())
+                        // 由于 gank 服务器关闭，暂时使用假数据模拟
+                        throwable -> mFragment.showData(fakeData)
                 ));
     }
 
@@ -122,7 +131,6 @@ public class GirlsPresenter extends NetWorkBasePresenter<ImageViewInterface> {
             }
         } else {// 下拉加载更多
             mCurrentPage = mPage;
-            //Timber.d("mCurrentPage:" + mCurrentPage + " pageCount:" + pageCount + " mPage:" + mPage);
             mRealm.executeTransaction(realm -> realm.insertOrUpdate(girls));
         }
     }

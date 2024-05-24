@@ -13,7 +13,7 @@ public class ApiFactory {
     public static GankApi getGankApi() {
         synchronized (monitor) {
             if (mGankApi == null) {
-                mGankApi = new ServiceFcactory().getGankApiService();
+                mGankApi = new ServiceFactory().getGankApiService();
             }
         }
         return mGankApi;
