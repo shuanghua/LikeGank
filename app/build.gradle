@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 /**
  *  navigation.safeargs 该插件内部使用了 kotlinpoet 生成代码库，
  *  根项目引入的插件会覆盖子模块的插件，导致冲突。
@@ -8,12 +6,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'io.realm.kotlin'
     id "org.jetbrains.kotlin.kapt"
-    id 'androidx.navigation.safeargs' version '2.7.7'
-    id 'dev.shuanghua.plugin.asmbytecode'
+    id 'androidx.navigation.safeargs'
+//    id 'dev.shuanghua.plugin.asmbytecode'
 }
 
-apply plugin: "realm-android"
 
 def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
@@ -49,10 +47,10 @@ android {
 
     defaultConfig {
         applicationId "com.shua.likegank"
-        minSdk 21
+        minSdk 23
         targetSdk 34
 
-        versionCode 15
+        versionCode 16
         versionName "6.0.0"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
@@ -94,28 +92,31 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
-    implementation 'com.google.android.material:material:1.12.0'
+    implementation libs.material
 
-    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.7.7'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.7.7'
+    implementation libs.swiperefreshlayout
+    implementation libs.appcompat
+    implementation libs.constraintlayout
+    implementation libs.navigation.fragment.ktx
+    implementation libs.navigation.ui.ktx
 
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.14'
+    implementation libs.retrofit
+    implementation libs.converter.gson
 
-    implementation 'io.reactivex.rxjava3:rxandroid:3.0.2'
-    implementation "io.reactivex.rxjava3:rxjava:3.1.8"
+    implementation libs.rxandroid
+    implementation libs.rxjava
 
-    implementation 'com.github.tbruyelle:rxpermissions:0.12'
-    implementation 'me.drakeet.multitype:multitype:3.5.0'
-    implementation 'com.github.bumptech.glide:glide:4.16.0'
-    implementation 'com.jakewharton.timber:timber:5.0.1'
-    implementation 'com.github.chrisbanes.photoview:library:1.2.4'
+    implementation libs.rxpermissions
+    implementation libs.multitype
+    implementation libs.glide
+    implementation libs.timber
+    implementation libs.library
 
-    implementation 'dev.shuanghua.library:annotation-nav:1.0.0'
+//    implementation 'dev.shuanghua.library:nav-annotation:1.0.0' // 仓库依赖
+    implementation project(':nav-annotation') // 直接代码依赖
     kapt project(':nav-compiler')
+    implementation libs.retrofit2.adapter.rxjava3
+
+    implementation libs.realm.kotlin.base
+    implementation libs.kotlin.coroutines.rx3
 }

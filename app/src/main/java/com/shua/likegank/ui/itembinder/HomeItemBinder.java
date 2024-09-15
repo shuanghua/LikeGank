@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.shua.likegank.ui.HomeFragmentDirections;
+
 import androidx.annotation.NonNull;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.shua.likegank.R;
 import com.shua.likegank.data.entity.Home;
 import com.shua.likegank.databinding.ItemHomeBinding;
-import com.shua.likegank.ui.HomeFragmentDirections;
 import com.shua.likegank.ui.WebActivity;
 import com.shua.likegank.utils.AppUtils;
 
@@ -37,7 +38,7 @@ public class HomeItemBinder extends ItemViewBinder<Home, HomeItemBinder.HomeHold
 
     @Override
     protected void onBindViewHolder(@NonNull HomeHolder holder, @NonNull Home home) {
-        switch (home.type) {
+        switch (home.getType()) {
             case "Android":
                 holder.mImageView.setImageResource(R.mipmap.ic_menu_android);
                 break;
@@ -60,22 +61,22 @@ public class HomeItemBinder extends ItemViewBinder<Home, HomeItemBinder.HomeHold
                 holder.mImageView.setImageResource(R.mipmap.likegank_launcher_round);
                 break;
         }
-        holder.mTextTime.setText(AppUtils.gankSubTimeString(home.createdAt));
+        holder.mTextTime.setText(AppUtils.gankSubTimeString(home.getCreatedAt()));
 
         SpannableString span = new SpannableString(new StringBuilder()
-                .append(home.title)
+                .append(home.getTitle())
                 .append("(via-")
-                .append(home.who)
+                .append(home.getWho())
                 .append(")"));
         span.setSpan(new ForegroundColorSpan(Color.parseColor("#eeb211"))
-                , home.title.length()
+                , home.getTitle().length()
                 , span.length()
                 , Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         holder.mTextTitle.setText(span);
-        holder.url = home.url;
-        holder.title = home.title;
-        holder.type = home.type;
+        holder.url = home.getUrl();
+        holder.title = home.getTitle();
+        holder.type = home.getType();
 
 
         // set TextColor or use  SpannableStringBuilder.addend + StringStyles.format

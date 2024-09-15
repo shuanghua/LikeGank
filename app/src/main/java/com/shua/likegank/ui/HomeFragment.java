@@ -24,7 +24,6 @@ import java.util.List;
 import dev.shuanghua.annotations.NavDestination;
 import me.drakeet.multitype.MultiTypeAdapter;
 
-
 @NavDestination(type = NavDestination.NavType.Fragment, route = "home_fragment")
 public class HomeFragment extends
         RefreshFragment<FragmentHomeBinding> implements HomeViewInterface {
@@ -42,7 +41,6 @@ public class HomeFragment extends
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPresenter.requestNetWorkData(HomePresenter.REQUEST_REFRESH);
     }
 
     @Override
@@ -51,6 +49,7 @@ public class HomeFragment extends
         super.onViewCreated(view, savedInstanceState);
         initRecyclerView();
         mPresenter.subscribeDBData();//单一数据源：数据库
+        mPresenter.requestNetWorkData(HomePresenter.REQUEST_REFRESH);
     }
 
     @Override
@@ -69,9 +68,9 @@ public class HomeFragment extends
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
-        mPresenter.unSubscribe();
+        mPresenter.destroy();
         mPresenter = null;
+        super.onDestroy();
     }
 
     private void initRecyclerView() {

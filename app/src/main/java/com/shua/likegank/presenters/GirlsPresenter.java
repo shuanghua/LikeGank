@@ -1,22 +1,26 @@
 package com.shua.likegank.presenters;
 
-import androidx.annotation.NonNull;
+import androidx.collection.ArraySet;
 import androidx.fragment.app.Fragment;
 
-import com.shua.likegank.api.ApiFactory;
-import com.shua.likegank.data.GankBean;
+import com.shua.likegank.data.RealmRepository;
 import com.shua.likegank.data.entity.Girl;
 import com.shua.likegank.interfaces.ImageViewInterface;
 import com.shua.likegank.utils.NetWorkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-import io.reactivex.Flowable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
-import io.realm.Realm;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+import io.realm.kotlin.Realm;
+import io.realm.kotlin.RealmConfiguration;
+import kotlin.jvm.JvmClassMappingKt;
+import kotlin.reflect.KClass;
+import timber.log.Timber;
 
 /**
  * ImageViewPresenter
@@ -27,13 +31,15 @@ public class GirlsPresenter extends NetWorkBasePresenter<ImageViewInterface> {
     public static final int REQUEST_REFRESH = 1;
     public static final int REQUEST_LOAD_MORE = 2;
 
-    private int mPage = 1; //请求页
-    private int mCurrentPage = 1;// 用于临时保存当前加载了多少页
-    private int mPageCount = 0; // 服务器总页数
+    private Realm mRealm;
 
-    private final Realm mRealm;
+    private int mPage = 1; //请求页，每次下拉加载更多 mPage++
+    private int mCurrentPage = 1;// 当前页，ui 列表当前显示的内容是第几页
+    private int mMaxPageCount = 2; // 服务器总页数
+
     private final CompositeDisposable mDisposable = new CompositeDisposable();
-    List<Girl> fakeData = new ArrayList<>();
+    List<Girl> fakeData1 = new ArrayList<>();
+    List<Girl> fakeData2 = new ArrayList<>();
 
 
     /**
@@ -45,17 +51,31 @@ public class GirlsPresenter extends NetWorkBasePresenter<ImageViewInterface> {
     public GirlsPresenter(ImageViewInterface viewInterface) {
         girlsFakeData();
         mFragment = viewInterface;
-        mRealm = Realm.getDefaultInstance();
-        int dbSize = mRealm.where(Girl.class).findAll().size();
-        if (dbSize > 0) mCurrentPage = (int) Math.ceil(dbSize / 30.0);// 获取当前数据库已经存了多少页
+        initRealm();
+    }
+
+    private void initRealm() {
+        Timber.d("G------->>" + "initRealm");
+        KClass<Girl> kClass = JvmClassMappingKt.getKotlinClass(Girl.class);// 反射获取java class 对应的 kotlin class
+        Set<KClass<Girl>> arraySet = new ArraySet<>();// ArraySet 在 sdk 23+ 才提供
+        arraySet.add(kClass);
+        RealmConfiguration config = RealmConfiguration.Companion.create(arraySet);
+        mRealm = Realm.Companion.open(config);
     }
 
     private void girlsFakeData() {
         for (int i = 0; i < 30; i++) {
-            fakeData.add(new Girl(
-                i + "",
-                "服务器已关闭,当前使用临时图片展示",
-                "https://img1.baidu.com/it/u=479423680,135458553&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500"));
+            fakeData1.add(new Girl(
+                    i + "",
+                    "服务器已关闭,当前使用临时图片展示",
+                    "https://img1.baidu.com/it/u=479423680,135458553&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500"));
+        }
+
+        for (int i = 30; i < 60; i++) {
+            fakeData2.add(new Girl(
+                    i + "",
+                    "服务器已关闭,当前使用临时图片展示",
+                    "https://img1.baidu.com/it/u=479423680,135458553&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500"));
         }
     }
 
@@ -69,86 +89,83 @@ public class GirlsPresenter extends NetWorkBasePresenter<ImageViewInterface> {
         switch (requestType) {
             case REQUEST_REFRESH:
                 mPage = 1;
-                fromNetWorkLoadV2();
+                fromNetWorkLoadV2(fakeData1);
                 break;
             case REQUEST_LOAD_MORE:
-                mFragment.showData(fakeData);
-//                if (mCurrentPage == mPageCount) {// 1==4
-//                    mFragment.onError("到底啦~");
-//                    return;
-//                } else {
-//                    mPage++;
-//                    fromNetWorkLoadV2();
-//                }
+                if (mCurrentPage == mMaxPageCount) {// 1==4
+                    mFragment.onError("到底啦~");
+                    return;
+                } else {
+                    mPage++;
+                    fromNetWorkLoadV2(fakeData2);
+                }
                 break;
             default:
                 break;
         }
     }
 
-    private void fromNetWorkLoadV2() {
-        mDisposable.add(ApiFactory.getGankApi().getGirlsDataV2(mPage)
-                .map(bean -> {
-                    mPageCount = bean.getPage_count();
-                    return bean;
-                })
-                .map(GankBean::getData)
-                .concatMap(Flowable::fromIterable)
-                .map(gankBean -> new Girl(
-                        gankBean.get_id(),
-                        gankBean.getDesc(),
-                        gankBean.getImages().get(0)))
-                .toList()
+    private void fromNetWorkLoadV2(List<Girl> fakeData) {
+        mDisposable.add(Single.just(fakeData)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         this::saveDataToDB,
-//                        throwable -> mFragment.onError("服务器数据异常："
-//                                + throwable.getMessage())
-                        // 由于 gank 服务器关闭，暂时使用假数据模拟
-                        throwable -> mFragment.showData(fakeData)
-                ));
+                        throwable -> mFragment.onError("数据异常：")
+                )
+        );
+
     }
 
     private void saveDataToDB(List<Girl> girls) {
-        if (girls.size() == 0) {
+        if (girls.isEmpty()) {
             return;
         }
-        if (mPage == 1) {//刷新时
-            final Girl girl = mRealm
-                    .where(Girl.class)
-                    .equalTo("_id", girls.get(0)._id)
-                    .findFirst();
-            if (girl == null) {//数据库数据过期
-                mRealm.executeTransaction(realm -> {
-                    realm.delete(Girl.class);
-                    realm.copyToRealmOrUpdate(girls);
-                    mCurrentPage = mPage;
-                });
-            } else {
-                mPage = mCurrentPage;//用户先前在当前窗口可能已经加载了很多页数据，以让用户可以继续加载更多的操作
-                mFragment.onError("已经是最新数据！");
-            }
-        } else {// 下拉加载更多
-            mCurrentPage = mPage;
-            mRealm.executeTransaction(realm -> realm.insertOrUpdate(girls));
+        if (mPage == 1) { // 下拉刷新
+            saveRefreshData(girls);
+        } else {// 上拉加载更多
+            saveLoadMoreData(girls);
         }
     }
 
-    public void subscribeDBData() {
-        mDisposable.add(mRealm.where(Girl.class)
-                .findAll()
-                .asFlowable()
-                .filter(results -> results.size() > 0)
+    private void saveRefreshData(List<Girl> girls) {
+        mDisposable.add(Single // fromCallable()用于发射耗时任务结果
+                .fromCallable(() -> RealmRepository.INSTANCE.hasExists(
+                        mRealm,
+                        girls.get(0).get_id(),
+                        Girl.class
+                ))
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        results -> mFragment.showData(results),
-                        throwable -> mFragment.onError("数据库数据："
-                                + throwable.getMessage())
+                .subscribe(hasSaved -> {
+                            if (!hasSaved) {
+                                RealmRepository.INSTANCE.saveGirls(mRealm, girls);
+                                mCurrentPage = mPage;
+                            } else {
+                                mPage = mCurrentPage;
+                                mFragment.onError("已经是最新数据！");
+                            }
+                        }
                 ));
     }
 
-    public void unSubscribe() {
+    private void saveLoadMoreData(List<Girl> girls) {
+        mCurrentPage = mPage;
+        Timber.d("mCurrentPage:" + mCurrentPage + " mMaxPageCount:" + mMaxPageCount + " mPage:" + mPage);
+        RealmRepository.INSTANCE.saveGirls(mRealm, girls);// Ream 插入数据，内部会切换线程，所以不需要考虑调用线程
+    }
+
+    public void subscribeDBData() {
+        mDisposable.add(RealmRepository.INSTANCE.subscribeGirl(mRealm)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(girls -> {
+                    mFragment.showData(girls);
+                }));
+    }
+
+    public void destroy() {
+        Timber.d("G------->>" + "destroy");
         mDisposable.dispose();
         mRealm.close();
     }

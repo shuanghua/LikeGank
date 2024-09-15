@@ -25,6 +25,7 @@ public abstract class BaseFragment<T extends ViewBinding> extends Fragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        System.out.println("当前方法:onCreate");
         super.onCreate(savedInstanceState);
         initPresenter();
     }

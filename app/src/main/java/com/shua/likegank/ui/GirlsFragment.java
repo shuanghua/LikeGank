@@ -59,7 +59,6 @@ public class GirlsFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);//父类已经实例化 presenter
-        mPresenter.requestNetWorkData(GirlsPresenter.REQUEST_REFRESH);
     }
 
     @Override
@@ -67,6 +66,7 @@ public class GirlsFragment
         super.onViewCreated(view, savedInstanceState);
         initRecyclerView();
         mPresenter.subscribeDBData();
+        mPresenter.requestNetWorkData(GirlsPresenter.REQUEST_REFRESH);
     }
 
     @Override
@@ -83,7 +83,7 @@ public class GirlsFragment
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mPresenter.unSubscribe();
+        mPresenter.destroy();
         mPresenter = null;
         binding = null;
     }

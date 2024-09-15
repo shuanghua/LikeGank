@@ -17,4 +17,6 @@ dependencyResolutionManagement {
     }
 }
 include ':app'
-include ':annotation'
+include ':nav-annotation'
+include ':nav-compiler'
+

@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:paddingTop="88dp"
+        android:paddingTop="100dp"
         android:scrollbars="vertical" />
     <!-- clipToPadding = false:
         recyclerView 运动的时候，无视 padding,也就是 padding = 0dp

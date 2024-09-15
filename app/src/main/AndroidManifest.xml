@@ -49,11 +49,11 @@
 
         <activity android:name=".ui.WebActivity" />
 
-        <activity-alias
+<!--        <activity-alias
             android:name="leakcanary.internal.activity.LeakLauncherActivity"
             android:exported="true"
             android:targetActivity="leakcanary.internal.activity.LeakActivity"
-            tools:node="merge" />
+            tools:node="merge" />-->
     </application>
 
 </manifest>

@@ -2,7 +2,7 @@ import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 
-class AsmModifyClassesVisitor (
+class AsmModifyClassesVisitor(
     api: Int,
     cv: ClassVisitor,
 ) : ClassVisitor(api, cv) {
@@ -17,8 +17,8 @@ class AsmModifyClassesVisitor (
         superName: String?,
         interfaces: Array<out String>?
     ) {
+        println("字节码插桩类2：$name")
         className = name
-        println("处理字节码的类：$name")
         super.visit(version, access, name, signature, superName, interfaces)
     }
 
@@ -30,16 +30,18 @@ class AsmModifyClassesVisitor (
         exceptions: Array<out String>?
     ): MethodVisitor {
         val mv: MethodVisitor = cv.visitMethod(access, name, descriptor, signature, exceptions)
+
         if (className == "com/shua/likegank/ui/base/BaseFragment" && (name == "onCreate" || name == "onDestroyView")) {
             // 在 onCreate() 方法和 onDestroyView() 方法中插入打印函数名的日志
-            return PrintMethodNameAdapter(api, mv)
+            return PrintMethodNameAdapter(api, mv, name)
         }
         return mv
     }
 
     private class PrintMethodNameAdapter(
         api: Int,
-        methodVisitor: MethodVisitor
+        methodVisitor: MethodVisitor,
+        private val funName: String
     ) : MethodVisitor(api, methodVisitor) {
         override fun visitCode() {
             super.visitCode()
@@ -49,7 +51,7 @@ class AsmModifyClassesVisitor (
                 "out",
                 "Ljava/io/PrintStream;"
             )
-            mv.visitLdcInsn("Method name: onCreate") // 或者 onDestroyView，具体方法名根据需要调整
+            mv.visitLdcInsn("Method name: $funName") // 或者 onDestroyView，具体方法名根据需要调整
             mv.visitMethodInsn(
                 Opcodes.INVOKEVIRTUAL,
                 "java/io/PrintStream",

@@ -1,10 +1,13 @@
 plugins {
-    `java-gradle-plugin`
+     id("java-gradle-plugin")
      alias(libs.plugins.kotlin.jvm)
 //    id ("java-gradle-plugin") // 开发本地插件
 //    id("com.gradle.plugin-publish") version "1.2.1" // 开发远程插件, 只有添加了该插件才会出现 plugin_portal 脚本
 //    id ("maven-publish") // 开发三方库   发布库到本地或远程 Maven 仓库
 }
+
+
+group = "dev.shuanghua.android.plugin"
 
 
 java {
@@ -16,30 +19,14 @@ java {
 
 dependencies {
     compileOnly(libs.android.gradlePlugin.api) // 编译时依赖
-
-    // 处理字节码库
-    implementation("commons-io:commons-io:2.16.1")
-    implementation("org.ow2.asm:asm:9.7")
-    implementation("org.ow2.asm:asm-tree:9.7")
-    implementation("com.squareup:kotlinpoet:1.16.0")
-    implementation("javassist:javassist:3.4.GA")
-
-    implementation("dev.shuanghua.library:android-annotation:1.0.0")
+    // 处理字节码相关库
+    compileOnly(libs.commons.io)
+    compileOnly(libs.asm)
+    compileOnly(libs.asm.tree)
 }
 
 
-group = "dev.shuanghua.android.plugin"
-version = "1.0.0"
 
-
-//gradlePlugin {
-//    plugins {
-//        register("nav-plugin") {
-//            id = "nav-plugin"
-//            implementationClass = "NavPlugin"
-//        }
-//    }
-//}
 
 
 /**
@@ -49,11 +36,13 @@ version = "1.0.0"
  */
 gradlePlugin {
     plugins {
-        register("nav-plugin") { // Library
-            id = "nav-plugin"
+        register("AsmBytecode") { // Library
+            id = "dev.shuanghua.plugin.asmbytecode"
+            version = "1.0.0"
             // 插件类 (kts + kt 或者 gradle + java , 千万不要 kts + java 或者 gradle + kt混用)
-            implementationClass = "NavPlugin"
+            implementationClass = "ModifyClassesPlugin"
         }
+        // register 注册更多的插件
     }
 }
 
@@ -81,7 +70,7 @@ gradlePlugin {
 
 
 /**
- *  发布一个"库"到本地 Maven Central 仓库
+ *  发布一个 "库 "到本地 Maven Central 仓库
  *
  *  需要引入插件: id 'maven-publish'
  */

@@ -1,9 +1,12 @@
 package com.shua.likegank;
 
+import static timber.log.Timber.DebugTree;
+
 import android.app.Application;
+
 import com.shua.likegank.utils.AppUtils;
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
+
+import timber.log.Timber;
 
 /**
  * LikeGank application
@@ -15,26 +18,6 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         AppUtils.setAppContext(getApplicationContext());
-//        if (BuildConfig.DEBUG) {
-//            Timber.plant(new Timber.DebugTree());
-//        }
-        initRealm();
+        Timber.plant(new DebugTree());
     }
-
-    private void initRealm() {
-        Realm.init(this);
-        RealmConfiguration config = new RealmConfiguration.Builder()
-                .deleteRealmIfMigrationNeeded()
-                .build();
-        //Realm.deleteRealm(config);
-        Realm.setDefaultConfiguration(config);
-    }
-
-//    private class LikeGankMigration implements RealmMigration{
-//
-//        @Override
-//        public void migrate(DynamicRealm realm, long oldVersion, long newVersion) {
-//            RealmSchema schema = realm.getSchema();
-//        }
-//    }
 }

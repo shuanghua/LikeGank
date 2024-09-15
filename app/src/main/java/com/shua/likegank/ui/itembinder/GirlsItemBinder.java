@@ -48,11 +48,11 @@ public class GirlsItemBinder extends ItemViewBinder<Girl, GirlsItemBinder.ViewHo
     @Override
     protected void onBindViewHolder(@NonNull ViewHolder holder, @NonNull Girl data) {
         Glide.with(mContext)
-                .load(data.url)
+                .load(data.getUrl())
                 .apply(options)
                 .into(holder.mImageView);
         holder.position = getPosition(holder);
-        holder.url = data.url;
+        holder.url = data.getUrl();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

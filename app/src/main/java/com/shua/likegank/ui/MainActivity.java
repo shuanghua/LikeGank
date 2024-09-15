@@ -38,8 +38,9 @@ public class MainActivity extends AppCompatActivity implements OnLoadingVisibili
         NavigationView navigationView = mViewBinding.navView;
         navigationView.setItemIconTintList(null);
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_android, R.id.nav_girls,
-                R.id.nav_about, R.id.nav_photo, R.id.nav_license
+                R.id.nav_home, R.id.nav_girls,
+                R.id.nav_about, R.id.nav_photo,
+                R.id.nav_license
         ).setOpenableLayout(drawer).build();
 
 //        NavController navController = Navigation.findNavController(this, R.id.fragment_container);

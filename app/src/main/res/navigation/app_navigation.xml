@@ -16,12 +16,6 @@
     </fragment>
 
     <fragment
-        android:id="@+id/nav_android"
-        android:name="com.shua.likegank.ui.AndroidFragment"
-        android:label="Android"
-        tools:layout="@layout/fragment_android" />
-
-    <fragment
         android:id="@+id/nav_girls"
         android:name="com.shua.likegank.ui.GirlsFragment"
         android:label="妹纸"

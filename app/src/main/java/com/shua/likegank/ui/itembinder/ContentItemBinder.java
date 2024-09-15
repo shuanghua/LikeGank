@@ -29,8 +29,8 @@ public class ContentItemBinder
     @Override
     protected void onBindViewHolder(@NonNull ContentItemBinder.ViewHolder viewHolder,
                                     @NonNull Content content) {
-        viewHolder.content.setText(content.content);
-        viewHolder.url = content.url;
+        viewHolder.content.setText(content.getContent());
+        viewHolder.url = content.getUrl();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

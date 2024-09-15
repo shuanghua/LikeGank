@@ -17,7 +17,7 @@ publishing {
         create<MavenPublication>("LikeGankAnnotation") {
             from(components["java"])
             groupId = "dev.shuanghua.library"
-            artifactId = "annotation-nav"
+            artifactId = "nav-annotation"
             version = "1.0.0"
         }
     }
