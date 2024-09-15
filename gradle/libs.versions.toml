@@ -1,0 +1,60 @@
+[versions]
+adapterRxjava3 = "2.11.0"
+agp = "8.5.2"
+appcompat = "1.7.0"
+asm = "9.7"
+commonsIo = "2.16.1"
+constraintlayout = "2.1.4"
+converterGson = "2.9.0"
+glide = "4.16.0"
+kotlin = "1.9.24"
+library = "1.2.4"
+material = "1.12.0"
+multitype = "3.5.0"
+navigationFragmentKtx = "2.8.0"
+navigationUiKtx = "2.8.0"
+realm = "2.0.0"
+retrofit = "2.11.0"
+rxandroid = "3.0.2"
+rxjava = "3.1.8"
+rxpermissions = "0.12"
+swiperefreshlayout = "1.1.0"
+timber = "5.0.1"
+navSafeargs = "2.8.0"
+coroutines = "1.9.0"
+
+[libraries]
+android-gradlePlugin-api = { group = "com.android.tools.build", name = "gradle-api", version.ref = "agp" }
+appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+asm = { module = "org.ow2.asm:asm", version.ref = "asm" }
+asm-tree = { module = "org.ow2.asm:asm-tree", version.ref = "asm" }
+commons-io = { module = "commons-io:commons-io", version.ref = "commonsIo" }
+constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
+converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
+glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
+library = { module = "com.github.chrisbanes.photoview:library", version.ref = "library" }
+material = { module = "com.google.android.material:material", version.ref = "material" }
+multitype = { module = "me.drakeet.multitype:multitype", version.ref = "multitype" }
+navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
+navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationUiKtx" }
+realm-kotlin-base = { group = "io.realm.kotlin", name = "library-base", version.ref = "realm" }
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+retrofit2-adapter-rxjava3 = { module = "com.squareup.retrofit2:adapter-rxjava3", version.ref = "adapterRxjava3" }
+rxandroid = { module = "io.reactivex.rxjava3:rxandroid", version.ref = "rxandroid" }
+rxjava = { module = "io.reactivex.rxjava3:rxjava", version.ref = "rxjava" }
+rxpermissions = { module = "com.github.tbruyelle:rxpermissions", version.ref = "rxpermissions" }
+swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+kotlin-coroutines-rx3 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-rx3", version.ref = "coroutines" }
+
+
+#[bundles]
+#retrofit-bundles = ["retrofit", "rxandroid", "adapter-rxjava2"]
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
+realm-kotlin = { id = "io.realm.kotlin", version.ref = "realm" }
+navigation-safeargs = { id = "androidx.navigation.safeargs", version.ref = "navSafeargs" }
